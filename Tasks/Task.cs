@@ -12,6 +12,7 @@ namespace Punctuation {
 		int GetWeight(Pirate pirate); //The per task cost of chunks
 
 		string Preform(Pirate pirate); //Preform the task
-			
+		
+		
 	}
 }
