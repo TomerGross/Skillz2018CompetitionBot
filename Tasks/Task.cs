@@ -13,6 +13,5 @@ namespace Punctuation {
 
 		string Preform(Pirate pirate); //Preform the task
 		
-		
 	}
 }

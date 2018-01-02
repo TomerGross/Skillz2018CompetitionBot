@@ -6,6 +6,7 @@ namespace Punctuation {
 
 		readonly int range;
 		
+		
 		public TraitAttractedToEnemies(int range) {
 			
 			this.range = range;
