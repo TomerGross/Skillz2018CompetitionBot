@@ -5,6 +5,7 @@ namespace Punctuation {
 	
 	public class TaskSailToMother : Task  {
 
+
 		public static Dictionary<int, Path> paths = new Dictionary<int, Path>();
 		
 		
@@ -49,6 +50,10 @@ namespace Punctuation {
 			return 0;		
 		}
 		
+				
+		public int Bias() {
+			return 1;
+		}
 		
 	}
 }
