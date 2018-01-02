@@ -3,7 +3,7 @@ using Pirates;
 
 namespace Punctuation {
 	
-	public class GoalBerserker : Goal  {
+	public class TaskBerserker : Task  {
 
 		public static Dictionary<int, Path> paths = new Dictionary<int, Path>();
 		
