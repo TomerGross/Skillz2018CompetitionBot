@@ -6,10 +6,12 @@ namespace Punctuation{
 
     public class Chunk{
         
-        public static int divider = 320;
-        public static int n = 6400 / divider;
+        const int divider = 320;
+        const int n = 6400 / divider;
+        
         public static Chunk[,] chunks = new Chunk[n, n];
-
+		
+		
         public static Chunk GetChunk(Location loc){
             
             int y = loc.Row / divider;
@@ -23,6 +25,7 @@ namespace Punctuation{
             return new Chunk(x, y);
         }
 
+
         public static Chunk GetChunk(int x, int y){
 
             if(chunks[y, x] != null){
@@ -32,7 +35,10 @@ namespace Punctuation{
             
             return new Chunk(x, y);
         }
-    
+    	
+    	
+    	//---------------[ End of static functions and vars ]--------
+
     
         private int x, y;
         
