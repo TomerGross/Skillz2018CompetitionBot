@@ -15,9 +15,8 @@ namespace Punctuation {
 		}
 		
 		
-		public int GetWeight(Pirate pirate) {
-		
-			return 0;		
+		public Pirate GetWeight(Pirate pirate) {
+			
 		}
 		
 		
