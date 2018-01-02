@@ -36,6 +36,7 @@
 ehthumbs.db
 Thumbs.db
 
+.gitignore
 bin/
 obj/
 Punctuation.csproj
