@@ -6,45 +6,47 @@ namespace Punctuation {
 
 	public class AStar{
 
-		private Chunk origin, endgoal;
 
-		private Dictionary<Chunk, int> fScore;		
-		private Dictionary<Chunk, int> gScore;
-        private Dictionary<Chunk, Chunk> cameFrom;
-        private List<Chunk> closedSet, openSet;
+		readonly Chunk origin, endgoal;
+        readonly List<Trait> traits;
+		readonly Stack pathStack;
 
-		private Stack pathStack;
-		
-		
-		public AStar(Goal goal, Chunk origin, Chunk endgoal) {
+		Dictionary<Chunk, int> fScore;		
+		Dictionary<Chunk, int> gScore;
+        Dictionary<Chunk, Chunk> cameFrom;
+        List<Chunk> closedSet, openSet;
 
+
+		public AStar(List<Trait> traits, Chunk origin, Chunk endgoal) {
+
+			this.traits = traits;
 			this.origin = origin;
 			this.endgoal = endgoal;
 		
-			this.fScore = new Dictionary<Chunk, int>();
-			this.gScore = new Dictionary<Chunk, int>();
-			this.cameFrom = new Dictionary<Chunk, Chunk>();
-			this.closedSet = new List<Chunk>();
-			this.openSet = new List<Chunk>();
-
-			this.pathStack = this.calculate();
+			fScore = new Dictionary<Chunk, int>();
+			gScore = new Dictionary<Chunk, int>();
+			cameFrom = new Dictionary<Chunk, Chunk>();
+			closedSet = new List<Chunk>();
+			openSet = new List<Chunk>();
+			
+			pathStack = calculate();
 		}
 
 		
-		private Stack calculate() {
+		protected Stack calculate() {
 
 			for (int x = 0; x < Chunk.n; x++) {
 				for (int y = 0; y < Chunk.n; y++) {
 
 					Chunk chunk = Chunk.GetChunk(x,y);
-					this.fScore[chunk] = int.MaxValue;
-					this.gScore[chunk] = int.MaxValue;
+					fScore[chunk] = int.MaxValue;
+					gScore[chunk] = int.MaxValue;
 				}
 			}
 
-			this.fScore[this.origin] = 0;
-			this.gScore[this.origin] = 1;
-			this.openSet.Add(this.origin);
+			fScore[origin] = 0;
+			gScore[origin] = 1;
+			openSet.Add(origin);
 
 			for (int count = 0; count < Chunk.n * Chunk.n; count++) {
 
@@ -60,48 +62,55 @@ namespace Punctuation {
 					
 				foreach (Chunk neighbor in current.GetNeighbors(0)) {
 
-					if (this.closedSet.Contains(neighbor))
+					if (closedSet.Contains(neighbor)) {
 						continue;
+					}
 					
-					if (!this.openSet.Contains(neighbor))
-						this.openSet.Add(neighbor);
+					if (!openSet.Contains(neighbor)) {
+						openSet.Add(neighbor);
+					}
 
-					int g = this.gScore[current] + current.Distance(neighbor) + neighbor.GetCost();
+					int g = gScore[current] + current.Distance(neighbor);
 
-					if (g >= gScore[neighbor])
+					foreach (Trait trait in traits) {
+						g += trait.Cost(neighbor);
+					}
+
+					if (g >= gScore[neighbor]) {
 						continue;
-
+					}
+					
 					cameFrom[neighbor] = current;
 					gScore[neighbor] = g;
-					fScore[neighbor] = gScore[neighbor] + neighbor.Distance(this.endgoal);
+					fScore[neighbor] = gScore[neighbor] + neighbor.Distance(endgoal);
 					
 				}
 			}
 
-			Chunk trace = this.endgoal;
-            Stack p = new Stack();
+			Chunk trace = endgoal;
+            var p = new Stack();
 
-            while(this.cameFrom.ContainsKey(trace)){
+            while(cameFrom.ContainsKey(trace)){
               
-             	Punctuation.game.Debug("AStar Path = " + trace.ToString() + this.gScore[trace] + " | " + this.fScore[trace]);
+             	Punctuation.game.Debug("AStar Path = " + trace + gScore[trace] + " | " + fScore[trace]);
 
 			 	p.Push(trace);
-                trace = this.cameFrom[trace];
+                trace = cameFrom[trace];
             }
 
 			return p;
 		}	
 		
 	
-		private Chunk CheapestChunk(){
+		protected Chunk CheapestChunk(){
 
 			int cheapest_price = int.MaxValue;
 			Chunk cheapest_chunk = null;
  
-            foreach(Chunk chunk in this.openSet){   
+            foreach(Chunk chunk in openSet){   
                 if(!closedSet.Contains(chunk)){
-                    if(cheapest_price > this.fScore[chunk]){
-                        cheapest_price = this.fScore[chunk];
+                    if(cheapest_price > fScore[chunk]){
+                        cheapest_price = fScore[chunk];
                         cheapest_chunk = chunk;
                     }   
                 }
@@ -112,7 +121,7 @@ namespace Punctuation {
 
 
 		public Stack GetPathStack() {
-			return this.pathStack;
+			return pathStack;
 		}
 
 	}

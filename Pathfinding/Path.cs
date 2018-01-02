@@ -1,5 +1,5 @@
 using System.Collections;
-using Pirates;
+using System.Collections.Generic;
 
 
 namespace Punctuation{
@@ -12,28 +12,30 @@ namespace Punctuation{
 		}
 
 
-		private Stack chunks, chunks_previous;
-		private Chunk origin, endgoal;
+		readonly Chunk origin, endgoal;
+		readonly List<Trait> traits;
+		Stack chunks, chunks_previous;
+			
 
-
-		public Path(Chunk origin, Chunk endgoal, Algorithm algorithm){
+		public Path(Chunk origin, Chunk endgoal, List<Trait> traits, Algorithm algorithm){
 
 			this.origin = origin;
 			this.endgoal = endgoal;
+			this.traits = traits;
 			
-			this.chunks_previous = new Stack();
+			chunks_previous = new Stack();
 
 			if (algorithm == Algorithm.ASTAR){
-				this.chunks = new AStar(null,this.origin,this.endgoal).GetPathStack();
+				chunks = new AStar(traits, this.origin, this.endgoal).GetPathStack();
 			} else {
-				this.chunks = new Stack();
+				chunks = new Stack();
 			}
         }
 
 
 		public Chunk Pop() {
 
-			var popped = (Chunk) this.chunks_previous.Pop();
+			var popped = (Chunk) chunks_previous.Pop();
 			chunks_previous.Push(popped);
 
 			return popped;
@@ -45,10 +47,10 @@ namespace Punctuation{
 			if (chunks.Count > 2) {
 
 				var from = (Chunk) chunks.Pop();
-				var skipped = this.Pop();
-				var jumpto = this.Pop();
+				var skipped = Pop();
+				var jumpto = Pop();
 
-				var recalculated = new Path(from, jumpto, Algorithm.ASTAR);
+				var recalculated = new Path(from, jumpto, traits, Algorithm.ASTAR);
 
 				if (recalculated.GetChunks().Count == 1 && recalculated.GetChunks().Peek() == skipped) {
 
@@ -77,17 +79,17 @@ namespace Punctuation{
 
 
         public Stack GetChunks(){
-            return this.chunks;
+            return chunks;
         }
 
 
 		public Stack GetPreviousChunks() {
-			return this.chunks_previous;
+			return chunks_previous;
 		}
 		
 
 		public Chunk GetEndGoal() {
-			return this.endgoal;
+			return endgoal;
 		}
 		
 		
@@ -96,7 +98,7 @@ namespace Punctuation{
             string build = "";
             
             foreach(Chunk chunk in chunks.ToArray()){
-                build += chunk.ToString() + " -> ";
+                build += chunk + " -> ";
             }  
 
             return build;

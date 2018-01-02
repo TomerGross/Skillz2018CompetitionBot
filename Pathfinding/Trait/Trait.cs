@@ -1,7 +1,15 @@
-﻿using System;
+﻿
 namespace Punctuation {
-	public class Trait {
-		public Trait() {
+	
+	public abstract class Trait {
+	
+			
+		public virtual int Cost(Chunk chunk) {
+
+			return 0;
 		}
+		
+		
 	}
+	
 }

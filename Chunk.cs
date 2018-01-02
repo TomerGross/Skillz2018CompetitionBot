@@ -69,30 +69,6 @@ namespace Punctuation{
             return System.Math.Abs(this.x - chunk.GetX()) + System.Math.Abs(this.y - chunk.GetY());
         }
 
-        public int GetCost(){
-
-            int cost = 0, PDistance = Punctuation.game.PushDistance, PRange = Punctuation.game.PushRange;
-
-            foreach(Pirate enemy in Punctuation.game.GetEnemyLivingPirates()){
-
-                if(enemy.Distance(this.GetLocation()) < PRange * 3){
-                    
-
-                    double price = (int) System.Math.Round(PDistance / 100.0) + 1;
-                    price -= enemy.Distance(this.GetLocation()) / 100.0;
-                    price *= 100;
-
-					if (0 <= price) {
-						cost += (int) System.Math.Round(price);
-					} else {
-						Punctuation.game.Debug("COST "+ this.ToString() + " " + cost);
-					}
-                }
-            }   
-      
-            return cost;
-        }
-
         public List<Chunk> GetNeighbors(int level){
 
             List<Chunk> neighbors = new List<Chunk>();
