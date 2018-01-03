@@ -16,7 +16,7 @@ namespace Punctuation{
 		readonly List<Trait> traits;
 		Stack chunks, chunks_previous;
 			
-
+		
 		public Path(Chunk origin, Chunk endgoal, List<Trait> traits, Algorithm algorithm){
 
 			this.origin = origin;

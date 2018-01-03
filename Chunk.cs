@@ -6,8 +6,8 @@ namespace Punctuation{
 
     public class Chunk{
         
-        const int divider = 320;
-        const int n = 6400 / divider;
+        public const int divider = 320;
+        public const int n = 6400 / divider;
         
         public static Chunk[,] chunks = new Chunk[n, n];
 		

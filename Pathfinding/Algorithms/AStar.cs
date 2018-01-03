@@ -3,9 +3,7 @@ using System.Collections;
 
 namespace Punctuation {
 
-
 	public class AStar{
-
 
 		readonly Chunk origin, endgoal;
         readonly List<Trait> traits;
