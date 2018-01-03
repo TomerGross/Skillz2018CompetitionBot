@@ -4,9 +4,12 @@ using System.Collections;
 namespace Punctuation {
 
 	public class AStar{
-
-		readonly Chunk origin, endgoal;
-        readonly List<Trait> traits;
+		
+		//The algorithm: 
+		//https://en.wikipedia.org/wiki/A*_search_algorithm
+		
+		readonly Chunk origin, endgoal; 
+        readonly List<Trait> traits; 
 		readonly Stack pathStack;
 
 		Dictionary<Chunk, int> fScore;		
@@ -20,7 +23,8 @@ namespace Punctuation {
 			this.traits = traits;
 			this.origin = origin;
 			this.endgoal = endgoal;
-		
+			
+			//Initiates everything 
 			fScore = new Dictionary<Chunk, int>();
 			gScore = new Dictionary<Chunk, int>();
 			cameFrom = new Dictionary<Chunk, Chunk>();
@@ -31,10 +35,10 @@ namespace Punctuation {
 		}
 
 		
-		protected Stack calculate() {
+		protected Stack calculate() { //The actual algorithm
 
-			for (int x = 0; x < Chunk.n; x++) {
-				for (int y = 0; y < Chunk.n; y++) {
+			for (int x = 0; x < Chunk.n; x++) { //Sets every chunk cost to INFINITY
+				for (int y = 0; y < Chunk.n; y++) { 
 
 					Chunk chunk = Chunk.GetChunk(x,y);
 					fScore[chunk] = int.MaxValue;
@@ -42,13 +46,13 @@ namespace Punctuation {
 				}
 			}
 
-			fScore[origin] = 0;
+			fScore[origin] = 0; //Sets the first chunks scores so it will be picked
 			gScore[origin] = 1;
 			openSet.Add(origin);
 
 			for (int count = 0; count < Chunk.n * Chunk.n; count++) {
 
-				Chunk current = CheapestChunk();
+				Chunk current = CheapestChunk(); //Sets the next chunk to go over
 
 				if (current == endgoal) {
 					Punctuation.game.Debug("AStar took " + count + " steps to complete");

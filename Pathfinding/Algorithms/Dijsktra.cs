@@ -6,14 +6,15 @@ namespace Punctuation {
 
 	public class Dikjstra {
 
-
+		//OLD CODE, NOT USED
+		
     	private Dictionary<Chunk, int> dist;
         private Dictionary<Chunk, Chunk> prev;
         private List<Chunk> finished;
         private Chunk origin, endgoal;
         private	Stack pathStack;
 
-		public Dikjstra(Goal goal,Chunk origin,Chunk endgoal) {
+		public Dikjstra(List<Trait> traits, Chunk origin, Chunk endgoal) {
 
 			this.origin = origin;
 			this.endgoal = endgoal;
@@ -91,7 +92,7 @@ namespace Punctuation {
 
 				foreach (Chunk neighbor in position.GetNeighbors(0)) {
 
-					int cost = this.dist[position] + neighbor.GetCost();
+					int cost = this.dist[position]; // + NEIGHBORS COST
 
 					if (cost < this.dist[neighbor]) {
 

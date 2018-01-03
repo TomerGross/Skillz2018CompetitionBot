@@ -7,12 +7,12 @@ namespace Punctuation{
     public class Chunk{
         
         public const int size = 320;
-        public const int n = 6400 / size;
+        public const int n = 6400 / size; //Number of chunks
         
-        public static Chunk[,] chunks = new Chunk[n, n];
+        public static Chunk[,] chunks = new Chunk[n, n]; //Keeps track of all the chunks
 		
 		
-        public static Chunk GetChunk(Location loc){
+        public static Chunk GetChunk(Location loc){ //Returns a chunkk
             
             int y = loc.Row / size;
             int x = loc.Col / size;
@@ -26,7 +26,7 @@ namespace Punctuation{
         }
 
 
-        public static Chunk GetChunk(int x, int y){
+        public static Chunk GetChunk(int x, int y){ //Returns a chunk from an index
 
             if(chunks[y, x] != null){
                 
@@ -39,14 +39,16 @@ namespace Punctuation{
     	//---------------[ End of static functions and vars ]--------
     
         readonly int X, Y;
-        
+		readonly Dictionary<int, List<Chunk>> neighbors; //Keeps track of neighbors and removes the need to recalculate
        	
-        protected Chunk(int X , int Y){
+        protected Chunk(int X , int Y){ //This should only be used by GetChunk methods, never by us.
           
             this.Y = Y;          
             this.X = X;
-
-            chunks[Y, X] = this; 
+			
+			neighbors = new Dictionary<int,List<Chunk>>();
+			
+            chunks[Y, X] = this; //Registers the chunk
         }   
 
 
@@ -62,25 +64,25 @@ namespace Punctuation{
         }
         
 
-         public Location GetLocation(){
-         
+         public Location GetLocation(){ //Gets the center of a chunk
+          
             return new Location((Y * size) + (size / 2), (X * size) + (size / 2));
         }	
 
 
-        public override string ToString(){
+        public override string ToString(){ //Because it override, this does NOT need to be called when building a string
         
              return "[Y: " + this.GetY() + ", X:"  + this.GetX() + "]";
         }
 
 
-        public int Distance(Chunk chunk){
-        
+        public int Distance(Chunk chunk){ 
+         
             return System.Math.Abs(X - chunk.GetX()) + System.Math.Abs(Y - chunk.GetY());
         }
         
 
-		public List<Pirate> GetEnemyPirates() {
+		public List<Pirate> GetEnemyPirates() { //TODO Gets every living pirate that is on the chunk, needs to be reworked
 
 			var list = new List<Pirate>();
 			
@@ -95,22 +97,29 @@ namespace Punctuation{
 		}
 		
 		
-        public List<Chunk> GetNeighbors(int level){
+        public List<Chunk> GetNeighbors(int level){ //The level is the distance of neighbors it should get
+													//0 will return only adjacent
 
-            var neighbors = new List<Chunk>();
+			if (neighbors.ContainsKey(level)){
+				return neighbors[level];
+			}
 
+			var list = new List<Chunk>();
+			
             for(int rx = (X - (level + 1)); rx <= (X + (level + 1)); rx++){
                 
                 for(int ry = (Y - (level + 1)); ry <= (Y + (level + 1)); ry++){
                     
                     if(rx >= 0 && ry >= 0 && rx < n && ry < n){
 						
-                        neighbors.Add(Chunk.GetChunk(rx, ry));
+                        list.Add(Chunk.GetChunk(rx, ry));
                     }
                 }
             }
 
-            return neighbors;
+			neighbors[level] = list;
+			
+            return list;
         }
 
     }

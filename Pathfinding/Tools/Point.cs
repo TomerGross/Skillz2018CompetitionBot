@@ -2,9 +2,9 @@ using Pirates;
 
 namespace Punctuation{
     
-    public class Point{
-
-        private int x, y;
+    public class Point{ //Suport class to Line, Will probably be removed in the near future
+	
+        readonly int x, y;
 
         public Point(int x, int y){
             
@@ -14,17 +14,17 @@ namespace Punctuation{
         
         public Point(Location loc){
             
-            this.x = loc.Col;
-            this.y = loc.Row;
+            x = loc.Col;
+            y = loc.Row;
         }
 
 
         public int GetX(){
-            return this.x;
+            return x;
         }
 
         public int GetY(){
-            return this.y;
+            return y;
         }
 
         public Location GetLocation(){

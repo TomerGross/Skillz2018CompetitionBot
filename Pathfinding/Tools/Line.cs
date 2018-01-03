@@ -22,7 +22,7 @@ namespace Punctuation{
         }
         
 	
-        public Point[] GetPointsBetween(int count){
+        public Point[] GetPointsBetween(int count){ //Gets a number of points between the two given points
 
             Point[] points = new Point[count];
 
@@ -40,7 +40,7 @@ namespace Punctuation{
         }
         
        	
-        public Point[] GetPoints(int range){
+        public Point[] GetPoints(int range){ //Gets the next points with a chunk's range, not done
 
             Point[] points = new Point[range];
 			double distance = Punctuation.game.PirateMaxSpeed;
@@ -57,12 +57,14 @@ namespace Punctuation{
         }
 
 
-        public double GetLength(){
+        public double GetLength(){ //Returns the length of the line
+        
             return System.Math.Sqrt(System.Math.Pow(point1.GetY() - point2.GetY(), 2) + System.Math.Pow(point1.GetX() - point2.GetX(), 2));
         }
 
 
-        public double GetSlope(){
+        public double GetSlope(){ //Returns the line's slope
+        
             return (point1.GetY() - point2.GetY()) / (point1.GetX() - point2.GetX());
         }
 
