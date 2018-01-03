@@ -38,50 +38,54 @@ namespace Punctuation{
     	
     	
     	//---------------[ End of static functions and vars ]--------
-
     
-        private int x, y;
+        readonly int X, Y;
         
-        private Chunk(int x , int y){
+        protected Chunk(int X , int Y){
           
-            this.y = y;          
-            this.x = x;
+            this.Y = Y;          
+            this.X = X;
 
-            chunks[y ,x] = this; 
+            chunks[Y, X] = this; 
         }   
 
 
         public int GetX(){
-            return this.x;
+        
+            return X;
         }
+
 
         public int GetY(){
-            return this.y;
-        }
 
-        public int GetNumber(){
-            return (this.y * n) + (this.x + 1);
+            return Y;
         }
+        
 
          public Location GetLocation(){
-            return new Location((this.y*divider)+(divider/2),(this.x*divider)+(divider/2));
+         
+            return new Location((Y * divider) + (divider/2), (X * divider) + (divider / 2));
         }	
 
         public override string ToString(){
-             return "[Y: " + this.GetY().ToString() + ", X:"  + this.GetX().ToString() + "]";
+        
+             return "[Y: " + this.GetY() + ", X:"  + this.GetX() + "]";
         }
 
+
         public int Distance(Chunk chunk){
-            return System.Math.Abs(this.x - chunk.GetX()) + System.Math.Abs(this.y - chunk.GetY());
+        
+            return System.Math.Abs(X - chunk.GetX()) + System.Math.Abs(Y - chunk.GetY());
         }
+
 
         public List<Chunk> GetNeighbors(int level){
 
             List<Chunk> neighbors = new List<Chunk>();
 
-            for(int rx = (this.x - (level + 1)); rx <= (this.x + (level + 1)); rx++){
+            for(int rx = (X - (level + 1)); rx <= (X + (level + 1)); rx++){
                 
-                for(int ry = (this.y - (level + 1)); ry <= (this.y + (level + 1)); ry++){
+                for(int ry = (Y - (level + 1)); ry <= (Y + (level + 1)); ry++){
                     
                     if(rx >= 0 && ry >= 0 && rx < n && ry < n){
 

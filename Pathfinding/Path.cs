@@ -7,13 +7,11 @@ namespace Punctuation{
     public class Path{
 
 
-		public enum Algorithm {
-			ASTAR
-		}
-
+		public enum Algorithm { ASTAR }
 
 		readonly Chunk origin, endgoal;
 		readonly List<Trait> traits;
+		
 		Stack chunks, chunks_previous;
 			
 		
