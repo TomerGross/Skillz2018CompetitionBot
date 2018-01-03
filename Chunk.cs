@@ -6,16 +6,16 @@ namespace Punctuation{
 
     public class Chunk{
         
-        public const int divider = 320;
-        public const int n = 6400 / divider;
+        public const int size = 320;
+        public const int n = 6400 / size;
         
         public static Chunk[,] chunks = new Chunk[n, n];
 		
 		
         public static Chunk GetChunk(Location loc){
             
-            int y = loc.Row / divider;
-            int x = loc.Col / divider;
+            int y = loc.Row / size;
+            int x = loc.Col / size;
 
             if(chunks[y, x] != null){
                 
@@ -35,12 +35,12 @@ namespace Punctuation{
             
             return new Chunk(x, y);
         }
-    	
-    	
+    	 	
     	//---------------[ End of static functions and vars ]--------
     
         readonly int X, Y;
         
+       	
         protected Chunk(int X , int Y){
           
             this.Y = Y;          
@@ -64,8 +64,9 @@ namespace Punctuation{
 
          public Location GetLocation(){
          
-            return new Location((Y * divider) + (divider/2), (X * divider) + (divider / 2));
+            return new Location((Y * size) + (size / 2), (X * size) + (size / 2));
         }	
+
 
         public override string ToString(){
         
@@ -77,18 +78,33 @@ namespace Punctuation{
         
             return System.Math.Abs(X - chunk.GetX()) + System.Math.Abs(Y - chunk.GetY());
         }
+        
 
+		public List<Pirate> GetEnemyPirates() {
 
+			var list = new List<Pirate>();
+			
+			foreach (Pirate enemy in Punctuation.game.GetEnemyLivingPirates()) {	
+				if (enemy.Distance(GetLocation()) < size / 2) {
+
+					list.Add(enemy);
+				}
+			}
+			
+			return list;
+		}
+		
+		
         public List<Chunk> GetNeighbors(int level){
 
-            List<Chunk> neighbors = new List<Chunk>();
+            var neighbors = new List<Chunk>();
 
             for(int rx = (X - (level + 1)); rx <= (X + (level + 1)); rx++){
                 
                 for(int ry = (Y - (level + 1)); ry <= (Y + (level + 1)); ry++){
                     
                     if(rx >= 0 && ry >= 0 && rx < n && ry < n){
-
+						
                         neighbors.Add(Chunk.GetChunk(rx, ry));
                     }
                 }

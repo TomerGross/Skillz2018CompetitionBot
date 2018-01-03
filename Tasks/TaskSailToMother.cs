@@ -5,7 +5,6 @@ namespace Punctuation {
 	
 	public class TaskSailToMother : Task  {
 
-
 		public static Dictionary<int, Path> paths = new Dictionary<int, Path>();
 		
 		
