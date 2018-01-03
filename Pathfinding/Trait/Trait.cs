@@ -12,7 +12,7 @@ namespace Punctuation {
 		
 		
 		public virtual int Cost(Chunk chunk) {
-
+				
 			return 0;
 		}
 		

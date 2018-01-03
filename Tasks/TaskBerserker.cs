@@ -2,19 +2,30 @@
 using Pirates;
 
 namespace Punctuation {
-    //-------------------Globals---------------------------------------------
-	    public List<Pirate> berserkerDidTurn = new List<Pirate>();
-	//-----------------------------------------------------------------------
-	public class TaskBerserker : Task  {
 
-		public static Dictionary<int, Path> paths = new Dictionary<int, Path>();
-		
-		
-		public string Preform(Pirate pirate) {
-            if (berserkerDidTurn.Contains(pirate)){
-                return ("|Pirate: "string.Parse(pirate.UniqueId())+"| Has already did his turn")
+
+	public class TaskBerserker : Task {
+
+		//-------------------Globals---------------------------------------------
+		public static List<Pirate> berserkerDidTurn = new List<Pirate>();
+		public static Dictionary<int,Path> paths = new Dictionary<int,Path>();
+		public PirateGame game = Punctuation.game;
+		//-----------------------------------------------------------------------
+
+		public int Bias() {
+			
+			return 0;	
 		}
+		
+
+		public string Preform(Pirate pirate) {
+
 			if (berserkerDidTurn.Contains(pirate)) {
+				//return ("|Pirate: " + string.Parse(pirate.UniqueId()) + "| Has already did his turn")
+			}
+
+			if (berserkerDidTurn.Contains(pirate)) {
+
 				return "Berserker already did thier turn";
 			}
 
@@ -27,11 +38,11 @@ namespace Punctuation {
 					int c = 0;
 					foreach (Pirate pir in game.GetMyLivingPirates()) {
 
-						if (roles[pir.UniqueId] == Role.BERSERKER) {
-							if (pir.CanPush(enemyHolder)) {
-								c++;
-							}
+						//if (roles[pir.UniqueId] == Role.BERSERKER) {  //The ROLE system is not used and should not be used anymore
+						if (pir.CanPush(enemyHolder)) {
+							c++;
 						}
+						//}
 					}
 
 					if (c > 1) {
@@ -59,9 +70,19 @@ namespace Punctuation {
 			} else {
 
 				berserkerDidTurn.Add(pirate);
-				pirate.Sail(enemyMine.Towards(myMine,650));
+				pirate.Sail(Punctuation.enemyMine.Towards(Punctuation.myMine,650));
 				return "Berserker moved towards enemy mine.";
 			}
+		}
+		
+		
+		
+		public int GetWeight(Pirate pirate) {
+
+			// TODO Make the weight algorithm
+
+			return 0;		
+		}
 		
 		
 	}

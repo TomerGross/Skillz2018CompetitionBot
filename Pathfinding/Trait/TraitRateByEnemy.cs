@@ -13,9 +13,7 @@ namespace Punctuation {
 
 			this.range = range;
 			this.pirateID = pirateID;
-			
 		}
-
 
 		override public int Cost(Chunk chunk) {
 
