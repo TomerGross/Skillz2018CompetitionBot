@@ -9,17 +9,18 @@ namespace Punctuation {
 		 //if the bias is minus the cost will make the pirate attracted to enemies
 		 //if pirateID is -1 the trait will target all enemies, if it's an ID it will only effect the given pirate
 		  
+		  
 		public TraitRateByEnemy(int range, int bias, int pirateID) {
 
 			this.range = range;
 			this.pirateID = pirateID;
 		}
+		
 
 		override public int Cost(Chunk chunk) {
 
 			PirateGame game = Punctuation.game;
 			int cost = 0, PDistance = game.PushDistance, PRange = game.PushRange;
-
 
 			foreach (Pirate enemy in game.GetEnemyLivingPirates()) {
 				if (pirateID == -1 || enemy.UniqueId == pirateID) {

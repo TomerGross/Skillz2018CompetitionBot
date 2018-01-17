@@ -12,6 +12,24 @@ namespace Punctuation {
 
 		public enum Role { MINER, MOLE, GUARDIAN, BERSERKER, GOALER }; //Creating "Role" Enum containing all pirate States
 
+
+
+		
+
+
+
+		
+
+
+
+
+
+
+
+
+
+
+
 		//---------------Dictionarys------------------
 		public static Dictionary<int, Role> roles;
 		public static Dictionary<int, Goal> goals;

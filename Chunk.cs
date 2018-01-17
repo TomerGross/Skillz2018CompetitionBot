@@ -1,10 +1,10 @@
 using System.Collections.Generic;
 using Pirates;
 
-
 namespace Punctuation{
 
     public class Chunk{
+
         
         public const int size = 320;
         public const int n = 6400 / size; //Number of chunks
@@ -49,10 +49,12 @@ namespace Punctuation{
 			neighbors = new Dictionary<int,List<Chunk>>();
 			
             chunks[Y, X] = this; //Registers the chunk
-        }   
+        }
 
 
-        public int GetX(){
+		public int GX { get; set; } = X;
+
+		public int GetX(){
         
             return X;
         }

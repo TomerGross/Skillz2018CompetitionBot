@@ -9,29 +9,29 @@ namespace Punctuation {
 		public enum Algorithm {
 			ASTAR
 		}
-
+		
 		readonly Chunk origin, endgoal;
 		readonly List<Trait> traits;
-
+		
 		Stack chunks, chunks_previous;
 		
-
-		public Path(Chunk origin,Chunk endgoal,List<Trait> traits,Algorithm algorithm) {
-
+		
+		public Path(Chunk origin, Chunk endgoal, List<Trait> traits, Algorithm algorithm) {
+		
 			this.origin = origin;
 			this.endgoal = endgoal;
 			this.traits = traits;
-
+		
 			chunks_previous = new Stack();
-
+		
 			if (algorithm == Algorithm.ASTAR) {
 				chunks = new AStar(traits,this.origin,this.endgoal).GetPathStack();
 			} else {
 				chunks = new Stack();
 			}
 		}
-
-
+		
+		
 		public Chunk Pop() {
 
 			var popped = (Chunk) chunks_previous.Pop();

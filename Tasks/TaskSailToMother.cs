@@ -4,7 +4,7 @@ using Pirates;
 namespace Punctuation {
 	
 	public class TaskSailToMother : Task  {
-
+	
 		public static Dictionary<int, Path> paths = new Dictionary<int, Path>();
 		
 		
@@ -17,7 +17,7 @@ namespace Punctuation {
 				
 				paths[pirate.UniqueId] = new Path(origin, endgoal, Path.Algorithm.ASTAR); //Generate a path using AStar
 			}
-
+			
 			int ID = pirate.UniqueId;
 			Path path = paths[ID];
 			
