@@ -7,23 +7,18 @@ public class TaskMiner : Task
         public string Preform(Pirate pirate)
         {
 
-            if ((!paths.ContainsKey(pirate.UniqueId) || paths[pirate.UniqueId] == null) && !pirate.HasCapsule())
+            if ((!paths.ContainsKey(pirate.UniqueId) || paths[pirate.UniqueId] == null))
             { //Checks if path exists
 
                 Chunk origin = Chunk.GetChunk(pirate.GetLocation()); //His starting position
-                Chunk endgoal = Chunk.GetChunk(Punctuation.game.GetMyCapsule().GetLocation()); //His final goal
-
+                
+                if (!pirate.HasCapsule())
+                    Chunk endgoal = Chunk.GetChunk(Punctuation.game.GetMyCapsule().GetLocation()); //His final goal
+                else
+                    Chunk endgoal = Chunk.GetChunk(Punctuation.game.GetMyMotherShip().GetLocation()); //His final goal
+                
                 paths[pirate.UniqueId] = new Path(origin, endgoal, Path.Algorithm.ASTAR); //Generate a path using AStar
             }
-
-            else if (!paths.ContainsKey(pirate.UniqueId) || paths[pirate.UniqueId] == null)
-            {
-                Chunk origin = Chunk.GetChunk(pirate.GetLocation()); //His starting position
-                Chunk endgoal = Chunk.GetChunk(Punctuation.game.GetMyMotherShip().GetLocation()); //His final goal
-
-                paths[pirate.UniqueId] = new Path(origin, endgoal, Path.Algorithm.ASTAR); //Generate a path using AStar
-            }
-
 
             int ID = pirate.UniqueId;
             Path path = paths[ID];
