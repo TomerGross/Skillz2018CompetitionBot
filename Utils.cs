@@ -146,6 +146,33 @@ namespace Punctuation {
 			}
 
 		}
+		
+		public MapObject[] ClosestPair(MapObject[] group1, MapObject[] group2){
+		    
+		    /* return list of the closest pair from both groups*/
+		    MapObject mingroup1, mingroup2;
+		    int mindistance = group1[0].distance(group2[0]);
+		    for(int i = 0 ; i < group1.GetLength(); i++){
+		        for(int j = 0; j < group2.GetLength(); j++){
+		            if (group1[i].distance(group2[j]) < mindistance){
+		                    mindistance = group1[i].distance(group2[j]);
+		                    mingroup1 = group1[i];
+		                    mingroup2 = group2[j];
+		                }
+		        }
+		    }
+		    return [mingroup1, mingroup2];
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 
 	}
 }
