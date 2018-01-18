@@ -57,7 +57,8 @@ namespace Skillz
             {
                 List<MapObject> sortedlist = new List<MapObject>();
                 sortedlist = Utils.SoloClosestPair(Skillz.game.GetMyLivingPirates(), Skillz.game.GetMyCapsule().Holder());
-                return (sortedlist.IndexOf(pirate) + 1) * (100 / Skillz.game.GetAllMyPirates().Length);
+                numofpirates = Skillz.game.GetAllMyPirates().Length;
+                return (numofpirates - sortedlist.IndexOf(pirate)) * (100 / numofpirates);
             }
 
             return 0;

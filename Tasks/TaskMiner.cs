@@ -52,8 +52,9 @@ public class TaskMiner : Task
             {
                 List<MapObject> sortedlist = new List<MapObject>();
                 sortedlist = Utils.SoloClosestPair(Skillz.game.GetMyLivingPirates(), Skillz.game.GetMyCapsule());
-                return (sortedlist.IndexOf(pirate) + 1) * (100 / Skillz.game.GetAllMyPirates().Length);
-            }
+                numofpirates = Skillz.game.GetAllMyPirates().Length;
+                return (numofpirates - sortedlist.IndexOf(pirate)) * (100 / numofpirates);
+        }
             else
             {
                 if (Punctuation.game.GetMyCapsule().Holder() == pirate)
