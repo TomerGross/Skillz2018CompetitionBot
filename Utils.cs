@@ -166,37 +166,37 @@ namespace Punctuation {
 		
 		public List<MapObject> SoloClosestPair(MapObject[] group1, MapObject object2){
 		    
-                    //the function return a list of sorted map object from group1 by distance to object2
-                    List<MapObject> sortedmapobjects = new List<MapObject>();
-                    List<MapObject> listofmapobjects = new List<MapObject>();
+            //the function return a list of sorted map object from group1 by distance to object2
+            List<MapObject> sortedmapobjects = new List<MapObject>();
+            List<MapObject> listofmapobjects = new List<MapObject>();
         
-                    foreach (MapObject mapobject in group1)
+            foreach (MapObject mapobject in group1)
+            {
+                listofmapobjects.Add(mapobject);
+            }
+        
+            while (listofmapobjects.Count > 0)
+            {
+                MapObject mingroup1 = listofmapobjects[0];
+        
+                int mindistance = group1[0].Distance(object2);
+        
+                for (int i = 0; i < listofmapobjects.Count; i++)
+                {
+                    if (listofmapobjects[i].Distance(object2) < mindistance)
                     {
-                        listofmapobjects.Add(mapobject);
+                        mindistance = listofmapobjects[i].Distance(object2);
+                        mingroup1 = listofmapobjects[i];
                     }
         
-                    while (listofmapobjects.Count > 0)
-                    {
-                        MapObject mingroup1 = listofmapobjects[0];
-        
-                        int mindistance = group1[0].Distance(object2);
-        
-                        for (int i = 0; i < listofmapobjects.Count; i++)
-                        {
-                            if (listofmapobjects[i].Distance(object2) < mindistance)
-                            {
-                                mindistance = listofmapobjects[i].Distance(object2);
-                                mingroup1 = listofmapobjects[i];
-                            }
-        
-                        }
-                        sortedmapobjects.Add(mingroup1);
-                        listofmapobjects.Remove(mingroup1);
-                    }
-        
-                    return sortedmapobjects;
-                    
                 }
+                sortedmapobjects.Add(mingroup1);
+                listofmapobjects.Remove(mingroup1);
+            }
+        
+            return sortedmapobjects;
+                    
+        }
         		
 	}
 }

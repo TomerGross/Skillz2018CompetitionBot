@@ -65,7 +65,10 @@ namespace Skillz
 
         public int Bias()
         {
-            return 5;
+            if (!Skillz.game.GetMyCapsule().Holder())
+                return 0;
+            else
+                return 5;
         }
 
     }
