@@ -164,8 +164,8 @@ namespace Punctuation {
 		    return [mingroup1, mingroup2];
 		}
 		
-		public List<MapObject> SoloClosestPair(MapObject[] group1, MapObject object2)
-        {
+		public List<MapObject> SoloClosestPair(MapObject[] group1, MapObject object2){
+		    
             //the function return a list of sorted map object from group1 by distance to object2
             List<MapObject> sortedmapobjects = new List<MapObject>();
             List<MapObject> listofmapobjects = new List<MapObject>();
