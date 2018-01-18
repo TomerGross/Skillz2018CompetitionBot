@@ -9,7 +9,7 @@ namespace Punctuation {
 		
 		int Bias(); //The task's bias
 
-		int GetWeight(Pirate pirate); //The per task cost of chunks
+		int GetWeight(Pirate pirate); //How much the task want a pirate
 	
 		string Preform(Pirate pirate); //Preform the task
 		

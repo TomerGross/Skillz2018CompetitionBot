@@ -11,11 +11,12 @@ public class TaskMiner : Task
             { //Checks if path exists
 
                 Chunk origin = Chunk.GetChunk(pirate.GetLocation()); //His starting position
+                Chunk endgoal = new Chunk();
                 
                 if (!pirate.HasCapsule())
-                    Chunk endgoal = Chunk.GetChunk(Punctuation.game.GetMyCapsule().GetLocation()); //His final goal
+                    endgoal = Chunk.GetChunk(Punctuation.game.GetMyCapsule().GetLocation()); //His final goal
                 else
-                    Chunk endgoal = Chunk.GetChunk(Punctuation.game.GetMyMotherShip().GetLocation()); //His final goal
+                    endgoal = Chunk.GetChunk(Punctuation.game.GetMyMotherShip().GetLocation()); //His final goal
                 
                 paths[pirate.UniqueId] = new Path(origin, endgoal, Path.Algorithm.ASTAR); //Generate a path using AStar
             }
@@ -47,18 +48,24 @@ public class TaskMiner : Task
         public int GetWeight(Pirate pirate)
         {
 
-            if (Punctuation.game.GetMyCapsule().Holder == pirate)
+            if (!Punctuation.game.GetMyCapsule().Holder())
             {
-                return 100;
+                List<MapObject> sortedlist = new List<MapObject>();
+                sortedlist = Utils.SoloClosestPair(Skillz.game.GetMyLivingPirates(), Skillz.game.GetMyCapsule());
+                return (sortedlist.IndexOf(pirate) + 1) * (100 / Skillz.game.GetAllMyPirates().Length);
             }
-
-            return 0;
+            else
+            {
+                if (Punctuation.game.GetMyCapsule().Holder() == pirate)
+                    return 100; //he is already in his task
+                return 0; // only one miner for this lvl of competition
+            }
+                
         }
-
 
         public int Bias()
         {
-            return 1;
+            return 10;
         }
 
     }

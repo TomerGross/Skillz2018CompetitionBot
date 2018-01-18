@@ -16,11 +16,12 @@ namespace Skillz
             { //Checks if path exists
 
                 Chunk origin = Chunk.GetChunk(pirate.GetLocation()); //His starting position
+                Chunk endgoal = new Chunk();
 
                 if (Skillz.game.GetMyCapsule().Holder().Distance(pirate) >= radius)
-                    Chunk endgoal = Chunk.GetChunk(Skillz.game.GetMyCapsule().Holder().GetLocation()); //His final goal
+                    endgoal = Chunk.GetChunk(Skillz.game.GetMyCapsule().Holder().GetLocation()); //His final goal
                 else
-                    Chunk endgoal = Chunk.GetChunk(Skillz.game.GetMyMotherShip().GetLocation()); //His final goal
+                    endgoal = Chunk.GetChunk(Skillz.game.GetMyMotherShip().GetLocation()); //His final goal
 
                 paths[pirate.UniqueId] = new Path(origin, endgoal, Path.Algorithm.ASTAR); //Generate a path using AStar
             }
