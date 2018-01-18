@@ -1,5 +1,4 @@
-﻿
-namespace Punctuation {
+﻿namespace Hydra {
 	
 	public abstract class Trait {
 		
@@ -16,7 +15,5 @@ namespace Punctuation {
 			return 0;
 		}
 		
-		
 	}
-	
 }

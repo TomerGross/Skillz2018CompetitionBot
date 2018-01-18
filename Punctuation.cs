@@ -14,32 +14,6 @@ namespace Punctuation {
 
 
 
-		
-
-
-
-		
-
-
-
-
-
-
-
-
-
-
-
-		//---------------Dictionarys------------------
-		public static Dictionary<int, Role> roles;
-		public static Dictionary<int, Goal> goals;
-		//--------------------------------------------
-
-		//---------------Globals to hold Mines--------
-		public static Location myMine;
-		public static Location enemyMine;
-		//--------------------------------------------
-
 		//---------------Globals To Avoid Caos--------------------------
 		public List<Pirate> berserkerDidTurn = new List<Pirate>();
 		public List<Pirate> boosted = new List<Pirate>();
@@ -114,7 +88,7 @@ namespace Punctuation {
 
 		public string RoleGetCapsuleToBase(Pirate pirate,PirateGame game) {
 
-			Location loc = new Location(game.GetMyMothership().GetLocation().Row,myMine.Col);
+			var loc = new Location(game.GetMyMothership().GetLocation().Row,myMine.Col);
 
 			if (reachedPy) {
 				pirate.Sail(game.GetMyMothership());
@@ -186,7 +160,7 @@ namespace Punctuation {
 
 		public string RoleMole(Pirate pirate) {
 
-			Location location = game.GetEnemyMothership().GetLocation().Towards(enemyMine,650);
+			Location location = game.GetEnemyMothership().GetLocation().Towards(enemyMine, 650);
 
 			if (game.GetEnemyCapsule().Holder != null) {
 				location = game.GetEnemyMothership().GetLocation().Towards(game.GetEnemyCapsule(),650);

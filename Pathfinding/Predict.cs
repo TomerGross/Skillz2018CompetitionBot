@@ -1,7 +1,7 @@
 ﻿using Pirates;
 using System.Collections.Generic;
 
-namespace Punctuation {
+namespace Hydra {
 	
 	public class Predict {
 

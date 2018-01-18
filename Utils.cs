@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Pirates;
 
-namespace Punctuation {
+namespace Hydra {
 
 	public class Utils {
 
@@ -23,23 +23,9 @@ namespace Punctuation {
 		}
 
 
-		public static int GetMinersAlive(PirateGame game) {
-
-			int c = 0;
-			
-			foreach (Pirate pirate in game.GetMyLivingPirates()) {
-				if (Punctuation.roles.ContainsKey(pirate.UniqueId) && Punctuation.roles[pirate.UniqueId] == Punctuation.Role.MINER) {
-					c++;
-				}
-			}
-
-			return c;
-		}
-
-
 		public static string GetPirateStatus(Pirate pirate,string status) {
 
-			string role = Punctuation.roles[pirate.UniqueId].ToString();
+			string role = "ROLE"; ///Main.roles[pirate.UniqueId].ToString();
 			return role + " | " + pirate.UniqueId.ToString() + " | " + status;
 		}
 
@@ -134,6 +120,7 @@ namespace Punctuation {
 			return false;
 		}
 
+		
 		public static Location[] GetFormation(Pirate Miner,Location oldLocation,Location newLocation) {
 
 			if (Miner.HasCapsule()) {
@@ -146,57 +133,57 @@ namespace Punctuation {
 			}
 
 		}
+
 		
-		public MapObject[] ClosestPair(MapObject[] group1, MapObject[] group2){
-		    
-		    /* return list of the closest pair from both groups*/
-		    MapObject mingroup1, mingroup2;
-		    int mindistance = group1[0].distance(group2[0]);
-		    for(int i = 0 ; i < group1.GetLength(); i++){
-		        for(int j = 0; j < group2.GetLength(); j++){
-		            if (group1[i].distance(group2[j]) < mindistance){
-		                    mindistance = group1[i].distance(group2[j]);
-		                    mingroup1 = group1[i];
-		                    mingroup2 = group2[j];
-		                }
-		        }
-		    }
-		    return [mingroup1, mingroup2];
+		// ClosestPair returns a list of the closest pair of enemy and friendly bot
+		public static List<MapObject> ClosestPair(MapObject[] group1, MapObject[] group2) {
+
+			/* return list of the closest pair from both groups*/
+			MapObject mingroup1 = null, mingroup2 = null;
+			int minDistance = group1[0].Distance(group2[0]);
+
+			for (int i = 0; i < group1.Length; i++) {
+				for (int j = 0; j < group2.Length; j++) {
+					if (group1[i].Distance(group2[j]) < minDistance) {
+						minDistance = group1[i].Distance(group2[j]);
+						mingroup1 = group1[i];
+						mingroup2 = group2[j];
+					}
+				}
+			}
+			return new List<MapObject>(){ mingroup1, mingroup2 };
 		}
-		
-		public List<MapObject> SoloClosestPair(MapObject[] group1, MapObject object2){
-		    
-            //the function return a list of sorted map object from group1 by distance to object2
-            List<MapObject> sortedmapobjects = new List<MapObject>();
-            List<MapObject> listofmapobjects = new List<MapObject>();
-        
-            foreach (MapObject mapobject in group1)
-            {
-                listofmapobjects.Add(mapobject);
-            }
-        
-            while (listofmapobjects.Count > 0)
-            {
-                MapObject mingroup1 = listofmapobjects[0];
-        
-                int mindistance = group1[0].Distance(object2);
-        
-                for (int i = 0; i < listofmapobjects.Count; i++)
-                {
-                    if (listofmapobjects[i].Distance(object2) < mindistance)
-                    {
-                        mindistance = listofmapobjects[i].Distance(object2);
-                        mingroup1 = listofmapobjects[i];
-                    }
-        
-                }
-                sortedmapobjects.Add(mingroup1);
-                listofmapobjects.Remove(mingroup1);
-            }
-        
-            return sortedmapobjects;
-                    
-        }
-        		
+
+
+		//The function return a list of sorted map object from group1 by distance to object2	
+		public static List<MapObject> SoloClosestPair(MapObject[] group1,MapObject object2) {
+
+			var sortedmapobjects = new List<MapObject>();
+			var listofmapobjects = new List<MapObject>();
+
+			foreach (MapObject mapobject in group1) {
+				listofmapobjects.Add(mapobject);
+			}
+
+			while (listofmapobjects.Count > 0) {
+			
+				MapObject mingroup1 = listofmapobjects[0];
+				int mindistance = group1[0].Distance(object2);
+
+				for (int i = 0; i < listofmapobjects.Count; i++) {
+					if (listofmapobjects[i].Distance(object2) < mindistance) {
+						mindistance = listofmapobjects[i].Distance(object2);
+						mingroup1 = listofmapobjects[i];
+					}
+
+				}
+				
+				sortedmapobjects.Add(mingroup1);
+				listofmapobjects.Remove(mingroup1);
+			}
+
+			return sortedmapobjects;
+		}
+
 	}
 }

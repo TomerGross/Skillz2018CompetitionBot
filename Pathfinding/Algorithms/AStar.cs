@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Collections;
 
-namespace Punctuation {
+namespace Hydra {
 
 	public class AStar{
 		

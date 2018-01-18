@@ -1,6 +1,6 @@
 ﻿using Pirates;
 
-namespace Punctuation {
+namespace Hydra {
 
 	public class TraitRateByEnemy : Trait {
 
@@ -19,7 +19,7 @@ namespace Punctuation {
 
 		override public int Cost(Chunk chunk) {
 
-			PirateGame game = Punctuation.game;
+			PirateGame game = Main.game;
 			int cost = 0, PDistance = game.PushDistance, PRange = game.PushRange;
 
 			foreach (Pirate enemy in game.GetEnemyLivingPirates()) {

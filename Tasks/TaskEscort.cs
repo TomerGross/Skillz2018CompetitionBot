@@ -1,82 +1,72 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using Pirates;
+using Punctuation;
 
-namespace Skillz
-{
-    class TaskEscort : Task
-    {
-        public static Dictionary<int, Path> paths = new Dictionary<int, Path>();
-        int radius = 1000; //Max of distance
-        public string Preform(Pirate pirate)
-        {
+namespace Hydra {
 
-            if ((!paths.ContainsKey(pirate.UniqueId) || paths[pirate.UniqueId] == null))
-            { //Checks if path exists
+	class TaskEscort : Task {
 
-                Chunk origin = Chunk.GetChunk(pirate.GetLocation()); //His starting position
-                Chunk endgoal = new Chunk();
+		public static Dictionary<int, Path> paths = new Dictionary<int, Path>();
+		int radius = 1000; // Maximum range
+	
+		
+		public string Preform(Pirate pirate) {
 
-                if (Skillz.game.GetMyCapsule().Holder().Distance(pirate) >= radius)
-                    endgoal = Chunk.GetChunk(Skillz.game.GetMyCapsule().Holder().GetLocation()); //His final goal
-                else
-                    endgoal = Chunk.GetChunk(Skillz.game.GetMyMotherShip().GetLocation()); //His final goal
+			if ((!paths.ContainsKey(pirate.UniqueId) || paths[pirate.UniqueId] == null)) { //Checks if path exists
 
-                paths[pirate.UniqueId] = new Path(origin, endgoal, Path.Algorithm.ASTAR); //Generate a path using AStar
-            }
+				Chunk origin = Chunk.GetChunk(pirate.GetLocation()); //His starting position
+				Chunk endgoal = new Chunk();
 
-            int ID = pirate.UniqueId;
-            Path path = paths[ID];
+				if (Main.game.GetMyCapsule().Holder.Distance(pirate) >= radius) {
+					endgoal = Chunk.GetChunk(Main.game.GetMyCapsule().Holder.GetLocation()); //His final goal
+				} else {
+					endgoal = Chunk.GetChunk(Main.game.GetMyMothership().GetLocation()); //His final goal
+				}
+				
+				paths[pirate.UniqueId] = new Path(origin, endgoal, new List<Trait>(), Path.Algorithm.ASTAR); //Generate a path using AStar
+			}
 
-            if (path.GetChunks().Count > 0)
-            {
+			int ID = pirate.UniqueId;
+			Path path = paths[ID];
 
-                Chunk next = path.GetNext();
+			if (path.GetChunks().Count > 0) {
 
-                if (next != null)
-                {
+				Chunk next = path.GetNext();
 
-                    if (next.GetLocation().Distance(pirate) < (Chunk.divider / 2))
-                    {
-                        path.GetChunks().Pop();
-                    }
+				if (next != null) {
 
-                    pirate.Sail(next.GetLocation());
-                    return Utils.GetPirateStatus(pirate, "Sailing to: " + next.ToString());
-                }
-            }
-            return Utils.GetPirateStatus(pirate, "Next is null");
-        }
+					if (next.GetLocation().Distance(pirate) < (Chunk.divider / 2)) {
+						path.GetChunks().Pop();
+					}
 
-
-        public int GetWeight(Pirate pirate)
-        {
-
-            if (!Skillz.game.GetMyCapsule().Holder() == pirate)
-            {
-                List<MapObject> sortedlist = new List<MapObject>();
-                sortedlist = Utils.SoloClosestPair(Skillz.game.GetMyLivingPirates(), Skillz.game.GetMyCapsule().Holder());
-                numofpirates = Skillz.game.GetAllMyPirates().Length;
-                return (numofpirates - sortedlist.IndexOf(pirate)) * (100 / numofpirates);
-            }
-
-            return 0;
-        }
+					pirate.Sail(next.GetLocation());
+					return Utils.GetPirateStatus(pirate,"Sailing to: " + next.ToString());
+				}
+			}
+			return Utils.GetPirateStatus(pirate,"Next is null");
+		}
 
 
-        public int Bias()
-        {
-            if (!Skillz.game.GetMyCapsule().Holder())
-                return 0;
-            else
-                return 5;
-        }
+		public int GetWeight(Pirate pirate) {
 
-    }
+			if (!Main.game.GetMyCapsule().Holder == pirate) {
+				List<MapObject> sortedlist = new List<MapObject>();
+				sortedlist = Utils.SoloClosestPair(Main.game.GetMyLivingPirates(), Main.game.GetMyCapsule().Holder);
+				int numofpirates = Main.game.GetAllMyPirates().Length;
+				return (numofpirates - sortedlist.IndexOf(pirate)) * (100 / numofpirates);
+			}
+
+			return 0;
+		}
 
 
+		public int Bias() {
+			if (!Main.game.GetMyCapsule().Holder())
+				return 0;
+			else
+				return 5;
+		}
 
+	}
 
-}
 }
