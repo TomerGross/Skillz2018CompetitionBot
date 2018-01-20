@@ -1,4 +1,3 @@
-
 using Pirates;
 
 		 public static Location currloc = null;
@@ -22,6 +21,7 @@ using Pirates;
         
         public void GetObjectsOnWay(PirateGame game, Location lastloc, Location currloc)
         {
+            Line line = new Line(lastloc, currloc);
             List<MapObject> listofmapobjects = new List<MapObject>();
             
             foreach (Pirate pirate in game.GetMyLivingPirates())
@@ -34,16 +34,15 @@ using Pirates;
             listofmapobjects.Add(game.GetMyMothership());
             listofmapobjects.Add(game.GetEnemyMothership());
             
-            foreach(MapObject obj in listofmapobjects){
-            
-         	int distance = lastloc.Distance(obj);
-                     // need to get the point in Distance distance from lastloc
-                     // in direct currloc
-          		Location locationonroute = lastloc.Towards(currloc, distance);
-		if (obj.GetLocation().Equals(locationonroute)) {
-			System.Console.WriteLine("sailing to : {0}",obj);
-		}
-            }
+            foreach(MapObject obj in listofmapobjects)
+                {
+
+                    Location loc = obj.GetLocation();
+
+                    if (line.OnLine(loc))
+                        System.Console.WriteLine("sailing to : {0}", obj);
+                    
+                }
             
         }
         
