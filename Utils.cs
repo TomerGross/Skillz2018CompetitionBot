@@ -6,11 +6,11 @@ namespace Hydra {
 	public class Utils {
 
 
-		public static List<GameObject> GetObstacles(PirateGame game,Location origin,Location end) {
+		public static List<GameObject> GetObstacles(PirateGame game, Location origin, Location end) {
 
 			var obstacles = new List<GameObject>();
 
-			foreach (Point point in new Line(origin,end).GetPoints(10)) {
+			foreach (Point point in new Line(origin, end).GetPoints(10)) {
 				foreach (Pirate pirate in game.GetEnemyLivingPirates()) {
 
 					if (pirate.Distance(point.GetLocation()) < game.PushDistance) {

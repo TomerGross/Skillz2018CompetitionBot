@@ -1,0 +1,64 @@
+﻿<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProjectGuid>{9848AF57-F484-4FAA-BCF8-4BF00774ACF5}</ProjectGuid>
+    <OutputType>Exe</OutputType>
+    <RootNamespace>Punctuation</RootNamespace>
+    <AssemblyName>Punctuation</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release</OutputPath>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="Punctuation.cs" />
+    <Compile Include="Utils.cs" />
+    <Compile Include="Pathfinding\Path.cs" />
+    <Compile Include="Pathfinding\Algorithms\AStar.cs" />
+    <Compile Include="Pathfinding\Algorithms\Dijsktra.cs" />
+    <Compile Include="Pathfinding\Predict.cs" />
+    <Compile Include="Tasks\Task.cs" />
+    <Compile Include="Tasks\TaskBerserker.cs" />
+    <Compile Include="Tasks\TaskSailToMother.cs" />
+    <Compile Include="Pathfinding\Trait\Trait.cs" />
+    <Compile Include="Pathfinding\Trait\TraitRateByEnemy.cs" />
+    <Compile Include="Pathfinding\Tools\Line.cs" />
+    <Compile Include="Pathfinding\Tools\Point.cs" />
+    <Compile Include="Pathfinding\Algorithms\MTDstarLite.cs" />
+    <Compile Include="Tasks\TaskMiner.cs" />
+    <Compile Include="Tasks\TaskEscort.cs" />
+    <Compile Include="Tasks\TaskMole.cs" />
+    <Compile Include="Main.cs" />
+    <Compile Include="Map\Chunk.cs" />
+    <Compile Include="alottofix.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="PirateGame">
+      <HintPath>..\PirateGame.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Pathfinding\" />
+    <Folder Include="Pathfinding\Algorithms\" />
+    <Folder Include="Tasks\" />
+    <Folder Include="Pathfinding\Trait\" />
+    <Folder Include="Pathfinding\Tools\" />
+    <Folder Include="Map\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>
