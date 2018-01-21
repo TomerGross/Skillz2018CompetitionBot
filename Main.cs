@@ -3,77 +3,119 @@ using System.Collections.Generic;
 using System.Linq;
 using Pirates;
 
-namespace Hydra {
+namespace Hydra
+{
 
-	public class Main : IPirateBot {
-
-
-		//---------------[ Main variables ]-----------
-		public static PirateGame game;
-		//--------------------------------------------
+    public class Main : IPirateBot
+    {
 
 
-		//---------------[ Mines ]--------------------
-		public static Location mine;
-		public static Location mineEnemy;
-		//--------------------------------------------
+        //---------------[ Main variables ]-----------
+        public static PirateGame game;
+        //--------------------------------------------
 
 
-		//---------------[ Task mangment ]-------------
-		public static Dictionary<Pirate,Task> tasks;
-		public static List<Pirate> unemployedPirates;
-		public static List<Task> todoTaks;
-		//--------------------------------------------
-
-		public void DoTurn(PirateGame game) {
-            
-            todoTaks.Add(TaskMole);
-            todoTaks.Add(TaskMole);
-            todoTaks.Add(TaskMole);
-            todoTaks.Add(TaskMole);
-            todoTaks.Add(TaskMole);
-            todoTaks.Add(TaskMine);
-            todoTaks.Add(TaskEscort);
-            todoTaks.Add(TaskEscort);
-
-            
-			Main.game = game
-			
-			if (game.GetMyCapsule().Holder == null) {
-				mine = game.GetMyCapsule().GetLocation();
-			}
-
-			if (game.GetEnemyCapsule().Holder == null) {
-				mineEnemy = game.GetEnemyCapsule().GetLocation();
-			}
-			
-			// Initiates all the tasks
-			giveTaks();
-			
-		}
-
-		public void giveTaks() {
+        //---------------[ Mines ]--------------------
+        public static Location mine;
+        public static Location mineEnemy;
+        //--------------------------------------------
 
 
-			var costs = new Dictionary<int,Tuple<Pirate,Task>>();
+        //---------------[ Task mangment ]-------------
+        public static Dictionary<Pirate, Task> tasks;
+        public static List<Pirate> unemployedPirates;
+        public static List<Task> todoTasks;
+        //--------------------------------------------
 
-			foreach (Pirate pirate in unemployedPirates) {
-				foreach (Task task in todoTaks) {
-					costs[task.Bias() + task.GetWeight(pirate)] = new Tuple<Pirate,Task>(pirate,task);
-				}
-			}
 
-			var sorted = costs.Keys.ToList();
-			sorted.Sort();
+        public void DoTurn(PirateGame game)
+        {
 
-			foreach (var key in sorted) {
-			
-				if (!tasks.ContainsKey(costs[key].Item1)) {
-					tasks[costs[key].Item1] = costs[key].Item2;
-				}
-				
-				costs.Remove(key);
-			}
-		}
 
-	}
+            Main.game = game;
+
+            if (game.GetMyCapsule().Holder == null)
+            {
+                mine = game.GetMyCapsule().GetLocation();
+            }
+
+            if (game.GetEnemyCapsule().Holder == null)
+            {
+                mineEnemy = game.GetEnemyCapsule().GetLocation();
+            }
+
+            // Initiates all the tasks
+            todoTasks = ChooseTasks();
+            giveTaks();
+
+        }
+
+        public void giveTaks()
+        {
+
+
+            var costs = new Dictionary<int, Tuple<Pirate, Task>>();
+
+            foreach (Pirate pirate in unemployedPirates)
+            {
+                foreach (Task task in todoTasks)
+                {
+                    costs[task.Bias() + task.GetWeight(pirate)] = new Tuple<Pirate, Task>(pirate, task);
+                }
+            }
+
+            var sorted = costs.Keys.ToList();
+            sorted.Sort();
+
+            foreach (var key in sorted)
+            {
+
+                if (!tasks.ContainsKey(costs[key].Item1))
+                {
+                    tasks[costs[key].Item1] = costs[key].Item2;
+                }
+
+                costs.Remove(key);
+            }
+        }
+
+
+        public List<Task> ChooseTasks()
+        {
+            remainTasks = game.GetMyLivingPirates().Length;
+            List<Task> tasksTodo = new List<Task>();
+      
+            tasksTodo.Add(new TaskMiner());
+            remainTasks--;
+
+            while(remainTasks > 0){
+
+                if (!tasksTodo.Contains(TaskEscort)){ 
+                    tasksTodo.Add(TaskEscort);
+                    remainTasks--;
+                    continue;
+                }
+                if (!tasksTodo.Contains(TaskMole)){
+                    tasksTodo.Add(TaskMole);
+                    remainTasks--;
+                    continue;
+                }
+
+                if (!tasksTodo.Contains(TaskBerserker)){ 
+                    tasksTodo.Add(TaskBerserker);
+                    remainTasks--;
+                    continue;
+                }
+                
+                tasksTodo.Add(TaskEscort);
+                remainTasks--;
+               
+            }
+
+            return tasksTodo;
+
+
+        }
+
+    }
+}
