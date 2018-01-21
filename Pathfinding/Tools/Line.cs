@@ -1,7 +1,40 @@
 using Pirates;
 
 namespace Hydra {
+    
+    
+    public class Point { //Suport class to Line, Will probably be removed in the near future
 
+		readonly int x, y;
+
+		public Point(int x,int y) {
+
+			this.x = x;
+			this.y = y;
+		}
+
+		public Point(Location loc) {
+
+			x = loc.Col;
+			y = loc.Row;
+		}
+
+
+		public int GetX() {
+			return x;
+		}
+
+		public int GetY() {
+			return y;
+		}
+
+		public Location GetLocation() {
+			return new Location(x,y);
+		}
+
+	}
+
+    
 	public class Line {
 
 		readonly Point point1, point2;
@@ -24,6 +57,7 @@ namespace Hydra {
 
         public bool OnLine(Location loc)
         {
+            //todo: when slope is zero
             return this.GetSlope() == ((loc.Row - this.point1.GetY()) / (loc.Col - this.point1.GetX()));
         }
 
@@ -69,7 +103,7 @@ namespace Hydra {
 
 
 		public double GetSlope() { //Returns the line's slope
-
+            //todo: when slope is zero
 			return (point1.GetY() - point2.GetY()) / (point1.GetX() - point2.GetX());
 		}
 
