@@ -19,7 +19,13 @@ namespace Hydra {
 			point1 = new Point(loc1);
 			point2 = new Point(loc2);
 		}
+        
+        
 
+        public bool OnLine(Location loc)
+        {
+            return this.GetSlope() == ((loc.Row - this.point1.GetY()) / (loc.Col - this.point1.GetX()));
+        }
 
 		public Point[] GetPointsBetween(int count) { //Gets a number of points between the two given points
 
