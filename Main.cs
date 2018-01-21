@@ -26,7 +26,17 @@ namespace Hydra {
 		//--------------------------------------------
 
 		public void DoTurn(PirateGame game) {
+            
+            todoTaks.Add(TaskMole);
+            todoTaks.Add(TaskMole);
+            todoTaks.Add(TaskMole);
+            todoTaks.Add(TaskMole);
+            todoTaks.Add(TaskMole);
+            todoTaks.Add(TaskMine);
+            todoTaks.Add(TaskEscort);
+            todoTaks.Add(TaskEscort);
 
+            
 			Main.game = game
 			
 			if (game.GetMyCapsule().Holder == null) {
