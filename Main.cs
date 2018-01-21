@@ -98,29 +98,28 @@ namespace Hydra
             while(remainTasks > 0){
 
                 if (!tasksTodo.Contains(TaskEscort)){ 
-                    tasksTodo.Add(TaskEscort);
+                    tasksTodo.Add(new TaskEscort());
                     remainTasks--;
                     continue;
                 }
                 if (!tasksTodo.Contains(TaskMole)){
-                    tasksTodo.Add(TaskMole);
+                    tasksTodo.Add(new TaskMole());
                     remainTasks--;
                     continue;
                 }
 
                 if (!tasksTodo.Contains(TaskBerserker)){ 
-                    tasksTodo.Add(TaskBerserker);
+                    tasksTodo.Add(new TaskBerserker());
                     remainTasks--;
                     continue;
                 }
                 
-                tasksTodo.Add(TaskEscort);
+                tasksTodo.Add(new TaskEscort());
                 remainTasks--;
                
             }
 
             return tasksTodo;
-
 
         }
 
