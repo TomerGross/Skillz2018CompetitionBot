@@ -33,6 +33,7 @@ namespace Hydra
 
 
             Main.game = game;
+            unemployedPirates = game.GetMyLivingPirates();
 
             if (game.GetMyCapsule().Holder == null)
             {
@@ -44,16 +45,23 @@ namespace Hydra
                 mineEnemy = game.GetEnemyCapsule().GetLocation();
             }
 
-            // Initiates all the tasks
-            todoTasks = ChooseTasks();
-            giveTaks();
+            // choose which task to do
+            todoTasks = chooseTasks();
+            // give each task to the choosen pirate
+            giveTasks();
+
+            // do the tasks
+            foreach (Pirate pirate in unemployedPirates){
+                tasktodo = tasks[pirate];
+                tasktodo.Preform(pirate);
+                unemployedPirates.Remove(pirate);
+            }
 
         }
 
-        public void giveTaks()
+        public void giveTasks()
         {
-
-
+            
             var costs = new Dictionary<int, Tuple<Pirate, Task>>();
 
             foreach (Pirate pirate in unemployedPirates)
@@ -79,15 +87,14 @@ namespace Hydra
             }
         }
 
-
-        public List<Task> ChooseTasks()
+        public List<Task> chooseTasks()
         {
             remainTasks = game.GetMyLivingPirates().Length;
             List<Task> tasksTodo = new List<Task>();
       
             tasksTodo.Add(new TaskMiner());
             remainTasks--;
-
+            
             while(remainTasks > 0){
 
                 if (!tasksTodo.Contains(TaskEscort)){ 
