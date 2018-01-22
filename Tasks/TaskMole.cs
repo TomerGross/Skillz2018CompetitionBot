@@ -4,8 +4,14 @@ namespace Hydra {
 
 	public class TaskMole : Task{
 
+		Pirate pirate;
 
-		public string Preform(Pirate pirate) {
+		public TaskMole(Pirate pirate) {
+			this.pirate = pirate;
+		}
+		
+		
+		public string Preform() {
 
 			PirateGame game = Main.game;
 
@@ -19,7 +25,6 @@ namespace Hydra {
 				// If the pirate is in position and can attack
 				if (pirate.Distance(towardsEnemy) < (radius / 8)) {
 					if (enemyCapuleHolder.HasCapsule() && pirate.CanPush(enemyCapuleHolder)) {
-
 						pirate.Push(enemyCapuleHolder,Utils.CanPushOutBeta(enemyCapuleHolder.GetLocation(),game));
 						return Utils.GetPirateStatus(pirate,"pushed enemy");
 					}
@@ -38,7 +43,7 @@ namespace Hydra {
 
 
 	
-        public int GetWeight(Pirate pirate){
+        public int GetWeight(){
 
 			return 10;    
         }

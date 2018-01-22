@@ -1,19 +1,26 @@
 ﻿using System.Collections.Generic;
 using Pirates;
 
-namespace Punctuation {
+namespace Hydra {
 	
 	public class TaskSailToMother : Task  {
 	
+		
 		public static Dictionary<int, Path> paths = new Dictionary<int, Path>();
+
+		Pirate pirate;
+
+		public TaskSailToMother(Pirate pirate) {
+			this.pirate = pirate;
+		}
 		
 		
-		public string Preform(Pirate pirate) {
+		public string Preform() {
 
 			if (!paths.ContainsKey(pirate.UniqueId) ||paths[pirate.UniqueId] == null) { //Checks if path exists
 				
 				Chunk origin = Chunk.GetChunk(pirate.GetLocation()); //His starting position
-				Chunk endgoal = Chunk.GetChunk(Punctuation.game.GetMyMothership().GetLocation()); //His final goal
+				Chunk endgoal = Chunk.GetChunk(Main.game.GetMyMothership().GetLocation()); //His final goal
 				
 				paths[pirate.UniqueId] = new Path(origin, endgoal, Path.Algorithm.ASTAR); //Generate a path using AStar
 			}
@@ -40,7 +47,7 @@ namespace Punctuation {
 		}
 		
 		
-		public int GetWeight(Pirate pirate) {
+		public int GetWeight() {
 
 			if (Punctuation.game.GetMyCapsule().Holder == pirate) {
 				return 100;

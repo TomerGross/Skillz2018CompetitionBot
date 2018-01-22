@@ -3,6 +3,7 @@ using Pirates;
 
 namespace Punctuation {
 
+/*
 
 	public class TaskBerserker : Task {
 
@@ -11,13 +12,8 @@ namespace Punctuation {
 		public static Dictionary<int,Path> paths = new Dictionary<int,Path>();
 		public PirateGame game = Punctuation.game;
 		//-----------------------------------------------------------------------
-
-		public int Bias() {
-			
-			return 0;	
-		}
-		
-
+	
+	
 		public string Preform(Pirate pirate) {
 
 			if (berserkerDidTurn.Contains(pirate)) {
@@ -84,6 +80,16 @@ namespace Punctuation {
 			return 0;		
 		}
 		
+					
+		public int Bias() {
+			
+			return 0;	
+		}
+
+		
+		
 		
 	}
+	
+	*/
 }

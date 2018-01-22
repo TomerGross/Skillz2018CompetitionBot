@@ -7,8 +7,14 @@ namespace Hydra {
 
 		public static Dictionary<int,Path> paths = new Dictionary<int,Path>();
 
+		Pirate pirate;
 
-		public string Preform(Pirate pirate) {
+		public TaskMiner(Pirate pirate) {
+			this.pirate = pirate;
+		}
+		
+
+		public string Preform() {
 
 			if (pirate.HasCapsule()) {
 				
@@ -49,7 +55,7 @@ namespace Hydra {
 		}
 
 
-		public int GetWeight(Pirate pirate) {
+		public int GetWeight() {
 
 			if (Main.game.GetMyCapsule().Holder != null) {
 			
@@ -66,7 +72,6 @@ namespace Hydra {
 				
 				return 0; // only one miner for this lvl of competition
 			}
-
 		}
 
 		public int Bias() {

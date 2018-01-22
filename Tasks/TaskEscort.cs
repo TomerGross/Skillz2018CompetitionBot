@@ -4,13 +4,19 @@ using Punctuation;
 
 namespace Hydra {
 
-	class TaskEscort : Task {
+	public class TaskEscort : Task {
 
 		public static Dictionary<int, Path> paths = new Dictionary<int, Path>();
-		int radius = 1000; // Maximum range
 	
+		int radius = 1000; // Maximum range
+		Pirate pirate;
+
+		public TaskEscort(Pirate pirate) {
+			this.pirate = pirate;
+		}
 		
-		public string Preform(Pirate pirate) {
+		
+		public string Preform() {
 
 			if ((!paths.ContainsKey(pirate.UniqueId) || paths[pirate.UniqueId] == null)) { //Checks if path exists
 
@@ -47,7 +53,7 @@ namespace Hydra {
 		}
 
 
-		public int GetWeight(Pirate pirate) {
+		public int GetWeight() {
 
 			if (!Main.game.GetMyCapsule().Holder == pirate) {
 				List<MapObject> sortedlist = new List<MapObject>();

@@ -3,7 +3,6 @@ using System.Collections;
 
 namespace Hydra {
 
-
 	public class Dikjstra {
 
 		//OLD CODE, NOT USED
@@ -69,7 +68,7 @@ namespace Hydra {
 		private Stack dijkstra() {
 
 			int chunk_count = Chunk.chunks.GetLength(0);
-			Punctuation.game.Debug("COUNT: " + chunk_count);
+			Main.game.Debug("COUNT: " + chunk_count);
 
 			for (int x = 0; x < chunk_count; x++) {
 				for (int y = 0; y < chunk_count; y++) {
@@ -86,7 +85,7 @@ namespace Hydra {
 				finished.Add(position);
 
 				if (position == this.endgoal) {
-					Punctuation.game.Debug("Path has been found! " + position.ToString());
+					Main.game.Debug("Path has been found! " + position.ToString());
 					break;
 				}
 
@@ -105,7 +104,7 @@ namespace Hydra {
 			}
 
 			foreach (KeyValuePair<Chunk,int> kvp in this.dist) {
-				Punctuation.game.Debug("Key = " + kvp.Key + " Value =  " + kvp.Value + " " + this.finished.Contains(kvp.Key));
+				Main.game.Debug("Key = " + kvp.Key + " Value =  " + kvp.Value + " " + this.finished.Contains(kvp.Key));
 			}
 
 			Chunk t = this.endgoal;
@@ -115,7 +114,7 @@ namespace Hydra {
 				p.Push(t);
 				t = this.prev[t];
 				if (t != null) {
-					Punctuation.game.Debug("Path = " + t.ToString() + this.dist[t]);
+					Main.game.Debug("Path = " + t.ToString() + this.dist[t]);
 				}
 			}
 
