@@ -33,7 +33,7 @@ namespace Hydra {
 		
 		public Chunk Pop() {
 
-			var popped = (Chunk) chunks_previous.Pop();
+			var popped = (Chunk) chunks.Pop();
 			chunks_previous.Push(popped);
 
 			return popped;
@@ -42,7 +42,7 @@ namespace Hydra {
 
 		public Chunk GetNext() {
 
-			if (chunks.Count > 2) {
+			if (chunks.Count > 3) {
 
 				var from = (Chunk) chunks.Pop();
 				var skipped = Pop();

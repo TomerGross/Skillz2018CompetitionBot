@@ -21,7 +21,9 @@ namespace Hydra {
 		//---------------[ Task mangment ]-------------
 		public static Dictionary<Pirate,Task> tasks = new Dictionary<Pirate,Task>();
 		public static List<Pirate> unemployedPirates = new List<Pirate>();
-		public static List<TaskType> todoTasks = new List<TaskType>();
+		public static List<TaskType> todoTasks = new List<TaskType>(new List<TaskType> 
+		{ TaskType.MINER, TaskType.MINER,  TaskType.ESCORT,  TaskType.MOLE,  TaskType.MOLE });
+
 		//--------------------------------------------
 
 
@@ -45,8 +47,10 @@ namespace Hydra {
 
 			// do the tasks
 			giveTasks();
-			
 
+			foreach (KeyValuePair<Pirate,Task> pair in tasks){
+				pair.Value.Preform();
+			}
 		}
 
 

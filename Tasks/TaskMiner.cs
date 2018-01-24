@@ -23,10 +23,10 @@ namespace Hydra {
 				if (!paths.ContainsKey(pirate.UniqueId) || paths[pirate.UniqueId] == null) { 
 
 					Chunk origin = Chunk.GetChunk(pirate.GetLocation()); // Staring position
-					Chunk endgoal = Chunk.GetChunk(Main.mine);
+					Chunk endgoal = Chunk.GetChunk(Main.game.GetMyMothership().Location);
 
 					var traits = new List<Trait>() { new TraitRateByEnemy(1,1,-1) };
-					paths[pirate.UniqueId] = new Path(origin,endgoal,traits,Path.Algorithm.ASTAR);;
+					paths[pirate.UniqueId] = new Path(origin, endgoal, traits, Path.Algorithm.ASTAR);;
 
 				}   
 
