@@ -16,6 +16,15 @@ namespace Hydra {
 		
 		
 		override public string Preform() {
+		    
+		    foreach (Pirate epirate in Main.game.GetEnemyLivingPirates())
+			    {
+			        if (pirate.CanPush(epirate)){
+			        
+			            pirate.Push(epirate, epirate.Location.Towards(game.GetEnemyMothership(),-5000));
+			            return "pirate attacking!"
+			        }
+			    }
 
 			if (Main.game.GetMyCapsule().Holder != null) { //Checks if path exists
                 Location endgoal;
