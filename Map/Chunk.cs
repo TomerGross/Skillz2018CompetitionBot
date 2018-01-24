@@ -41,6 +41,7 @@ namespace Hydra{
         readonly int X, Y;
 		readonly Dictionary<int, List<Chunk>> neighbors; //Keeps track of neighbors and removes the need to recalculate
        	
+       	
         protected Chunk(int X , int Y){ //This should only be used by GetChunk methods, never by us.
           
             this.Y = Y;          
@@ -51,8 +52,6 @@ namespace Hydra{
             chunks[Y, X] = this; //Registers the chunk
         }
 
-
-		public int GX { get; set; } = X;
 
 		public int GetX(){
         
@@ -74,7 +73,7 @@ namespace Hydra{
 
         public override string ToString(){ //Because it override, this does NOT need to be called when building a string
         
-             return "[Y: " + this.GetY() + ", X:"  + this.GetX() + "]";
+             return "[Y: " + GetY() + ", X:"  + GetX() + "]";
         }
 
 
@@ -84,11 +83,12 @@ namespace Hydra{
         }
         
 
-		public List<Pirate> GetEnemyPirates() { //TODO Gets every living pirate that is on the chunk, needs to be reworked
+		public List<Pirate> GetEnemyPirates() { 
+			// TODO Gets every living pirate that is on the chunk, needs to be reworked
 
 			var list = new List<Pirate>();
 			
-			foreach (Pirate enemy in Punctuation.game.GetEnemyLivingPirates()) {	
+			foreach (Pirate enemy in Main.game.GetEnemyLivingPirates()) {	
 				if (enemy.Distance(GetLocation()) < size / 2) {
 
 					list.Add(enemy);
@@ -114,7 +114,7 @@ namespace Hydra{
                     
                     if(rx >= 0 && ry >= 0 && rx < n && ry < n){
 						
-                        list.Add(Chunk.GetChunk(rx, ry));
+                        list.Add(GetChunk(rx, ry));
                     }
                 }
             }

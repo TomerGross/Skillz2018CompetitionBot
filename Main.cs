@@ -20,9 +20,9 @@ namespace Hydra {
 
 
 		//---------------[ Task mangment ]-------------
-		public static Dictionary<Pirate,Task> tasks;
-		public static List<Pirate> unemployedPirates;
-		public static List<Task> todoTasks;
+		public static Dictionary<Pirate,Task> tasks = new Dictionary<Pirate,Task>();
+		public static List<Pirate> unemployedPirates = new List<Pirate>();
+		public static List<Task> todoTasks = new List<Task>();
 		//--------------------------------------------
 
 
@@ -30,8 +30,11 @@ namespace Hydra {
 
 
 			Main.game = game;
-			unemployedPirates = game.GetMyLivingPirates();
 
+			if (game.Turn == 0){
+				unemployedPirates = game.GetMyLivingPirates();
+			}	
+			
 			if (game.GetMyCapsule().Holder == null) {
 				mine = game.GetMyCapsule().GetLocation();
 			}
@@ -80,9 +83,10 @@ namespace Hydra {
 		public List<Task> chooseTasks() {
 			var remainTasks = game.GetMyLivingPirates().Length;
 			
+			
 			List<Task> tasksTodo = new List<Task>();
 
-			tasksTodo.Add(new TaskMiner());
+			tasksTodo.Add(new TaskMiner(game.GetMyLivingPirates()[0]));
 			remainTasks--;
 
 			while (remainTasks > 0) {
