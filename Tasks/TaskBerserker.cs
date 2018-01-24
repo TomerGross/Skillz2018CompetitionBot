@@ -38,7 +38,7 @@ namespace Hydra {
 			} 
 			else {
 
-				pirate.Sail(Main.mineEnemy.Towards(Main.mineEnemy,650));
+				pirate.Sail(Main.mineEnemy.Towards(Main.game.GetEnemyMothership(),650));
 				return "Berserker moved towards enemy mine.";
 			}
 		}
