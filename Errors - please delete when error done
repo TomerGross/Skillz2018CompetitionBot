@@ -1,0 +1,39 @@
+Compilation Errors:
+/tmp/bot8jvnjks5/bots/24595/tmpFB6Uub/Chunk.cs(55,33) : error CS0236: A field initializer cannot reference the nonstatic field, method, or property `Hydra.Chunk.X'
+/tmp/bot8jvnjks5/bots/24595/tmpFB6Uub/Chunk.cs(91,41) : error CS0234: The type or namespace name `game' does not exist in the namespace `Punctuation'. Are you missing an assembly reference?
+/tmp/bot8jvnjks5/bots/24595/tmpFB6Uub/Line.cs(85,34) : error CS0234: The type or namespace name `game' does not exist in the namespace `Punctuation'. Are you missing an assembly reference?
+/tmp/bot8jvnjks5/bots/24595/tmpFB6Uub/Main.cs(33,29) : error CS0029: Cannot implicitly convert type `Pirates.Pirate[]' to `System.Collections.Generic.List<Pirates.Pirate>'
+/tmp/bot8jvnjks5/bots/24595/tmpFB6Uub/Main.cs(50,5) : error CS0103: The name `tasktodo' does not exist in the current context
+/tmp/bot8jvnjks5/bots/24595/tmpFB6Uub/Main.cs(51,5) : error CS0103: The name `tasktodo' does not exist in the current context
+/tmp/bot8jvnjks5/bots/24595/tmpFB6Uub/Main.cs(59,35) : error CS0246: The type or namespace name `Tuple' could not be found. Are you missing `System' using directive?
+/tmp/bot8jvnjks5/bots/24595/tmpFB6Uub/Main.cs(63,56) : error CS0246: The type or namespace name `Tuple' could not be found. Are you missing `System' using directive?
+/tmp/bot8jvnjks5/bots/24595/tmpFB6Uub/Main.cs(63,11) : error CS0131: The left-hand side of an assignment must be a variable, a property or an indexer
+/tmp/bot8jvnjks5/bots/24595/tmpFB6Uub/Main.cs(85,18) : error CS1729: The type `Hydra.TaskMiner' does not contain a constructor that takes `0' arguments
+/tmp/bot8jvnjks5/bots/24595/tmpFB6Uub/Main.cs(90,29) : error CS0118: `Hydra.TaskEscort' is a `type' but a `variable' was expected
+/tmp/bot8jvnjks5/bots/24595/tmpFB6Uub/Main.cs(90,29) : error CS0119: Expression denotes a `type', where a `variable', `value' or `method group' was expected
+/tmp/bot8jvnjks5/bots/24595/tmpFB6Uub/Main.cs(90,20) : error CS1929: Type `System.Collections.Generic.List<Hydra.Task>' does not contain a member `Contains' and the best extension method overload `System.Linq.ParallelEnumerable.Contains<<error>>(this System.Linq.ParallelQuery<<error>>, <error>)' requires an instance of type `System.Linq.ParallelQuery<<error>>'
+/tmp/bot8jvnjks5/bots/24595/tmpFB6Uub/Main.cs(91,20) : error CS1729: The type `Hydra.TaskEscort' does not contain a constructor that takes `0' arguments
+/tmp/bot8jvnjks5/bots/24595/tmpFB6Uub/Main.cs(95,29) : error CS0118: `Hydra.TaskMole' is a `type' but a `variable' was expected
+/tmp/bot8jvnjks5/bots/24595/tmpFB6Uub/Main.cs(95,29) : error CS0119: Expression denotes a `type', where a `variable', `value' or `method group' was expected
+/tmp/bot8jvnjks5/bots/24595/tmpFB6Uub/Main.cs(95,20) : error CS1929: Type `System.Collections.Generic.List<Hydra.Task>' does not contain a member `Contains' and the best extension method overload `System.Linq.ParallelEnumerable.Contains<<error>>(this System.Linq.ParallelQuery<<error>>, <error>)' requires an instance of type `System.Linq.ParallelQuery<<error>>'
+/tmp/bot8jvnjks5/bots/24595/tmpFB6Uub/Main.cs(96,20) : error CS1729: The type `Hydra.TaskMole' does not contain a constructor that takes `0' arguments
+/tmp/bot8jvnjks5/bots/24595/tmpFB6Uub/Main.cs(101,29) : error CS0103: The name `TaskBerserker' does not exist in the current context
+/tmp/bot8jvnjks5/bots/24595/tmpFB6Uub/Main.cs(101,20) : error CS1929: Type `System.Collections.Generic.List<Hydra.Task>' does not contain a member `Contains' and the best extension method overload `System.Linq.ParallelEnumerable.Contains<<error>>(this System.Linq.ParallelQuery<<error>>, <error>)' requires an instance of type `System.Linq.ParallelQuery<<error>>'
+/tmp/bot8jvnjks5/bots/24595/tmpFB6Uub/Main.cs(102,24) : error CS0246: The type or namespace name `TaskBerserker' could not be found. Are you missing an assembly reference?
+/tmp/bot8jvnjks5/bots/24595/tmpFB6Uub/Main.cs(107,19) : error CS1729: The type `Hydra.TaskEscort' does not contain a constructor that takes `0' arguments
+/tmp/bot8jvnjks5/bots/24595/tmpFB6Uub/Path.cs(55,18) : error CS0234: The type or namespace name `game' does not exist in the namespace `Punctuation'. Are you missing an assembly reference?
+/tmp/bot8jvnjks5/bots/24595/tmpFB6Uub/Path.cs(72,17) : error CS0234: The type or namespace name `game' does not exist in the namespace `Punctuation'. Are you missing an assembly reference?
+/tmp/bot8jvnjks5/bots/24595/tmpFB6Uub/Predict.cs(16,42) : error CS0234: The type or namespace name `game' does not exist in the namespace `Punctuation'. Are you missing an assembly reference?
+/tmp/bot8jvnjks5/bots/24595/tmpFB6Uub/TaskEscort.cs(23,21) : error CS1540: Cannot access protected member `Hydra.Chunk.Chunk(int, int)' via a qualifier of type `Hydra.Chunk'. The qualifier must be of type `Hydra.TaskEscort' or derived from it
+/tmp/bot8jvnjks5/bots/24595/tmpFB6Uub/TaskEscort.cs(23,21) : error CS1729: The type `Hydra.Chunk' does not contain a constructor that takes `0' arguments
+/tmp/bot8jvnjks5/bots/24595/tmpFB6Uub/TaskEscort.cs(43,55) : error CS0117: `Hydra.Chunk' does not contain a definition for `divider'
+/tmp/bot8jvnjks5/bots/24595/tmpFB6Uub/TaskEscort.cs(57,8) : error CS0023: The `!' operator cannot be applied to operand of type `Pirates.Pirate'
+/tmp/bot8jvnjks5/bots/24595/tmpFB6Uub/TaskEscort.cs(69,34) : error CS0122: `Pirates.Capsule.Holder' is inaccessible due to its protection level
+/tmp/bot8jvnjks5/bots/24595/tmpFB6Uub/TaskEscort.cs(69,34) : error CS1955: The member `Pirates.Capsule.Holder' cannot be used as method or delegate
+/tmp/bot8jvnjks5/bots/24595/tmpFB6Uub/TaskSailToMother.cs(25,30) : error CS1729: The type `Hydra.Path' does not contain a constructor that takes `3' arguments
+/tmp/bot8jvnjks5/bots/24595/tmpFB6Uub/TaskSailToMother.cs(37,55) : error CS0117: `Hydra.Chunk' does not contain a definition for `divider'
+/tmp/bot8jvnjks5/bots/24595/tmpFB6Uub/TaskSailToMother.cs(52,20) : error CS0234: The type or namespace name `game' does not exist in the namespace `Punctuation'. Are you missing an assembly reference?
+Failure while running bot from [/tmp/bot8jvnjks5/bots/24595/tmpFB6Uub]: Please fix compilation errors
+System.NullReferenceException: Object reference not set to an instance of an object
+  at Pirates.PiratesRunner.Main (System.String[] args) [0x0011d] in <29d43b31a0e245aeafd5f7b45e807de4>:0 
+Bot crashed.
