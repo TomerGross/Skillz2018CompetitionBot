@@ -70,7 +70,7 @@ namespace Hydra {
 			var Ku = CalculateKeys(u);
 			var Ks = CalculateKeys(s);
 
-			if (Ku[0] < Ks[0] || Ku[1] < Ks[1]{
+			if (Ku[0] < Ks[0] || Ku[1] < Ks[1]){
 				return true;
 			}
 
