@@ -57,14 +57,15 @@ namespace Hydra {
 
 		public int GetWeight() {
 
-			if (Main.game.GetMyCapsule().Holder != null) {
+			if (Main.game.GetMyCapsule().Holder == null) {
 			
 				var sortedlist = new List<MapObject>();
 				sortedlist = Utils.SoloClosestPair(Main.game.GetMyLivingPirates(), Main.game.GetMyCapsule());
 				int numofpirates = Main.game.GetAllMyPirates().Length;
 				return (numofpirates - sortedlist.IndexOf(pirate)) * (100 / numofpirates);
 				
-			} else {
+			} 
+			else {
 
 				if (Main.game.GetMyCapsule().Holder == pirate) {
 					return 100; //he is already in his task
@@ -75,7 +76,7 @@ namespace Hydra {
 		}
 
 		public int Bias() {
-			return 10;
+			return 100;
 		}
 
 	}
