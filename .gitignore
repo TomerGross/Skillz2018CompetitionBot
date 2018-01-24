@@ -3,3 +3,8 @@
 ################################################################################
 
 /.vs/ProjectSettings.json
+.DS_Store
+Punctuation.cs
+Punctuation.csproj
+.gitignore
+
