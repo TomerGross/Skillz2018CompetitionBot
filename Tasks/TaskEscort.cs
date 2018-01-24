@@ -5,7 +5,6 @@ namespace Hydra {
 
 	public class TaskEscort : Task {
 
-		public static Dictionary<int, Path> paths = new Dictionary<int, Path>();
 	
 		
 		int radius = 1000; // Maximum range
@@ -16,8 +15,10 @@ namespace Hydra {
 			this.pirate = pirate;
 		}
 		
+		
 		override public string Preform() {
 
+			/*
 			if ((!paths.ContainsKey(pirate.UniqueId) || paths[pirate.UniqueId] == null)) { //Checks if path exists
 
 				Chunk origin = Chunk.GetChunk(pirate.GetLocation()); //His starting position
@@ -32,8 +33,11 @@ namespace Hydra {
 			    pirate.Sail(endgoal.GetLocation());	
 			
 			}
+			*/
 
+			return "TODO: Create escort";
 		}
+		
 		/*override public string Preform() {
 
 			if ((!paths.ContainsKey(pirate.UniqueId) || paths[pirate.UniqueId] == null)) { //Checks if path exists

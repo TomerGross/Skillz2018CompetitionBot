@@ -41,7 +41,7 @@ namespace Hydra {
 			}
 
 			// choose which task to do
-			todoTasks = chooseTasks();
+			//todoTasks = chooseTasks();
 
 			// do the tasks
 			giveTasks();
