@@ -21,7 +21,7 @@ namespace Hydra {
 		//---------------[ Task mangment ]-------------
 		public static Dictionary<Pirate,Task> tasks = new Dictionary<Pirate,Task>();
 		public static List<Pirate> unemployedPirates = new List<Pirate>();
-		public static List<Task> todoTasks = new List<Task>();
+		public static List<TaskType> todoTasks = new List<TaskType>();
 		//--------------------------------------------
 
 
@@ -55,8 +55,9 @@ namespace Hydra {
 			var costs = new Dictionary<int, Tuple<Pirate,Task>>();
 
 			foreach (Pirate pirate in unemployedPirates) {
-				foreach (Task task in todoTasks) {
-					costs[task.Bias() + task.GetWeight(pirate)] = new Tuple<Pirate,Task>(pirate,task);
+				foreach (TaskType taskType in todoTasks) {
+					Task task = taskTypeToTask(taskType, pirate);
+					costs[task.Bias() + task.GetWeight()] = new Tuple<Pirate,Task>(pirate,task);
 				}
 			}
 
@@ -74,6 +75,24 @@ namespace Hydra {
 		}
 
 
+		public Task taskTypeToTask(TaskType task, Pirate pirate) {
+
+			switch (task){
+				case TaskType.BERSERKER:
+					return new TaskBerserker(pirate);
+					
+				case TaskType.ESCORT:
+					return new TaskEscort(pirate);
+					
+				case TaskType.MOLE:
+					return new TaskMole(pirate);
+					
+				default:
+					return new TaskMiner(pirate);
+			}
+		}
+		
+		/*
 		public List<Task> chooseTasks() {
 			var remainTasks = game.GetMyLivingPirates().Length;
 			
@@ -85,8 +104,8 @@ namespace Hydra {
 
 			while (remainTasks > 0) {
 
-				if (!tasksTodo.Contains(TaskEscort)) {
-					tasksTodo.Add(new TaskEscort());
+				if (!tasksTodo.Contains(TaskType.ESCORT)) {
+					tasksTodo.Add(TaskType.ESCORT));
 					remainTasks--;
 					continue;
 				}
@@ -110,5 +129,47 @@ namespace Hydra {
 			return tasksTodo;
 
 		}
+		*/
 	}
+
+
+    
+	public class Tuple<T1, T2> {
+
+		readonly T1 m_Item1;
+		readonly T2 m_Item2;
+
+		public T1 Item1 {
+			get {
+				return m_Item1;
+			}
+		}
+		public T2 Item2 {
+			get {
+				return m_Item2;
+			}
+		}
+
+		public Tuple(T1 item1,T2 item2) {
+			m_Item1 = item1;
+			m_Item2 = item2;
+		}
+
+		
+		object this[int index] {
+			get {
+				switch (index) {
+					case 0:
+						return Item1;
+					case 1:
+						return Item2;
+					default:
+						return null;
+				}
+			}
+		}
+	}
+	
+	
+	
 }

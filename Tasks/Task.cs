@@ -4,6 +4,12 @@ namespace Hydra {
 
 	//This is an interface class, it builds the super type to all the tasks
 
+
+	public enum TaskType {
+		BERSERKER, ESCORT, MINER, MOLE
+	};
+
+
 	public abstract class Task {
 
 		//The task's bias
