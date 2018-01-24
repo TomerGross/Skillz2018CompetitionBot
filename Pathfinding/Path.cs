@@ -52,7 +52,7 @@ namespace Hydra {
 
 				if (recalculated.GetChunks().Count == 1 && recalculated.GetChunks().Peek() == skipped) {
 
-					Punctuation.game.Debug("No better path could be found");
+					Main.game.Debug("No better path could be found");
 
 					chunks.Push(jumpto);
 					chunks.Push(skipped);
@@ -69,7 +69,7 @@ namespace Hydra {
 					chunks.Push(rechunk);
 				}
 
-				Punctuation.game.Debug("Path found and recalculted");
+				Main.game.Debug("Path found and recalculted");
 			}
 
 			return (Chunk) chunks.Peek();
