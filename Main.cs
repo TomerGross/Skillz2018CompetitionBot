@@ -19,11 +19,11 @@ namespace Hydra {
 
 
 		//---------------[ Task mangment ]-------------
-		public static Dictionary<Pirate,Task> tasks = new Dictionary<Pirate,Task>();
+		public static Dictionary<int, TaskType> tasks = new Dictionary<int, TaskType>();
 		public static List<Pirate> unemployedPirates = new List<Pirate>();
 		public static List<TaskType> todoTasks = new List<TaskType>(new List<TaskType> 
 		{ TaskType.MINER, TaskType.ESCORT, TaskType.MOLE});
-
+		public static int alivePirateCount = 0;
 		//--------------------------------------------
 
 
@@ -31,7 +31,8 @@ namespace Hydra {
 
 
 			Main.game = game;
-						
+			alivePirateCount = game.GetMyLivingPirates().Count();
+			
 			if (game.GetMyCapsule().Holder == null) {
 				mine = game.GetMyCapsule().GetLocation();
 			}
@@ -40,46 +41,84 @@ namespace Hydra {
 				mineEnemy = game.GetEnemyCapsule().GetLocation();
 			}
 
-			// choose which task to do
-			//todoTasks = chooseTasks();
-
+			
 			// do the tasks
 			unemployedPirates = game.GetMyLivingPirates().ToList();
 			tasks.Clear();
 			giveTasks();
 
-			foreach (KeyValuePair<Pirate,Task> pair in tasks){
-				game.Debug(pair.Value.Preform());
+			foreach (KeyValuePair<int, TaskType> pair in tasks){
+				game.Debug(taskTypeToTask(game.GetMyPirateById(pair.Key), pair.Value).Preform());
 			}
 		}
 
 
-		public void giveTasks() {
+		public int piratesWithTask(TaskType type) {
 
-			var costs = new Dictionary<int, Tuple<Pirate,Task>>();
+			int sum = 0;
+			
+			foreach (KeyValuePair<int, TaskType> pair in tasks) {
+				if (pair.Value == type) {
+					sum += 1;
+				} 	
+			}
+
+			return 0;
+		}
+
+
+		public Dictionary<double, Tuple<Pirate, TaskType>> getCurrentCosts() {
+			
+			var costs = new Dictionary<double, Tuple<Pirate, TaskType>>();
 
 			foreach (Pirate pirate in unemployedPirates) {
+
 				foreach (TaskType taskType in todoTasks) {
-					Task task = taskTypeToTask(taskType, pirate);
-					costs[task.Bias() + task.GetWeight()] = new Tuple<Pirate,Task>(pirate,task);
+					Task task = taskTypeToTask(pirate, taskType);
+					
+					double cost = task.Bias() + task.GetWeight();
+					cost *= (1 - ((double) piratesWithTask(taskType) / game.GetMyLivingPirates().Count()));
+
+					if (piratesWithTask(taskType) > 4){
+						cost *= 50;
+					}
+					
+					costs[cost] = new Tuple<Pirate, TaskType>(pirate, taskType);
+					//game.Debug(pirate.Id + " | " + taskType + " | " + cost);
 				}
 			}
 
-			var sorted = costs.Keys.ToList();
-			sorted.Sort();
+			return costs;
+		}
+		
 
-			foreach (var key in sorted) {
+		public void giveTasks() {
 
-				if (!tasks.ContainsKey(costs[key].Item1)) {
-					tasks[costs[key].Item1] = costs[key].Item2;
+			for (int i = 0; i < alivePirateCount; i++) {
+
+				var costs = getCurrentCosts();
+
+				var sorted = costs.Keys.ToList();
+				sorted.Sort();
+				sorted.Reverse();
+				
+				foreach (var key in sorted) {
+
+					Pirate pirate = costs[key].Item1;
+					TaskType taskType = costs[key].Item2;
+				
+					if (!tasks.ContainsKey(pirate.Id)) {
+						game.Debug("Gave: " + pirate.Id + " | " + taskType + " at cost: " + key);
+						tasks[pirate.Id] = taskType;
+						unemployedPirates.Remove(pirate);
+						break;
+					}
 				}
-
-				costs.Remove(key);
 			}
 		}
 		
 
-		public Task taskTypeToTask(TaskType task, Pirate pirate) {
+		public Task taskTypeToTask(Pirate pirate, TaskType task) {
 
 			switch (task){
 				case TaskType.BERSERKER:
@@ -95,8 +134,8 @@ namespace Hydra {
 					return new TaskMiner(pirate);
 			}
 		}
+		
 	}
-
 
     
 	public class Tuple<T1, T2> {

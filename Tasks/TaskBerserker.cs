@@ -3,7 +3,6 @@ using Pirates;
 
 namespace Hydra {
 
-
 	public class TaskBerserker : Task {
 
 		//-------------------Globals---------------------------------------------
@@ -26,7 +25,7 @@ namespace Hydra {
 				Pirate enemyHolder = game.GetEnemyCapsule().Holder;
 
 				if (pirate.CanPush(enemyHolder)) {
-					pirate.Push(enemyHolder,enemyHolder.Location.Towards(game.GetEnemyMothership(),-5000));
+					pirate.Push(enemyHolder,enemyHolder.Location.Towards(game.GetEnemyMothership(), -5000));
 					return "Berserker pushed enemy holder away.";
 					
 				}
@@ -56,16 +55,13 @@ namespace Hydra {
 				
 				return (numofpirates - sortedlist.IndexOf(pirate)) * (100 / numofpirates);
 			} 
+			
 			return 0;		
 		}
 		
 					
 		override public int Bias() {
 
-			if (Main.game.GetEnemyCapsule().Holder == null) {
-				return 0;
-			}
-			    
 			return 50;	
 		}
 

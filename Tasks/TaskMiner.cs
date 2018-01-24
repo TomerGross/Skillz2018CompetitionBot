@@ -5,7 +5,6 @@ namespace Hydra {
 
 	public class TaskMiner : Task {
 
-
 		Pirate pirate;
 		Path path;
 		
@@ -13,7 +12,7 @@ namespace Hydra {
 			this.pirate = pirate;
 		}
 		
-
+		
 		override public string Preform() {
 
 			if (pirate.HasCapsule()) {
@@ -50,8 +49,7 @@ namespace Hydra {
 
 			if (Main.game.GetMyCapsule().Holder == null) {
 			
-				var sortedlist = new List<MapObject>();
-				sortedlist = Utils.SoloClosestPair(Main.game.GetMyLivingPirates(), Main.game.GetMyCapsule());
+				var sortedlist = Utils.SoloClosestPair(Main.game.GetMyLivingPirates(), Main.game.GetMyCapsule());
 				int numofpirates = Main.game.GetAllMyPirates().Length;
 				
 				return (numofpirates - sortedlist.IndexOf(pirate)) * (100 / numofpirates);
@@ -61,8 +59,7 @@ namespace Hydra {
 				return 1000; //he is already in his task
 			}
 				
-			return 50; // only one miner for this lvl of competition
-			
+			return 50; // only one miner for this lvl of competition		
 		}
 
 

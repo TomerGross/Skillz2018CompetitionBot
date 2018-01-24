@@ -11,6 +11,7 @@ namespace Hydra {
 			this.pirate = pirate;
 		}
 		
+		
 		override public string Preform() {
 
 			PirateGame game = Main.game;
@@ -26,7 +27,7 @@ namespace Hydra {
 				if (pirate.Distance(towardsEnemy) < (radius / 8)) {
 					if (enemyCapuleHolder.HasCapsule() && pirate.CanPush(enemyCapuleHolder)) {
 
-						pirate.Push(enemyCapuleHolder,Utils.CanPushOutBeta(enemyCapuleHolder.GetLocation(),game));
+						pirate.Push(enemyCapuleHolder, Utils.CanPushOutBeta(enemyCapuleHolder.GetLocation(), game));
 						return Utils.GetPirateStatus(pirate,"pushed enemy");
 					}
 					
