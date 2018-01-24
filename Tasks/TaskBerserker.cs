@@ -7,21 +7,26 @@ namespace Hydra {
 	public class TaskBerserker : Task {
 
 		//-------------------Globals---------------------------------------------
-		
 		public static Dictionary<int,Path> paths = new Dictionary<int,Path>();
-		public PirateGame game = Punctuation.game;
+		public PirateGame game = Main.game;
 		//-----------------------------------------------------------------------
-	
-	
-		public string Preform(Pirate pirate) {
 
+
+		private Pirate pirate;
+		
+		public TaskBerserker(Pirate pirate) {
+			this.pirate = pirate;
+		}
+		
+		
+		override public string Preform() {
 			
 			if (game.GetEnemyCapsule().Holder != null) {
 
 				Pirate enemyHolder = game.GetEnemyCapsule().Holder;
 
 				if (pirate.CanPush(enemyHolder)) {
-					pir.Push(enemyHolder,enemyHolder.Location.Towards(game.GetEnemyMothership(),-5000));
+					pirate.Push(enemyHolder,enemyHolder.Location.Towards(game.GetEnemyMothership(),-5000));
 					return "Berserker pushed enemy holder away.";
 					
 				}
@@ -33,28 +38,34 @@ namespace Hydra {
 			} 
 			else {
 
-				pirate.Sail(Punctuation.enemyMine.Towards(Punctuation.myMine,650));
+				pirate.Sail(Main.mineEnemy.Towards(Main.mineEnemy,650));
 				return "Berserker moved towards enemy mine.";
 			}
 		}
 		
 		
 		
-		public int GetWeight(Pirate pirate) {
+		override public int GetWeight() {
 
 			if (game.GetEnemyCapsule().Holder != null){
-                List<MapObject> sortedlist = new List<MapObject>();
+			
+                var sortedlist = new List<MapObject>();
 				sortedlist = Utils.SoloClosestPair(Main.game.GetMyLivingPirates(), Main.game.GetEnemyCapsule().Holder);
+				
 				int numofpirates = Main.game.GetAllMyPirates().Length;
+				
 				return (numofpirates - sortedlist.IndexOf(pirate)) * (100 / numofpirates);
 			} 
 			return 0;		
 		}
 		
 					
-		public int Bias() {
-			if (Main.game.GetEnemyCapsule().Holder() == null)
-			    return 0;
+		override public int Bias() {
+
+			if (Main.game.GetEnemyCapsule().Holder == null) {
+				return 0;
+			}
+			    
 			return 50;	
 		}
 

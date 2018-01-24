@@ -5,7 +5,13 @@ namespace Hydra {
 	public class TaskMole : Task{
 
 
-		public string Preform(Pirate pirate) {
+		Pirate pirate;
+
+		public TaskMole(Pirate pirate) {
+			this.pirate = pirate;
+		}
+		
+		override public string Preform() {
 
 			PirateGame game = Main.game;
 
@@ -38,13 +44,13 @@ namespace Hydra {
 
 
 	
-        public int GetWeight(Pirate pirate){
+        override public int GetWeight(){
 
 			return 60;    
         }
 
 
-		public int Bias() {
+		override public int Bias() {
 			
 			return 50;
 		}

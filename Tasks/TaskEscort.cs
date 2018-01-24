@@ -7,15 +7,17 @@ namespace Hydra {
 
 		public static Dictionary<int, Path> paths = new Dictionary<int, Path>();
 	
+		
 		int radius = 1000; // Maximum range
 		Pirate pirate;
 
 		public TaskEscort(Pirate pirate) {
+			
 			this.pirate = pirate;
 		}
 		
 		
-		public string Preform() {
+		override public string Preform() {
 
 			if ((!paths.ContainsKey(pirate.UniqueId) || paths[pirate.UniqueId] == null)) { //Checks if path exists
 
@@ -52,9 +54,9 @@ namespace Hydra {
 		}
 
 
-		public int GetWeight() {
+		override public int GetWeight() {
 
-			if (!Main.game.GetMyCapsule().Holder == pirate) {
+			if (Main.game.GetMyCapsule().Holder != pirate) {
 				List<MapObject> sortedlist = new List<MapObject>();
 				sortedlist = Utils.SoloClosestPair(Main.game.GetMyLivingPirates(), Main.game.GetMyCapsule().Holder);
 				int numofpirates = Main.game.GetAllMyPirates().Length;
@@ -65,13 +67,13 @@ namespace Hydra {
 		}
 
 
-		public int Bias() {
-			if (Main.game.GetMyCapsule().Holder() == null)
+		override public int Bias() {
+			if (Main.game.GetMyCapsule().Holder == null)
 				return 0;
 			else
 				return 50;
 		}
-
+	
+	
 	}
-
 }

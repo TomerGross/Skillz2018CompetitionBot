@@ -4,14 +4,20 @@ namespace Hydra {
 
 	//This is an interface class, it builds the super type to all the tasks
 
-	public interface Task {
+	public abstract class Task {
 
-		public static int Bias(); //The task's bias
+		//The task's bias
+		public virtual int Bias() {
+			return 0;
+		}
 
-
-		static int GetWeight(Pirate pirate); //How much the task want a pirate
-
-		public static string Preform(Pirate pirate); //Preform the task
+		public virtual int GetWeight() {
+			return 0;
+		}
+		
+		public virtual string Preform() {
+			return "Nulp";
+		}
 
 	}
 

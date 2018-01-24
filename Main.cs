@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Pirates;
 
@@ -31,9 +30,7 @@ namespace Hydra {
 
 			Main.game = game;
 
-			if (game.Turn == 0){
-				unemployedPirates = game.GetMyLivingPirates();
-			}	
+			unemployedPirates = game.GetMyLivingPirates().ToList();
 			
 			if (game.GetMyCapsule().Holder == null) {
 				mine = game.GetMyCapsule().GetLocation();
@@ -45,21 +42,17 @@ namespace Hydra {
 
 			// choose which task to do
 			todoTasks = chooseTasks();
-			// give each task to the choosen pirate
-			giveTasks();
 
 			// do the tasks
-			foreach (Pirate pirate in unemployedPirates) {
-				tasktodo = tasks[pirate];
-				tasktodo.Preform(pirate);
-				unemployedPirates.Remove(pirate);
-			}
+			giveTasks();
+			
 
 		}
 
+
 		public void giveTasks() {
 
-			var costs = new Dictionary<int,Tuple<Pirate,Task>>();
+			var costs = new Dictionary<int, Tuple<Pirate,Task>>();
 
 			foreach (Pirate pirate in unemployedPirates) {
 				foreach (Task task in todoTasks) {
@@ -79,6 +72,7 @@ namespace Hydra {
 				costs.Remove(key);
 			}
 		}
+
 
 		public List<Task> chooseTasks() {
 			var remainTasks = game.GetMyLivingPirates().Length;
@@ -116,6 +110,5 @@ namespace Hydra {
 			return tasksTodo;
 
 		}
-
 	}
 }

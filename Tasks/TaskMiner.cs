@@ -7,6 +7,7 @@ namespace Hydra {
 
 		public static Dictionary<int,Path> paths = new Dictionary<int,Path>();
 
+
 		Pirate pirate;
 
 		public TaskMiner(Pirate pirate) {
@@ -14,7 +15,7 @@ namespace Hydra {
 		}
 		
 
-		public string Preform() {
+		override public string Preform() {
 
 			if (pirate.HasCapsule()) {
 				
@@ -55,7 +56,7 @@ namespace Hydra {
 		}
 
 
-		public int GetWeight() {
+		override public int GetWeight() {
 
 			if (Main.game.GetMyCapsule().Holder == null) {
 			
@@ -75,7 +76,8 @@ namespace Hydra {
 			}
 		}
 
-		public int Bias() {
+
+		override public int Bias() {
 			return 100;
 		}
 
