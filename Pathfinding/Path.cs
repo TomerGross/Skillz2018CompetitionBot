@@ -39,7 +39,8 @@ namespace Hydra {
 			return popped;
 		}
 
-
+	
+		/*
 		public Chunk GetNext() {
 
 			if (chunks.Count > 3) {
@@ -74,6 +75,7 @@ namespace Hydra {
 
 			return (Chunk) chunks.Peek();
 		}
+		*/
 
 
 		public Stack GetChunks() {

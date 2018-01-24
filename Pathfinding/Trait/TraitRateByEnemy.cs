@@ -13,6 +13,7 @@ namespace Hydra {
 		public TraitRateByEnemy(int range, int bias, int pirateID) {
 
 			this.range = range;
+			this.bias = bias;
 			this.pirateID = pirateID;
 		}
 		
@@ -36,7 +37,8 @@ namespace Hydra {
 					}
 				}
 			}
-			
+
+			Main.game.Debug("COST: " + cost);
 			return cost;
 		}
 

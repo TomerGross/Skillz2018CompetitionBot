@@ -22,7 +22,7 @@ namespace Hydra {
 		public static Dictionary<Pirate,Task> tasks = new Dictionary<Pirate,Task>();
 		public static List<Pirate> unemployedPirates = new List<Pirate>();
 		public static List<TaskType> todoTasks = new List<TaskType>(new List<TaskType> 
-		{ TaskType.MINER, TaskType.MINER,  TaskType.ESCORT,  TaskType.MOLE,  TaskType.MOLE });
+		{ TaskType.MINER, TaskType.ESCORT, TaskType.MOLE});
 
 		//--------------------------------------------
 
@@ -31,9 +31,7 @@ namespace Hydra {
 
 
 			Main.game = game;
-
-			unemployedPirates = game.GetMyLivingPirates().ToList();
-			
+						
 			if (game.GetMyCapsule().Holder == null) {
 				mine = game.GetMyCapsule().GetLocation();
 			}
@@ -46,10 +44,12 @@ namespace Hydra {
 			//todoTasks = chooseTasks();
 
 			// do the tasks
+			unemployedPirates = game.GetMyLivingPirates().ToList();
+			tasks.Clear();
 			giveTasks();
 
 			foreach (KeyValuePair<Pirate,Task> pair in tasks){
-				pair.Value.Preform();
+				game.Debug(pair.Value.Preform());
 			}
 		}
 
@@ -77,7 +77,7 @@ namespace Hydra {
 				costs.Remove(key);
 			}
 		}
-
+		
 
 		public Task taskTypeToTask(TaskType task, Pirate pirate) {
 
@@ -95,45 +95,6 @@ namespace Hydra {
 					return new TaskMiner(pirate);
 			}
 		}
-		
-		/*
-		public List<Task> chooseTasks() {
-			var remainTasks = game.GetMyLivingPirates().Length;
-			
-			
-			List<Task> tasksTodo = new List<Task>();
-
-			tasksTodo.Add(new TaskMiner(game.GetMyLivingPirates()[0]));
-			remainTasks--;
-
-			while (remainTasks > 0) {
-
-				if (!tasksTodo.Contains(TaskType.ESCORT)) {
-					tasksTodo.Add(TaskType.ESCORT));
-					remainTasks--;
-					continue;
-				}
-				if (!tasksTodo.Contains(TaskMole)) {
-					tasksTodo.Add(new TaskMole());
-					remainTasks--;
-					continue;
-				}
-
-				if (!tasksTodo.Contains(TaskBerserker)) {
-					tasksTodo.Add(new TaskBerserker());
-					remainTasks--;
-					continue;
-				}
-
-				tasksTodo.Add(new TaskEscort());
-				remainTasks--;
-
-			}
-
-			return tasksTodo;
-
-		}
-		*/
 	}
 
 
