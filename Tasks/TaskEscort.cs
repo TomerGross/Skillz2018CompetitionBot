@@ -16,27 +16,25 @@ namespace Hydra {
 		}
 		
 		
+	
 		override public string Preform() {
 
-			/*
-			if ((!paths.ContainsKey(pirate.UniqueId) || paths[pirate.UniqueId] == null)) { //Checks if path exists
-
-				Chunk origin = Chunk.GetChunk(pirate.GetLocation()); //His starting position
-				Chunk endgoal = new Chunk();
+			
+			if (Main.game.GetMyCapsule().Holder != null) { //Checks if path exists
+                Location endgoal;
 
 				if (Main.game.GetMyCapsule().Holder.Distance(pirate) >= radius) {
-					endgoal = Chunk.GetChunk(Main.game.GetMyCapsule().Holder.GetLocation()); //His final goal
+					endgoal = Main.game.GetMyCapsule().Holder.GetLocation(); //His final goal
 				} else {
-					endgoal = Chunk.GetChunk(Main.game.GetMyMothership().GetLocation()); //His final goal
+					endgoal = Main.game.GetMyMothership().GetLocation(); //His final goal
 				}
 				
-			    pirate.Sail(endgoal.GetLocation());	
+			    pirate.Sail(endgoal);	
 			
 			}
-			*/
-
 			return "TODO: Create escort";
 		}
+		
 		
 		/*override public string Preform() {
 
