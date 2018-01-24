@@ -13,7 +13,7 @@ namespace Hydra {
 		
 		public void Log() {	//This SHOULD be ran EVERY TURN
 
-			foreach (Pirate pirate in Punctuation.game.GetEnemyLivingPirates()) {
+			foreach (Pirate pirate in Main.game.GetEnemyLivingPirates()) {
 
 				if (log.ContainsKey(pirate.UniqueId)) {
 

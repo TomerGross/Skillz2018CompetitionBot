@@ -1,4 +1,4 @@
-﻿using Pirates;
+using Pirates;
 
 namespace Hydra {
 
@@ -40,13 +40,13 @@ namespace Hydra {
 	
         public int GetWeight(Pirate pirate){
 
-			return 10;    
+			return 60;    
         }
 
 
 		public int Bias() {
 			
-			return 0;
+			return 50;
 		}
 		
 	}

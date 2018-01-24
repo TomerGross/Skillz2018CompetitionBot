@@ -1,6 +1,5 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Pirates;
-using Punctuation;
 
 namespace Hydra {
 
@@ -67,10 +66,10 @@ namespace Hydra {
 
 
 		public int Bias() {
-			if (!Main.game.GetMyCapsule().Holder())
+			if (Main.game.GetMyCapsule().Holder() == null)
 				return 0;
 			else
-				return 5;
+				return 50;
 		}
 
 	}
