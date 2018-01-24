@@ -82,7 +82,7 @@ namespace Hydra {
 		public Point[] GetPoints(int range) { //Gets the next points with a chunk's range, not done
 
 			var points = new Point[range];
-			double distance = Punctuation.game.PirateMaxSpeed;
+			double distance = Main.game.PirateMaxSpeed;
 
 			for (int i = 0; i < range; i++) {
 
