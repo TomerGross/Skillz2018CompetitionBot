@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using Pirates;
 
@@ -22,7 +22,7 @@ namespace Hydra {
 		public static Dictionary<int, TaskType> tasks = new Dictionary<int, TaskType>();
 		public static List<Pirate> unemployedPirates = new List<Pirate>();
 		public static List<TaskType> todoTasks = new List<TaskType>(new List<TaskType> 
-		{ TaskType.MINER, TaskType.ESCORT, TaskType.MOLE});
+		{ TaskType.MINER, TaskType.ESCORT/*, TaskType.MOLE*/, TaskType.BERSERKER, TaskType.DEFAULT});
 		public static int alivePirateCount = 0;
 		//--------------------------------------------
 
@@ -49,6 +49,8 @@ namespace Hydra {
 
 			foreach (KeyValuePair<int, TaskType> pair in tasks){
 				game.Debug(taskTypeToTask(game.GetMyPirateById(pair.Key), pair.Value).Preform());
+				
+				
 			}
 		}
 
@@ -108,7 +110,9 @@ namespace Hydra {
 					TaskType taskType = costs[key].Item2;
 				
 					if (!tasks.ContainsKey(pirate.Id)) {
+					    
 						game.Debug("Gave: " + pirate.Id + " | " + taskType + " at cost: " + key);
+						
 						tasks[pirate.Id] = taskType;
 						unemployedPirates.Remove(pirate);
 						break;
@@ -129,6 +133,9 @@ namespace Hydra {
 					
 				case TaskType.MOLE:
 					return new TaskMole(pirate);
+				
+				case TaskType.DEFAULT:
+				    return new TaskDefault(pirate);
 					
 				default:
 					return new TaskMiner(pirate);
