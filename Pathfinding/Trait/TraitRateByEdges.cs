@@ -1,30 +1,28 @@
-﻿using Pirates;
+﻿namespace Hydra {
 
-namespace Hydra {
+    public class TraitRateByEdges : Trait {
 
-    public class TraitAttractedToGoal : Trait {
-
-        readonly int range;
-        readonly GameObject goal;
+        readonly int range, multiplier;
 
 
-        public TraitAttractedToGoal(int range, GameObject goal) {
+        public TraitRateByEdges(int range, int multiplier) {
 
 			this.range = range;
-            this.goal = goal;
+            this.multiplier = multiplier;
 		}
-		
 
-		override public int Cost(Chunk chunk) {
 
-            int MoveDistance = Main.game.PirateMaxSpeed;               
+        override public int Cost(Chunk chunk) {
 
-            if (MoveDistance * range > chunk.Distance(goal)){
-                return -5 * (MoveDistance * range - chunk.Distance(goal));
+            int radius = range * Main.game.PirateMaxSpeed;
+            int distanceFromWall = Utils.GetClosestWallDistance(chunk.GetLocation());
+
+            if(distanceFromWall < radius){
+                return distanceFromWall * multiplier;
             }
 
-            return 0; 
-		}
+            return 0;
+        }
 
 
 	}

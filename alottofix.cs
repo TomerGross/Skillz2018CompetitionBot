@@ -1,5 +1,6 @@
 using Pirates;
 
+/*
 		 public static Location currloc = null;
         public static Location lastloc = null;
         
@@ -45,4 +46,4 @@ using Pirates;
                 }
             
         }
-        
+        */

@@ -29,6 +29,11 @@ namespace Hydra {
 			if (Main.game.GetMyCapsule().Holder != null) { //Checks if path exists
                 Location endgoal;
 
+                if(Main.game.GetMyCapsule().Holder.Distance(Main.game.GetMyMothership()) == Main.game.PushRange + Main.game.PirateMaxSpeed){
+                    pirate.Push(Main.game.GetMyCapsule().Holder, Main.game.GetMyMothership());
+                    return "Pushed holder";
+                }
+
 				if (Main.game.GetMyCapsule().Holder.Distance(pirate) >= radius) {
 					endgoal = Main.game.GetMyCapsule().Holder.GetLocation(); //His final goal
 				} else {

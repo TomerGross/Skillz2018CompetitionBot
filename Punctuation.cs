@@ -6,6 +6,7 @@ using Pirates;
 
 namespace Punctuation {
 
+    /*
 	public class Punctuation : IPirateBot {
 
 		public static PirateGame game;//Saving game
@@ -256,6 +257,7 @@ namespace Punctuation {
 		}
 
 	}
+	*/
 
 	}
 

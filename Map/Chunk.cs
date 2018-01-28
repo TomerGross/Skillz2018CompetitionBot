@@ -52,33 +52,22 @@ namespace Hydra{
             chunks[Y, X] = this; //Registers the chunk
         }
 
-
-		public int GetX(){
-        
-            return X;
-        }
-
-
-        public int GetY(){
-
-            return Y;
-        }
-        
-
          public Location GetLocation(){ //Gets the center of a chunk
-          
             return new Location((Y * size) + (size / 2), (X * size) + (size / 2));
         }	
 
 
-        public override string ToString(){ //Because it override, this does NOT need to be called when building a string
-        
-             return "[Y: " + GetY() + ", X:"  + GetX() + "]";
+        public override string ToString(){ //Because it overrides, this does NOT need to be called when building a string
+             return "[Y: " + Y + ", X:"  + X + "]";
+        }
+
+
+        public int Distance(GameObject obj) {
+            return GetLocation().Distance(obj);
         }
 
 
         public int Distance(Chunk chunk){ 
-         
             return GetLocation().Distance(chunk.GetLocation());
         }
         

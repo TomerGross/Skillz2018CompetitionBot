@@ -1,9 +1,16 @@
 using System.Collections.Generic;
+using System.Linq;
 using Pirates;
 
 namespace Hydra {
 
 	public class Utils {
+
+
+        public static int GetClosestWallDistance(Location loc){
+            return new List<int> { loc.Col, loc.Row, 6400 - loc.Col, 6400 - loc.Row }.OrderBy(dis => dis).First();
+        }
+
 
 
 		public static List<GameObject> GetObstacles(PirateGame game, Location origin, Location end) {
