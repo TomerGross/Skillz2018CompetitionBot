@@ -79,7 +79,7 @@ namespace Hydra{
 
         public int Distance(Chunk chunk){ 
          
-            return System.Math.Abs(X - chunk.GetX()) + System.Math.Abs(Y - chunk.GetY());
+            return GetLocation().Distance(chunk.GetLocation());
         }
         
 
