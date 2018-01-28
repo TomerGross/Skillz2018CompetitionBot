@@ -1,4 +1,4 @@
-﻿using Pirates;
+using Pirates;
 
 namespace Hydra {
 
@@ -6,7 +6,7 @@ namespace Hydra {
 
 
 	public enum TaskType {
-		BERSERKER, ESCORT, MINER, MOLE
+		BERSERKER, ESCORT, MINER, MOLE, DEFAULT
 	};
 
 
