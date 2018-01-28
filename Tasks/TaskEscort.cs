@@ -6,7 +6,7 @@ namespace Hydra {
 	public class TaskEscort : Task {
 		
 		
-		int radius = 1000; // Maximum range
+		int radius = 500; // Maximum range
 		Pirate pirate;
 		
 		public TaskEscort(Pirate pirate) {
@@ -21,8 +21,8 @@ namespace Hydra {
 			    {
 			        if (pirate.CanPush(epirate)){
 			        
-			            pirate.Push(epirate, epirate.Location.Towards(game.GetEnemyMothership(),-5000));
-			            return "pirate attacking!"
+			            pirate.Push(epirate, epirate.Location.Towards(Main.game.GetEnemyMothership(),-5000));
+			            return "pirate attacking!";
 			        }
 			    }
 
@@ -32,6 +32,7 @@ namespace Hydra {
 				if (Main.game.GetMyCapsule().Holder.Distance(pirate) >= radius) {
 					endgoal = Main.game.GetMyCapsule().Holder.GetLocation(); //His final goal
 				} else {
+				    var sortedlist = Utils.SoloClosestPair(Main.game.GetMyLivingPirates(), Main.game.GetMyCapsule().Holder);
 					endgoal = Main.game.GetMyMothership().GetLocation(); //His final goal
 				}
 				
@@ -44,9 +45,16 @@ namespace Hydra {
 	
 	
 		override public int GetWeight() {
-
+            
 			if ( Main.game.GetMyCapsule().Holder != null && Main.game.GetMyCapsule().Holder != pirate) {
 
+
+               
+			    var sortedlist1 = Utils.SoloClosestPair(Main.game.GetEnemyLivingPirates(), Main.game.GetMyMothership());
+			    Pirate myholder = Main.game.GetMyCapsule().Holder;
+			    if (sortedlist1[0].Distance(Main.game.GetMyMothership()) > myholder.Distance(Main.game.GetMyMothership()) + myholder.PushRange)
+			        return 0;
+			        
 				var sortedlist = Utils.SoloClosestPair(Main.game.GetMyLivingPirates(), Main.game.GetMyCapsule().Holder);
 				int numofpirates = Main.game.GetAllMyPirates().Length;
 				
