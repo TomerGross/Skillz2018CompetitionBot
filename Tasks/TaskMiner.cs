@@ -32,7 +32,7 @@ namespace Hydra {
 					Chunk origin = Chunk.GetChunk(pirate.GetLocation()); // Staring position
 					Chunk endgoal = Chunk.GetChunk(Main.game.GetMyMothership().Location);
 
-					var traits = new List<Trait>() { new TraitRateByEnemy(1,1,-1) };
+					var traits = new List<Trait>() { new TraitRateByEnemy(3,1,-1) };
 					this.path = new Path(origin, endgoal, traits, Path.Algorithm.ASTAR);
 				}
 				

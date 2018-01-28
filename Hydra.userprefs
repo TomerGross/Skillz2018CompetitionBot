@@ -1,0 +1,20 @@
+﻿<Properties StartupConfiguration="{9848AF57-F484-4FAA-BCF8-4BF00774ACF5}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Tasks/TaskMiner.cs">
+    <Files>
+      <File FileName="Pathfinding/Algorithms/AStar.cs" Line="55" Column="17" />
+      <File FileName="Pathfinding/Algorithms/Dijsktra.cs" Line="1" Column="1" />
+      <File FileName="alottofix.cs" Line="3" Column="27" />
+      <File FileName="Pathfinding/Trait/Trait.cs" Line="15" Column="13" />
+      <File FileName="Pathfinding/Trait/TraitRateByEnemy.cs" Line="30" Column="37" />
+      <File FileName="Map/Chunk.cs" Line="71" Column="11" />
+      <File FileName="Tasks/TaskMiner.cs" Line="35" Column="61" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.ItemProperties.Hydra PreferredExecutionTarget="MonoDevelop.Default" />
+</Properties>

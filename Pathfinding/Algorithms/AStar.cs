@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections;
+using System.Linq;
 
 namespace Hydra {
 
@@ -44,50 +45,51 @@ namespace Hydra {
 					fScore[chunk] = int.MaxValue;
 					gScore[chunk] = int.MaxValue;
 				}
-			}
+            }
 
 			fScore[origin] = 0; //Sets the first chunks scores so it will be picked
 			gScore[origin] = 1;
 			openSet.Add(origin);
 
-			for (int count = 0; count < Chunk.n * Chunk.n; count++) {
+            for (int count = 0; count < Chunk.n * Chunk.n; count++) {
+                
+                Chunk current = openSet.OrderBy(chunk => fScore[chunk]).First();
+                //Sets the next chunk to go over to be the cheapest
 
-				Chunk current = CheapestChunk(); //Sets the next chunk to go over
+                if (current == endgoal) {
+                    Main.game.Debug("AStar took " + count + " steps to complete");
+                    break;
+                }
 
-				if (current == endgoal) {
-					Main.game.Debug("AStar took " + count + " steps to complete");
-					break;
-				}
+                openSet.Remove(current);
+                closedSet.Add(current);
 
-				openSet.Remove(current);
-				closedSet.Add(current);			
-					
-				foreach (Chunk neighbor in current.GetNeighbors(0)) {
+                foreach (Chunk neighbor in current.GetNeighbors(0)) {
 
-					if (closedSet.Contains(neighbor)) {
-						continue;
-					}
-					
-					if (!openSet.Contains(neighbor)) {
-						openSet.Add(neighbor);
-					}
+                    if (closedSet.Contains(neighbor)) {
+                        continue;
+                    }
 
-					int g = gScore[current] + current.Distance(neighbor);
+                    if (!openSet.Contains(neighbor)) {
+                        openSet.Add(neighbor);
+                    }
 
-					foreach (Trait trait in traits) {
-						g += trait.Cost(neighbor);
-					}
+                    int g = gScore[current] + current.Distance(neighbor);
 
-					if (g >= gScore[neighbor]) {
-						continue;
-					}
-					
-					cameFrom[neighbor] = current;
-					gScore[neighbor] = g;
-					fScore[neighbor] = gScore[neighbor] + neighbor.Distance(endgoal);
-					
-				}
-			}
+                    foreach (Trait trait in traits) {
+                        g += trait.Cost(neighbor);
+                    }
+
+                    if (g >= gScore[neighbor]) {
+                        continue;
+                    }
+
+                    cameFrom[neighbor] = current;
+                    gScore[neighbor] = g;
+                    fScore[neighbor] = gScore[neighbor] + neighbor.Distance(endgoal);
+
+                }
+            }
 
 			Chunk trace = endgoal;
             var p = new Stack();
@@ -102,24 +104,6 @@ namespace Hydra {
 
 			return p;
 		}	
-		
-	
-		protected Chunk CheapestChunk(){
-
-			int cheapest_price = int.MaxValue;
-			Chunk cheapest_chunk = null;
- 
-            foreach(Chunk chunk in openSet){   
-                if(!closedSet.Contains(chunk)){
-                    if(cheapest_price > fScore[chunk]){
-                        cheapest_price = fScore[chunk];
-                        cheapest_chunk = chunk;
-                    }   
-                }
-            }
-	
-            return cheapest_chunk;
-        }
 
 
 		public Stack GetPathStack() {
