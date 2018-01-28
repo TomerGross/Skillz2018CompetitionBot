@@ -30,10 +30,15 @@ namespace Hydra {
 		}
 
 
-		public static string GetPirateStatus(Pirate pirate,string status) {
+		public static string GetPirateStatus(Pirate pirate, string status) {
 
-			string role = "ROLE"; ///Main.roles[pirate.UniqueId].ToString();
-			return role + " | " + pirate.UniqueId.ToString() + " | " + status;
+
+            string task = "NO TASK";
+            if (Main.tasks.ContainsKey(pirate.id)) {
+                task = Main.tasks[pirate.Id].ToString();
+            }
+
+			return task + " | " + pirate.UniqueId.ToString() + " | " + status;
 		}
 
 
