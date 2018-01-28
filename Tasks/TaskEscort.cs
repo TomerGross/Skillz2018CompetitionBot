@@ -32,7 +32,7 @@ namespace Hydra {
                 if (holder.Distance(pirate) >= radius) {
 
                     pirate.Sail(Main.game.GetMyCapsule().Holder.GetLocation());
-                    return Utils.GetPirateStatus(pirate, "Sailing towards holder";
+                    return Utils.GetPirateStatus(pirate, "Sailing towards holder");
                 }
             }
 
