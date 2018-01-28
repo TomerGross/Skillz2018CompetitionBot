@@ -19,8 +19,8 @@ namespace Hydra {
 			    {
 			        if (pirate.CanPush(epirate)){
 			        
-			            pirate.Push(epirate, epirate.Location.Towards(game.GetEnemyMothership(),-5000));
-			            return "pirate attacking!"
+			            pirate.Push(epirate, epirate.Location.Towards(Main.game.GetEnemyMothership(),-5000));
+			            return "pirate attacking!";
 			        }
 			    }
 
@@ -42,7 +42,8 @@ namespace Hydra {
 					pirate.Sail(nextChunk.GetLocation());
 					return Utils.GetPirateStatus(pirate,"Sailing to: " + nextChunk.ToString());
 				} 
-					
+				
+				pirate.Sail(Main.game.GetMyMothership()); //!!!!!!!!!!!!!!!!!!!!!
 				return Utils.GetPirateStatus(pirate, "Is idle");
 
 			} else {
@@ -68,7 +69,7 @@ namespace Hydra {
 				return 1000; //he is already in his task
 			}
 				
-			return 50; // only one miner for this lvl of competition		
+			return 0; // only one miner for this lvl of competition		
 		}
 
 
