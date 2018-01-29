@@ -7,18 +7,20 @@
       <File FileName="Pathfinding/Trait/Trait.cs" Line="15" Column="13" />
       <File FileName="Pathfinding/Trait/TraitRateByEnemy.cs" Line="26" Column="17" />
       <File FileName="Map/Chunk.cs" Line="27" Column="9" />
-      <File FileName="Tasks/TaskMiner.cs" Line="35" Column="61" />
-      <File FileName="Tasks/TaskEscort.cs" Line="63" Column="1" />
+      <File FileName="Tasks/TaskMiner.cs" Line="19" Column="9" />
+      <File FileName="Tasks/TaskEscort.cs" Line="23" Column="9" />
       <File FileName="Pathfinding/Trait/TraitAttractedToGoal.cs" Line="17" Column="9" />
       <File FileName="Punctuation.cs" Line="260" Column="4" />
-      <File FileName="Main.cs" Line="26" Column="42" />
-      <File FileName="Utils.cs" Line="25" Column="9" />
+      <File FileName="Main.cs" Line="72" Column="42" />
+      <File FileName="Utils.cs" Line="17" Column="9" />
       <File FileName="Tasks/Task.cs" Line="1" Column="1" />
-      <File FileName="Pathfinding/Trait/TraitRateByEdges.cs" Line="10" Column="7" />
-      <File FileName="Tasks/TaskBerserker.cs" Line="79" Column="1" />
-      <File FileName="Tasks/TaskDefault.cs" Line="1" Column="1" />
-      <File FileName="Tuple.cs" Line="1" Column="1" />
+      <File FileName="Pathfinding/Trait/TraitRateByEdges.cs" Line="18" Column="61" />
+      <File FileName="Tasks/TaskBerserker.cs" Line="14" Column="1" />
+      <File FileName="Tasks/TaskDefault.cs" Line="15" Column="17" />
+      <File FileName="Tuple.cs" Line="9" Column="9" />
       <File FileName="Hydra Status" />
+      <File FileName="Tasks/TaskMole.cs" Line="29" Column="81" />
+      <File FileName="PushingTactic.cs" Line="8" Column="6" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
