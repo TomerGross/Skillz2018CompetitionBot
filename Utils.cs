@@ -4,7 +4,16 @@ using Pirates;
 
 namespace Hydra {
 
-	public class Utils {
+	public static class Utils {
+
+        //-------------------Globals---------------------------------------------
+        public static PirateGame game = Main.game;
+        //-----------------------------------------------------------------------
+
+
+        public static List<Pirate> PiratesWithTask(TaskType type) {
+            return (from tuple in Main.tasks.Where(pair => pair.Value == type) select game.GetMyPirateById(tuple.Key)).ToList();
+        }
 
 
         public static int ClosestEdgeDistance(Location loc) {
