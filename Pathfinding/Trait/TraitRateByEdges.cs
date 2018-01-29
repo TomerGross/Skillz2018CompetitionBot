@@ -15,7 +15,7 @@
         override public int Cost(Chunk chunk) {
 
             int radius = range * Main.game.PirateMaxSpeed;
-            int distanceFromWall = Utils.GetClosestWallDistance(chunk.GetLocation());
+            int distanceFromWall = Utils.ClosestEdgeDistance(chunk.GetLocation());
 
             if(distanceFromWall < radius){
                 return distanceFromWall * multiplier;

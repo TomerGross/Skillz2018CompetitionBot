@@ -6,21 +6,34 @@ namespace Hydra {
     public class TaskEscort : Task {
 
 
-        int radius = 500; // Maximum range
-        Pirate pirate;
+        //-------------------Globals---------------------------------------------
+        public static PirateGame game = Main.game;
+        //-----------------------------------------------------------------------
+
+
+        readonly int radius; // Maximum distance from holder
+        readonly Pirate pirate;
+
+
+        public TaskEscort(Pirate pirate, int radius) {
+
+            this.pirate = pirate;
+            this.radius = radius;
+        }
+
 
         public TaskEscort(Pirate pirate) {
 
             this.pirate = pirate;
+            radius = 500;
         }
 
 
         override public string Preform() {
 
-            PirateGame game = Main.game;
             Pirate holder = game.GetMyCapsule().Holder;
 
-            if (Main.game.GetMyCapsule().Holder != null) {
+            if (game.GetMyCapsule().Holder != null) {
 
                 if (!pirate.CanPush(holder) && holder.Distance(game.GetMyMothership()) <= (game.PushDistance + holder.MaxSpeed)) {
 
@@ -36,16 +49,16 @@ namespace Hydra {
 
             }
 
-            foreach (Pirate enemy in Main.game.GetEnemyLivingPirates().Where(enemy => pirate.CanPush(enemy))) {
+            foreach (Pirate enemy in game.GetEnemyLivingPirates().Where(enemy => pirate.CanPush(enemy))) {
 
                 pirate.Push(enemy, enemy.Location.Towards(game.GetEnemyMothership(), -5000));
                 return Utils.GetPirateStatus(pirate, "Pushed enemy pirate " + enemy.Id);
             }
 
-            if (Main.game.GetMyCapsule().Holder != null) {
+            if (game.GetMyCapsule().Holder != null) {
 
-                var sortedlist = Utils.SoloClosestPair(game.GetEnemyLivingPirates(), holder);
-                pirate.Sail(sortedlist[0]);
+                var pairs = Utils.SoloClosestPair(game.GetMyLivingPirates(), game.GetEnemyCapsule().Holder);
+                pirate.Sail(pairs[0].Item1);
 
                 return Utils.GetPirateStatus(pirate, "Sailing closest pair");
             }
@@ -57,19 +70,21 @@ namespace Hydra {
 
         override public int GetWeight() {
 
-            if (Main.game.GetMyCapsule().Holder != null && Main.game.GetMyCapsule().Holder != pirate) {
+            if (game.GetMyCapsule().Holder != null && game.GetMyCapsule().Holder != pirate) {
+                
+                var pairs = Utils.SoloClosestPair(game.GetMyLivingPirates(), game.GetEnemyCapsule().Holder);
+                int index = pairs.IndexOf(pairs.First(tuple => tuple.Item1 == pirate));
 
+                Pirate myholder = game.GetMyCapsule().Holder;
 
-
-                var sortedlist1 = Utils.SoloClosestPair(Main.game.GetEnemyLivingPirates(), Main.game.GetMyMothership());
-                Pirate myholder = Main.game.GetMyCapsule().Holder;
-                if (sortedlist1[0].Distance(Main.game.GetMyMothership()) > myholder.Distance(Main.game.GetMyMothership()) + myholder.PushRange)
+                if (pairs[0].Item1.Distance(game.GetMyMothership()) > myholder.Distance(game.GetMyMothership()) + myholder.PushRange) {
                     return 0;
+                }
 
-                var sortedlist = Utils.SoloClosestPair(Main.game.GetMyLivingPirates(), Main.game.GetMyCapsule().Holder);
-                int numofpirates = Main.game.GetAllMyPirates().Length;
+                var sortedlist = Utils.SoloClosestPair(game.GetMyLivingPirates(), game.GetMyCapsule().Holder);
+                int numofpirates = game.GetAllMyPirates().Length;
 
-                return (numofpirates - sortedlist.IndexOf(pirate)) * (100 / numofpirates);
+                return (numofpirates - index) * (100 / numofpirates);
             }
 
             return 0;
@@ -78,7 +93,7 @@ namespace Hydra {
 
         override public int Bias() {
 
-            if (Main.game.GetMyCapsule().Holder == null) {
+            if (game.GetMyCapsule().Holder == null) {
                 return 0;
             }
 

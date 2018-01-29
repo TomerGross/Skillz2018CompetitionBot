@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Pirates;
 
 namespace Hydra {
@@ -7,11 +8,11 @@ namespace Hydra {
 
 		//-------------------Globals---------------------------------------------
 		public static Dictionary<int,Path> paths = new Dictionary<int,Path>();
-		public PirateGame game = Main.game;
+		public static PirateGame game = Main.game;
 		//-----------------------------------------------------------------------
 
 
-		private Pirate pirate;
+        readonly Pirate pirate;
 		
 		public TaskDefault(Pirate pirate) {
 			this.pirate = pirate;
@@ -19,11 +20,11 @@ namespace Hydra {
 		
 		
 		override public string Preform() {
-			foreach (Pirate epirate in Main.game.GetEnemyLivingPirates())
+			foreach (Pirate epirate in game.GetEnemyLivingPirates())
 			    {
 			        if (pirate.CanPush(epirate)){
 			        
-			            pirate.Push(epirate, epirate.Location.Towards(Main.game.GetEnemyMothership(),-5000));
+			            pirate.Push(epirate, epirate.Location.Towards(game.GetEnemyMothership(),-5000));
 			            return "pirate attacking!";
 			        }
 			    }
@@ -42,7 +43,7 @@ namespace Hydra {
 				}
 				else
 				{
-				    pirate.Sail(Main.mineEnemy.Towards(Main.game.GetEnemyMothership(),650));
+				    pirate.Sail(Main.mineEnemy.Towards(game.GetEnemyMothership(),650));
 				    return "Berserker moved towards enemy mine.";
 				    
 				}
@@ -50,7 +51,7 @@ namespace Hydra {
 
 			} 
 			else {
-                pirate.Sail(Main.mineEnemy.Towards(Main.game.GetEnemyMothership(),650));
+                pirate.Sail(Main.mineEnemy.Towards(game.GetEnemyMothership(),650));
 				return "Berserker moved towards enemy mine.";
 				
 			}
@@ -62,29 +63,25 @@ namespace Hydra {
             
 			if (game.GetMyCapsule().Holder == null){
 			   
-                var sortedlist = new List<MapObject>();
-				sortedlist = Utils.SoloClosestPair(Main.game.GetMyLivingPirates(), Main.game.GetEnemyCapsule());
-				
-				int numofpirates = Main.game.GetAllMyPirates().Length;
-				
-			    if (sortedlist.IndexOf(pirate)+1 <= numofpirates / 2)
-				    return 1000;
-				return 0;    
-			} 
+                var pairs = Utils.SoloClosestPair(game.GetMyLivingPirates(), game.GetEnemyCapsule().Holder);
+                int index = pairs.IndexOf(pairs.First(tuple => tuple.Item1 == pirate));
+
+				int numofpirates = game.GetAllMyPirates().Length;
+
+                if (index + 1 <= numofpirates / 2) {
+                    return 1000;
+                }
+            } 
 			
 			return 0;		
 		}
 		
 					
 		override public int Bias() {
-
 			return 0;	
 		}
 
+				
 		
-		
-		
-	}
-	
-	
+	}	
 }

@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Pirates;
 
 namespace Hydra {
@@ -7,11 +8,12 @@ namespace Hydra {
 
         //-------------------Globals---------------------------------------------
         public static Dictionary<int, Path> paths = new Dictionary<int, Path>();
-        public PirateGame game = Main.game;
+        public static PirateGame game = Main.game;
         //-----------------------------------------------------------------------
 
 
-        private Pirate pirate;
+        readonly Pirate pirate;
+
 
         public TaskBerserker(Pirate pirate) {
             this.pirate = pirate;
@@ -29,27 +31,21 @@ namespace Hydra {
                     var cloestEdge = Utils.CloestEdge(enemyHolder.Location);
 
                     if (cloestEdge.Item1 <= game.PushDistance) {
-
                         pirate.Push(enemyHolder, cloestEdge.Item2);
-
-                    } else {    
-                        
+                    } else {
                         pirate.Push(enemyHolder, Main.mineEnemy);
                     }
 
                     return Utils.GetPirateStatus(pirate, "Pushed enemy holder");
-
-                } else {
-                             
-                    pirate.Sail(enemyHolder);
-                    return "Berserker moving towards enemy holder...";
                 }
 
-            } else {
+                pirate.Sail(enemyHolder);
+                return "Berserker moving towards enemy holder...";
 
-                pirate.Sail(Main.mineEnemy.Towards(Main.game.GetEnemyMothership(), 300));
-                return "Berserker is sailing towards enemy mine.";
             }
+
+            pirate.Sail(Main.mineEnemy.Towards(Main.game.GetEnemyMothership(), 300));
+            return "Berserker is sailing towards enemy mine.";
         }
 
 
@@ -58,12 +54,12 @@ namespace Hydra {
 
             if (game.GetEnemyCapsule().Holder != null) {
 
-                var sortedlist = new List<MapObject>();
-                sortedlist = Utils.SoloClosestPair(Main.game.GetMyLivingPirates(), Main.game.GetEnemyCapsule().Holder);
+                var pairs = Utils.SoloClosestPair(Main.game.GetMyLivingPirates(), Main.game.GetEnemyCapsule().Holder);
+                int index = pairs.IndexOf(pairs.First(tuple => tuple.Item1 == pirate));
 
                 int numofpirates = Main.game.GetAllMyPirates().Length;
 
-                return (numofpirates - sortedlist.IndexOf(pirate)) * (100 / numofpirates);
+                return (numofpirates - index) * (100 / numofpirates);
             }
 
             return 0;

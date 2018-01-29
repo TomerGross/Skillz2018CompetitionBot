@@ -1,81 +1,78 @@
-using Pirates;
 using System.Collections.Generic;
+using System.Linq;
+using Pirates;
 
 namespace Hydra {
 
-	public class TaskMiner : Task {
+    public class TaskMiner : Task {
 
-		Pirate pirate;
-		Path path;
-		
-		public TaskMiner(Pirate pirate) {
-			this.pirate = pirate;
-		}
-		
-		
-		override public string Preform() {
-		    
-		    foreach (Pirate epirate in Main.game.GetEnemyLivingPirates())
-			    {
-			        if (pirate.CanPush(epirate)){
-			        
-			            pirate.Push(epirate, epirate.Location.Towards(Main.game.GetEnemyMothership(),-5000));
-			            return "pirate attacking!";
-			        }
-			    }
+        //-------------------Globals---------------------------------------------
+        public static PirateGame game = Main.game;
+        //-----------------------------------------------------------------------
 
-			if (pirate.HasCapsule()) {
-				
-				// If there is no path
-				if (this.path == null) { 
-
-					Chunk origin = Chunk.GetChunk(pirate.GetLocation()); // Staring position
-					Chunk endgoal = Chunk.GetChunk(Main.game.GetMyMothership().Location);
-
-					var traits = new List<Trait>() { new TraitRateByEnemy(3,1,-1) };
-					this.path = new Path(origin, endgoal, traits, Path.Algorithm.ASTAR);
-				}
-				
-				if(path.GetChunks().Count > 0){
-				
-					Chunk nextChunk = path.Pop();
-					pirate.Sail(nextChunk.GetLocation());
-					return Utils.GetPirateStatus(pirate,"Sailing to: " + nextChunk.ToString());
-				} 
-				
-				pirate.Sail(Main.game.GetMyMothership()); //!!!!!!!!!!!!!!!!!!!!!
-				return Utils.GetPirateStatus(pirate, "Is idle");
-
-			} else {
-
-				pirate.Sail(Main.mine);
-			
-				return Utils.GetPirateStatus(pirate, "Sailing to mine...");
-			}
-		}
+        readonly Pirate pirate;
 
 
-		override public int GetWeight() {
-
-			if (Main.game.GetMyCapsule().Holder == null) {
-			
-				var sortedlist = Utils.SoloClosestPair(Main.game.GetMyLivingPirates(), Main.game.GetMyCapsule());
-				int numofpirates = Main.game.GetAllMyPirates().Length;
-				
-				return (numofpirates - sortedlist.IndexOf(pirate)) * (100 / numofpirates);
-			}  
-
-			if (Main.game.GetMyCapsule().Holder == pirate) {
-				return 1000; //he is already in his task
-			}
-				
-			return 0; // only one miner for this lvl of competition		
-		}
+        public TaskMiner(Pirate pirate) {
+            this.pirate = pirate;
+        }
 
 
-		override public int Bias() {
-			return 100;
-		}
+        override public string Preform() {
 
-	}
+            if (pirate.HasCapsule()) {
+
+                Chunk origin = Chunk.GetChunk(pirate.GetLocation());
+                Chunk endgoal = Chunk.GetChunk(game.GetMyMothership().Location);
+
+                var traits = new List<Trait>() {
+                        new TraitRateByEnemy(2, 1,-1),
+                        new TraitAttractedToGoal(3, game.GetMyMothership()),
+                        new TraitRateByEdges(5, 2)
+                };
+
+                Path path = new Path(origin, endgoal, traits, Path.Algorithm.ASTAR);
+                           
+                if (path.GetChunks().Count > 0) {
+
+                    Chunk nextChunk = path.Pop();
+                    pirate.Sail(nextChunk.GetLocation());
+                    return Utils.GetPirateStatus(pirate, "Sailing to: " + nextChunk.ToString());
+                }
+
+                pirate.Sail(game.GetMyMothership());
+                return Utils.GetPirateStatus(pirate, "Is idle");
+            }
+
+            pirate.Sail(Main.mine);
+            return Utils.GetPirateStatus(pirate, "Sailing to mine...");
+        }
+
+
+        override public int GetWeight() {
+
+            if (game.GetMyCapsule().Holder == null) {
+
+                var pairs = Utils.SoloClosestPair(game.GetMyLivingPirates(), game.GetEnemyCapsule().Holder);
+
+                int index = pairs.IndexOf(pairs.First(tuple => tuple.Item1 == pirate));
+                int numofpirates = game.GetAllMyPirates().Length;
+
+                return (numofpirates - index) * (100 / numofpirates);
+            }
+
+            if (game.GetMyCapsule().Holder == pirate) {
+                return 1000; //he is already in his task
+            }
+
+            return 0; // only one miner for this lvl of competition		
+        }
+
+
+        override public int Bias() {
+            return 100;
+        }
+
+
+    }
 }

@@ -5,7 +5,7 @@ namespace Hydra {
 	public class TaskMole : Task{
 
 
-		Pirate pirate;
+		readonly Pirate pirate;
 
 		public TaskMole(Pirate pirate) {
 			this.pirate = pirate;
@@ -20,18 +20,24 @@ namespace Hydra {
 			
 			if (game.GetEnemyCapsule().Holder != null) {
 
-				Pirate enemyCapuleHolder = game.GetEnemyCapsule().Holder;
+				Pirate enemyHolder = game.GetEnemyCapsule().Holder;
 				Location towardsEnemy = game.GetEnemyMothership().GetLocation().Towards(game.GetEnemyCapsule(),radius);
 
-				// If the pirate is in position and can attack
-				if (pirate.Distance(towardsEnemy) < (radius / 8)) {
-					if (enemyCapuleHolder.HasCapsule() && pirate.CanPush(enemyCapuleHolder)) {
+                // If the pirate is in position and can attack
+                if (pirate.Distance(towardsEnemy) < (radius / 8) && pirate.CanPush(enemyHolder)) {
 
-						pirate.Push(enemyCapuleHolder, Utils.CanPushOutBeta(enemyCapuleHolder.GetLocation(), game));
-						return Utils.GetPirateStatus(pirate,"pushed enemy");
-					}
-					
-				} else {
+                    var cloestEdge = Utils.CloestEdge(enemyHolder.GetLocation());
+
+                    if (cloestEdge.Item1 <= game.PushDistance) {
+                        pirate.Push(enemyHolder, cloestEdge.Item2);
+                    } else {
+                        pirate.Push(enemyHolder, Main.mineEnemy);
+                    }
+
+                    return Utils.GetPirateStatus(pirate, "Pushed enemy holder");
+
+
+                } else {
 					
 					// Sail to a position
 					pirate.Sail(towardsEnemy);
@@ -46,7 +52,7 @@ namespace Hydra {
 
 	
         override public int GetWeight(){
-
+                        
 			return 60;    
         }
 
