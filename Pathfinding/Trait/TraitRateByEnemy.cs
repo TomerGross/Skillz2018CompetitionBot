@@ -25,7 +25,7 @@ namespace Hydra {
 
 			foreach (Pirate enemy in game.GetEnemyLivingPirates()) {
 				if (pirateID == -1 || enemy.UniqueId == pirateID) {
-					if (enemy.Distance(chunk.GetLocation()) < PRange * range) {
+                    if (enemy.Distance(chunk.GetLocation()) < PRange * range && enemy.PushReloadTurns == 0) {
 
 						double price = (int) System.Math.Round(PDistance / 100.0) + 1;
 						price -= enemy.Distance(chunk.GetLocation()) / 100.0;

@@ -25,7 +25,8 @@ namespace Hydra {
 				Pirate enemyHolder = game.GetEnemyCapsule().Holder;
 
 				if (pirate.CanPush(enemyHolder)) {
-					pirate.Push(enemyHolder,enemyHolder.Location.Towards(game.GetEnemyMothership(), -5000));
+
+                    pirate.Push(enemyHolder, Utils.CanPushOutBeta(enemyHolder.GetLocation()));
 					return "Berserker pushed enemy holder away.";
 					
 				}
@@ -46,6 +47,8 @@ namespace Hydra {
 		
 		
 		override public int GetWeight() {
+
+            if(pirate.PushReloadTurns())
 
 			if (game.GetEnemyCapsule().Holder != null){
 			

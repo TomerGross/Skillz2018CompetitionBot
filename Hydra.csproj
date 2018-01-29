@@ -47,6 +47,7 @@
     <Compile Include="Pathfinding\Trait\TraitAttractedToGoal.cs" />
     <Compile Include="Tasks\TaskDefault.cs" />
     <Compile Include="Pathfinding\Trait\TraitRateByEdges.cs" />
+    <Compile Include="Tuple.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="PirateGame">

@@ -18,10 +18,9 @@ namespace Hydra {
         override public string Preform() {
 
             PirateGame game = Main.game;
+            Pirate holder = game.GetMyCapsule().Holder;
 
             if (Main.game.GetMyCapsule().Holder != null) {
-
-                Pirate holder = game.GetMyCapsule().Holder;
 
                 if (!pirate.CanPush(holder) && holder.Distance(game.GetMyMothership()) <= (game.PushDistance + holder.MaxSpeed)) {
 
@@ -31,15 +30,24 @@ namespace Hydra {
 
                 if (holder.Distance(pirate) >= radius) {
 
-                    pirate.Sail(Main.game.GetMyCapsule().Holder.GetLocation());
+                    pirate.Sail(holder);
                     return Utils.GetPirateStatus(pirate, "Sailing towards holder");
                 }
+
             }
 
             foreach (Pirate enemy in Main.game.GetEnemyLivingPirates().Where(enemy => pirate.CanPush(enemy))) {
 
-                pirate.Push(enemy, enemy.Location.Towards(Main.game.GetEnemyMothership(), -5000));
+                pirate.Push(enemy, enemy.Location.Towards(game.GetEnemyMothership(), -5000));
                 return Utils.GetPirateStatus(pirate, "Pushed enemy pirate " + enemy.Id);
+            }
+
+            if (Main.game.GetMyCapsule().Holder != null) {
+
+                var sortedlist = Utils.SoloClosestPair(game.GetEnemyLivingPirates(), holder);
+                pirate.Sail(sortedlist[0]);
+
+                return Utils.GetPirateStatus(pirate, "Sailing closest pair");
             }
 
             pirate.Sail(Main.mine.GetLocation().Towards(game.GetMyMothership(), 500));

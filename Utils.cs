@@ -7,10 +7,32 @@ namespace Hydra {
 	public class Utils {
 
 
-        public static int GetClosestWallDistance(Location loc){
+        public static int GetClosestEdgeDistance(Location loc){
             return new List<int> { loc.Col, loc.Row, 6400 - loc.Col, 6400 - loc.Row }.OrderBy(dis => dis).First();
         }
 
+
+        // ClosestPair returns a list of the closest pair of enemy and friendly bot
+        public static List<MapObject> ClosestPair(MapObject[] group1, MapObject[] group2) {
+
+            int min = group1.Min(obj => group2.Min(obj.Distance));
+
+            var obj1 = group1.First(obj => min == group2.Min(obj.Distance));
+            var obj2 = group1.First(obj => min == group1.Min(obj.Distance));
+
+            return new List<MapObject>() { obj1, obj2 };
+        }
+
+
+        public static Tuple<int, Location> CloestEdge(Location loc) {
+
+            return new List<Tuple<int, Location>> {
+                new Tuple<int, Location>(loc.Col, new Location(loc.Row, -1)),
+                new Tuple<int, Location>(6400 - loc.Col, new Location(loc.Row, 6401)),
+                new Tuple<int, Location>(loc.Row, new Location(loc.Col, -1)),
+                new Tuple<int, Location>(6400 - loc.Row, new Location(loc.Row, 6401))
+            }.OrderBy(tuple => tuple.Item1).First();
+        }
 
 
 		public static List<GameObject> GetObstacles(PirateGame game, Location origin, Location end) {
@@ -78,44 +100,6 @@ namespace Hydra {
 		}
 
 
-		public static Location CanPushOutBeta(Location location,PirateGame game) {
-
-			int side = 0;
-			int distance = location.Col;
-
-			if (distance > location.Row) {
-				side = 1;
-				distance = location.Row;
-			}
-
-			if (distance > (6401 - location.Row)) {
-				side = 2;
-				distance = 6401 - location.Row;
-			}
-
-			if (distance > (6401 - location.Col)) {
-				side = 3;
-				distance = 6401 - location.Col;
-			}
-
-			switch (side) {
-				case 0:
-					return new Location(location.Row,0);
-
-				case 1:
-					return new Location(0,location.Col);
-
-				case 2:
-					return new Location(6401,location.Col);
-
-				case 3:
-					return new Location(location.Row,6401);
-
-				default:
-					return new Location(6401,6401);
-			}
-		}
-
 
 		public static bool TryPush(Pirate pirate,PirateGame game) {
 
@@ -144,26 +128,6 @@ namespace Hydra {
 				return null;
 			}
 
-		}
-
-		
-		// ClosestPair returns a list of the closest pair of enemy and friendly bot
-		public static List<MapObject> ClosestPair(MapObject[] group1, MapObject[] group2) {
-
-			/* return list of the closest pair from both groups*/
-			MapObject mingroup1 = null, mingroup2 = null;
-			int minDistance = group1[0].Distance(group2[0]);
-
-			for (int i = 0; i < group1.Length; i++) {
-				for (int j = 0; j < group2.Length; j++) {
-					if (group1[i].Distance(group2[j]) < minDistance) {
-						minDistance = group1[i].Distance(group2[j]);
-						mingroup1 = group1[i];
-						mingroup2 = group2[j];
-					}
-				}
-			}
-			return new List<MapObject>(){ mingroup1, mingroup2 };
 		}
 
 
