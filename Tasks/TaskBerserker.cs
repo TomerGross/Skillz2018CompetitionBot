@@ -3,78 +3,82 @@ using Pirates;
 
 namespace Hydra {
 
-	public class TaskBerserker : Task {
+    public class TaskBerserker : Task {
 
-		//-------------------Globals---------------------------------------------
-		public static Dictionary<int,Path> paths = new Dictionary<int,Path>();
-		public PirateGame game = Main.game;
-		//-----------------------------------------------------------------------
+        //-------------------Globals---------------------------------------------
+        public static Dictionary<int, Path> paths = new Dictionary<int, Path>();
+        public PirateGame game = Main.game;
+        //-----------------------------------------------------------------------
 
 
-		private Pirate pirate;
-		
-		public TaskBerserker(Pirate pirate) {
-			this.pirate = pirate;
-		}
-		
-		
-		override public string Preform() {
-			
-			if (game.GetEnemyCapsule().Holder != null) {
+        private Pirate pirate;
 
-				Pirate enemyHolder = game.GetEnemyCapsule().Holder;
+        public TaskBerserker(Pirate pirate) {
+            this.pirate = pirate;
+        }
 
-				if (pirate.CanPush(enemyHolder)) {
 
-                    pirate.Push(enemyHolder, Utils.CanPushOutBeta(enemyHolder.GetLocation()));
-					return "Berserker pushed enemy holder away.";
-					
-				}
-			    else {
-			        //          
-					pirate.Sail(enemyHolder);
-					return "Berserker moving towards enemy holder...";
-				}
+        override public string Preform() {
 
-			} 
-			else {
+            if (game.GetEnemyCapsule().Holder != null) {
 
-				pirate.Sail(Main.mineEnemy.Towards(Main.game.GetEnemyMothership(),650));
-				return "Berserker moved towards enemy mine.";
-			}
-			pirate.Sail(Main.mineEnemy.Towards(Main.game.GetEnemyMothership(),650));
-			return "Berserker moved towards enemy mine.";
-		}
-		
-		
-		
-		override public int GetWeight() {
+                Pirate enemyHolder = game.GetEnemyCapsule().Holder;
 
-            if(pirate.PushReloadTurns())
+                if (pirate.CanPush(enemyHolder)) {
 
-			if (game.GetEnemyCapsule().Holder != null){
-			
+                    var cloestEdge = Utils.CloestEdge(enemyHolder.Location);
+
+                    if (cloestEdge.Item1 <= game.PushDistance) {
+
+                        pirate.Push(enemyHolder, cloestEdge.Item2);
+
+                    } else {    
+                        
+                        pirate.Push(enemyHolder, Main.mineEnemy);
+                    }
+
+                    return Utils.GetPirateStatus(pirate, "Pushed enemy holder");
+
+                } else {
+                             
+                    pirate.Sail(enemyHolder);
+                    return "Berserker moving towards enemy holder...";
+                }
+
+            } else {
+
+                pirate.Sail(Main.mineEnemy.Towards(Main.game.GetEnemyMothership(), 300));
+                return "Berserker is sailing towards enemy mine.";
+            }
+        }
+
+
+
+        override public int GetWeight() {
+
+            if (game.GetEnemyCapsule().Holder != null) {
+
                 var sortedlist = new List<MapObject>();
-				sortedlist = Utils.SoloClosestPair(Main.game.GetMyLivingPirates(), Main.game.GetEnemyCapsule().Holder);
-				
-				int numofpirates = Main.game.GetAllMyPirates().Length;
-				
-				return (numofpirates - sortedlist.IndexOf(pirate)) * (100 / numofpirates);
-			} 
-			
-			return 0;		
-		}
-		
-					
-		override public int Bias() {
+                sortedlist = Utils.SoloClosestPair(Main.game.GetMyLivingPirates(), Main.game.GetEnemyCapsule().Holder);
 
-			return 50;	
-		}
+                int numofpirates = Main.game.GetAllMyPirates().Length;
 
-		
-		
-		
-	}
-	
-	
+                return (numofpirates - sortedlist.IndexOf(pirate)) * (100 / numofpirates);
+            }
+
+            return 0;
+        }
+
+
+        override public int Bias() {
+
+            return 50;
+        }
+
+
+
+
+    }
+
+
 }
