@@ -9,12 +9,14 @@ namespace Hydra {
 
 		//---------------[ Main variables ]-----------
 		public static PirateGame game;
+        public static List<int> didTurn = new List<int>();
 		//--------------------------------------------
 
 
 		//---------------[ Mines ]--------------------
 		public static Location mine;
 		public static Location mineEnemy;
+        public static int maxMiners = 2;
 		//--------------------------------------------
 
 
@@ -31,6 +33,7 @@ namespace Hydra {
 
 
 			Main.game = game;
+            didTurn.Clear();
 			alivePirateCount = game.GetMyLivingPirates().Count();
 			
 			if (game.GetMyCapsule().Holder == null) {

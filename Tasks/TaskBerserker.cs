@@ -7,7 +7,6 @@ namespace Hydra {
     public class TaskBerserker : Task {
 
         //-------------------Globals---------------------------------------------
-        public static Dictionary<int, Path> paths = new Dictionary<int, Path>();
         public static PirateGame game = Main.game;
         //-----------------------------------------------------------------------
 
@@ -22,6 +21,10 @@ namespace Hydra {
 
         override public string Preform() {
 
+            if (Main.didTurn.Contains(pirate.Id)) {
+                return Utils.GetPirateStatus(pirate, "Already did turn");
+            }
+
             if (game.GetEnemyCapsule().Holder != null) {
 
                 Pirate enemyHolder = game.GetEnemyCapsule().Holder;
@@ -29,19 +32,38 @@ namespace Hydra {
                 if (pirate.CanPush(enemyHolder)) {
 
                     var cloestEdge = Utils.CloestEdge(enemyHolder.Location);
+                    double killCost = cloestEdge.Item1 / game.PushDistance;
 
-                    if (cloestEdge.Item1 <= game.PushDistance) {
+                    var available = Utils.PiratesWithTask(TaskType.BERSERKER);
+                    available.RemoveAll(escort => !escort.CanPush(enemyHolder) || escort.Id == pirate.Id);
+                    available.Insert(0, pirate);
+
+                    if (killCost <= 1) {
+
                         pirate.Push(enemyHolder, cloestEdge.Item2);
-                    } else {
-                        pirate.Push(enemyHolder, Main.mineEnemy);
+                        return Utils.GetPirateStatus(pirate, "Killed enemy holder");
                     }
 
-                    return Utils.GetPirateStatus(pirate, "Pushed enemy holder");
+                    if (available.Count >= 1) {
+
+                        var pushLocation = new Location(6400 - enemyHolder.Location.Row, 6400 - enemyHolder.Location.Col);
+
+                        if (0.5 * killCost <= 1) {
+                            pushLocation = cloestEdge.Item2;
+                        }
+
+                        foreach (Pirate escort in available.Take(2)) {
+                            Main.didTurn.Add(escort.Id);
+                            escort.Push(enemyHolder, cloestEdge.Item2);
+                        }
+
+                        return Utils.GetPirateStatus(pirate, "Couple attacked holder");
+                    }
+
                 }
 
                 pirate.Sail(enemyHolder);
                 return "Berserker moving towards enemy holder...";
-
             }
 
             pirate.Sail(Main.mineEnemy.Towards(Main.game.GetEnemyMothership(), 300));

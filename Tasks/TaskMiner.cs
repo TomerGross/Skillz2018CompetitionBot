@@ -51,9 +51,13 @@ namespace Hydra {
 
         override public int GetWeight() {
 
+            if(Utils.PiratesWithTask(TaskType.MINER).Count >= Main.maxMiners){
+                return 0;
+            }
+
             if (game.GetMyCapsule().Holder == null) {
 
-                var pairs = Utils.SoloClosestPair(game.GetMyLivingPirates(), game.GetEnemyCapsule().Holder);
+                var pairs = Utils.SoloClosestPair(game.GetMyLivingPirates(), game.GetMyCapsule());
 
                 int index = pairs.IndexOf(pairs.First(tuple => tuple.Item1 == pirate));
                 int numofpirates = game.GetAllMyPirates().Length;
@@ -70,6 +74,11 @@ namespace Hydra {
 
 
         override public int Bias() {
+
+            if (Utils.PiratesWithTask(TaskType.MINER).Count >= Main.maxMiners) {
+                return 0;
+            }
+
             return 100;
         }
 

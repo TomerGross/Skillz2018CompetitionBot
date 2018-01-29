@@ -27,8 +27,8 @@ namespace Hydra {
             return new List<Tuple<int, Location>> {
                 new Tuple<int, Location>(loc.Col, new Location(loc.Row, -1)),
                 new Tuple<int, Location>(6400 - loc.Col, new Location(loc.Row, 6401)),
-                new Tuple<int, Location>(loc.Row, new Location(loc.Col, -1)),
-                new Tuple<int, Location>(6400 - loc.Row, new Location(loc.Row, 6401))
+                new Tuple<int, Location>(loc.Row, new Location(-1, loc.Col)),
+                new Tuple<int, Location>(6400 - loc.Row, new Location(6401, loc.Col))
             }.OrderBy(tuple => tuple.Item1).First();
         }
 
@@ -52,7 +52,7 @@ namespace Hydra {
             var listofmapobjects = new List<MapObject>();
 
             return (from obj in objects select new Tuple<MapObject, int>(obj, obj.Distance(to))
-                   ).OrderBy(tuple => tuple.Item1.Distance(to)).ToList();
+                   ).OrderBy(tuple => tuple.Item2).ToList();
         }
 
 

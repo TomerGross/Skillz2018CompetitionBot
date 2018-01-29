@@ -26,7 +26,6 @@
     <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Punctuation.cs" />
     <Compile Include="Utils.cs" />
     <Compile Include="Pathfinding\Path.cs" />
     <Compile Include="Pathfinding\Algorithms\AStar.cs" />
