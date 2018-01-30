@@ -4,147 +4,123 @@ using Pirates;
 
 namespace Hydra {
 
-	public class Main : IPirateBot {
+    public class Main : IPirateBot {
 
 
-		//---------------[ Main variables ]-----------
-		public static PirateGame game;
+        //---------------[ Main variables ]-----------
+        public static PirateGame game;
         public static List<int> didTurn = new List<int>();
-		//--------------------------------------------
+        //public static List<Pirate> enemypirates = game.GetEnemyLivingPirates().ToList(); 
+        public static int numofpushes = 0;
+        //--------------------------------------------
 
 
-		//---------------[ Mines ]--------------------
-		public static Location mine;
-		public static Location mineEnemy;
+        //---------------[ Mines ]--------------------
+        public static Location mine;
+        public static Location mineEnemy;
         public static int maxMiners = 2;
-		//--------------------------------------------
+        //--------------------------------------------
 
 
-		//---------------[ Task mangment ]-------------
-		public static Dictionary<int, TaskType> tasks = new Dictionary<int, TaskType>();
-		public static List<Pirate> unemployedPirates = new List<Pirate>();
-		public static List<TaskType> todoTasks = new List<TaskType>(new List<TaskType> 
-		{ TaskType.MINER, TaskType.ESCORT/*, TaskType.MOLE*/, TaskType.BERSERKER, TaskType.DEFAULT});
-		public static int alivePirateCount = 0;
-		//--------------------------------------------
+        //---------------[ Task mangment ]-------------
+        public static Dictionary<int, TaskType> tasks = new Dictionary<int, TaskType>();
+        public static List<Pirate> unemployedPirates = new List<Pirate>();
+        public readonly List<TaskType> todoTasks = new List<TaskType>(new List<TaskType>
+        { TaskType.MINER, TaskType.ESCORT/*, TaskType.MOLE*/, TaskType.BERSERKER});
+        public static int alivePirateCount = 0;
+        //--------------------------------------------
 
 
-		public void DoTurn(PirateGame game) {
+        public void DoTurn(PirateGame game) {
 
-
-			Main.game = game;
+            Main.numofpushes = 0;
+            Main.game = game;
             didTurn.Clear();
-			alivePirateCount = game.GetMyLivingPirates().Count();
-			
-			if (game.GetMyCapsule().Holder == null) {
-				mine = game.GetMyCapsule().GetLocation();
-			}
+            alivePirateCount = game.GetMyLivingPirates().Count();
 
-			if (game.GetEnemyCapsule().Holder == null) {
-				mineEnemy = game.GetEnemyCapsule().GetLocation();
-			}
+            if (game.GetMyCapsule().Holder == null) {
+                mine = game.GetMyCapsule().GetLocation();
+            }
 
-			
-			// do the tasks
-			unemployedPirates = game.GetMyLivingPirates().ToList();
-			tasks.Clear();
-			giveTasks();
-
-			foreach (KeyValuePair<int, TaskType> pair in tasks){
-				game.Debug(taskTypeToTask(game.GetMyPirateById(pair.Key), pair.Value).Preform());
-				
-				
-			}
-		}
+            if (game.GetEnemyCapsule().Holder == null) {
+                mineEnemy = game.GetEnemyCapsule().GetLocation();
+            }
 
 
-		public int piratesWithTask(TaskType type) {
+            // do the tasks
+            unemployedPirates = game.GetMyLivingPirates().ToList();
+            tasks.Clear();
+            giveTasks();
 
-			int sum = 0;
-			
-			foreach (KeyValuePair<int, TaskType> pair in tasks) {
-				if (pair.Value == type) {
-					sum += 1;
-				} 	
-			}
-
-			return 0;
-		}
+            foreach (KeyValuePair<int, TaskType> pair in tasks) {
+                game.Debug(taskTypeToTask(game.GetMyPirateById(pair.Key), pair.Value).Preform());
+            }
+        }
 
 
-		public Dictionary<double, Tuple<Pirate, TaskType>> getCurrentCosts() {
-			
-			var costs = new Dictionary<double, Tuple<Pirate, TaskType>>();
+        public Dictionary<Tuple<Pirate, TaskType>, double> getCurrentCosts() {
 
-			foreach (Pirate pirate in unemployedPirates) {
+            var scores = new Dictionary<Tuple<Pirate, TaskType>, double>();
 
-				foreach (TaskType taskType in todoTasks) {
-					Task task = taskTypeToTask(pirate, taskType);
-					
-					double cost = task.Bias() + task.GetWeight();
-					cost *= (1 - ((double) piratesWithTask(taskType) / game.GetMyLivingPirates().Count()));
+            foreach (Pirate pirate in unemployedPirates) {
+                foreach (TaskType taskType in todoTasks) {
 
-					if (piratesWithTask(taskType) > 4){
-						cost *= 50;
-					}
-					
-					costs[cost] = new Tuple<Pirate, TaskType>(pirate, taskType);
-					//game.Debug(pirate.Id + " | " + taskType + " | " + cost);
-				}
-			}
+                    Task task = taskTypeToTask(pirate, taskType);
+                    double score = task.Bias() + task.GetWeight();
 
-			return costs;
-		}
-		
+                    scores[new Tuple<Pirate, TaskType>(pirate, taskType)] = score;
+                }
+            }
 
-		public void giveTasks() {
+            game.Debug("SCORES LEN: " + scores.Count);
 
-			for (int i = 0; i < alivePirateCount; i++) {
+ 
+            foreach (Pirate pirate in unemployedPirates) {
+                var ptasks = from tup in scores.Keys.ToList().Where(tup => tup.Item1.Id == pirate.Id) select tup.Item2.ToString() + " > " + scores[tup] + "  ||  ";
+                string s = "";
+                ptasks.ToList().ForEach(str => s += str);
+                game.Debug(pirate.Id + " | " + s);
+            }
 
-				var costs = getCurrentCosts();
+            return scores;
+        }
 
-				var sorted = costs.Keys.ToList();
-				sorted.Sort();
-				sorted.Reverse();
-				
-				foreach (var key in sorted) {
 
-					Pirate pirate = costs[key].Item1;
-					TaskType taskType = costs[key].Item2;
-				
-					if (!tasks.ContainsKey(pirate.Id)) {
-					    
-						game.Debug("Gave: " + pirate.Id + " | " + taskType + " at cost: " + key);
-						
-						tasks[pirate.Id] = taskType;
-						unemployedPirates.Remove(pirate);
-						break;
-					}
-				}
-			}
-		}
-		
+        public void giveTasks() {
 
-		public Task taskTypeToTask(Pirate pirate, TaskType task) {
+            for (int i = 0; i < alivePirateCount; i++) {
 
-			switch (task){
-				case TaskType.BERSERKER:
-					return new TaskBerserker(pirate);
-					
-				case TaskType.ESCORT:
-					return new TaskEscort(pirate);
-					
-				case TaskType.MOLE:
-					return new TaskMole(pirate);
-				
-				case TaskType.DEFAULT:
-				    return new TaskDefault(pirate);
-					
-				default:
-					return new TaskMiner(pirate);
-			}
-		}
-		
-	}
-	
+                var scores = getCurrentCosts();
+                var sorted = scores.Keys.OrderByDescending(key => scores[key]);
+
+                Pirate pirate = sorted.First().Item1;
+                TaskType taskType = sorted.First().Item2;
+
+                tasks[pirate.Id] = taskType;
+                unemployedPirates.Remove(pirate);
+
+                game.Debug("Gave: " + pirate.Id + " | " + taskType + " at cost: " + scores[sorted.First()]);
+            }
+        }
+
+
+        public Task taskTypeToTask(Pirate pirate, TaskType task) {
+
+            switch (task) {
+                case TaskType.BERSERKER:
+                    return new TaskBerserker(pirate);
+
+                case TaskType.ESCORT:
+                    return new TaskEscort(pirate);
+
+                case TaskType.MOLE:
+                    return new TaskMole(pirate);
+
+                default:
+                    return new TaskMiner(pirate);
+            }
+        }
+
+    }
+
 }

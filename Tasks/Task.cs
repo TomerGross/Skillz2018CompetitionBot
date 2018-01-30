@@ -17,7 +17,7 @@ namespace Hydra {
 			return 0;
 		}
 
-		public virtual int GetWeight() {
+        public virtual double GetWeight() {
 			return 0;
 		}
 		

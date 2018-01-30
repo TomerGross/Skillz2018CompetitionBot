@@ -32,7 +32,7 @@ namespace Hydra {
                 };
 
                 Path path = new Path(origin, endgoal, traits, Path.Algorithm.ASTAR);
-                           
+
                 if (path.GetChunks().Count > 0) {
 
                     Chunk nextChunk = path.Pop();
@@ -49,10 +49,10 @@ namespace Hydra {
         }
 
 
-        override public int GetWeight() {
+        override public double GetWeight() {
 
-            if(Utils.PiratesWithTask(TaskType.MINER).Count >= Main.maxMiners){
-                return 0;
+            if (Utils.PiratesWithTask(TaskType.MINER).Count >= Main.maxMiners) {
+                return -100;
             }
 
             if (game.GetMyCapsule().Holder == null) {
@@ -69,15 +69,15 @@ namespace Hydra {
                 return 1000; //he is already in his task
             }
 
-            return 0; // only one miner for this lvl of competition		
+            return 0; // only one miner for this lvl of competition     
         }
 
 
         override public int Bias() {
 
-            if (Utils.PiratesWithTask(TaskType.MINER).Count >= Main.maxMiners) {
-                return 0;
-            }
+            //if (Utils.PiratesWithTask(TaskType.MINER).Count >= Main.maxMiners) {
+            //  return 0;
+            //}
 
             return 100;
         }

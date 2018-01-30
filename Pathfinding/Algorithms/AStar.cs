@@ -57,7 +57,6 @@ namespace Hydra {
                 //Sets the next chunk to go over to be the cheapest
 
                 if (current == endgoal) {
-                    Main.game.Debug("AStar took " + count + " steps to complete");
                     break;
                 }
 
@@ -96,8 +95,6 @@ namespace Hydra {
 
             while(cameFrom.ContainsKey(trace)){
               
-             	Main.game.Debug("AStar Path = " + trace + gScore[trace] + " | " + fScore[trace]);
-
 			 	p.Push(trace);
                 trace = cameFrom[trace];
             }

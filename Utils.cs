@@ -4,7 +4,7 @@ using Pirates;
 
 namespace Hydra {
 
-	public static class Utils {
+	public class Utils {
 
         //-------------------Globals---------------------------------------------
         public static PirateGame game = Main.game;

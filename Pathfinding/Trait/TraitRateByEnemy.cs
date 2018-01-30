@@ -38,7 +38,6 @@ namespace Hydra {
 				}
 			}
 
-			Main.game.Debug("COST: " + cost);
 			return cost;
 		}
 
