@@ -26,7 +26,7 @@ namespace Hydra {
         public static Dictionary<int, TaskType> tasks = new Dictionary<int, TaskType>();
         public static List<Pirate> unemployedPirates = new List<Pirate>();
         public readonly List<TaskType> todoTasks = new List<TaskType>(new List<TaskType>
-        { TaskType.MINER, TaskType.ESCORT/*, TaskType.MOLE*/, TaskType.BERSERKER});
+        { TaskType.MINER, TaskType.ESCORT, TaskType.BOOSTER, TaskType.BERSERKER, TaskType.MOLE});
         public static int alivePirateCount = 0;
         //--------------------------------------------
 
@@ -74,7 +74,7 @@ namespace Hydra {
 
             game.Debug("SCORES LEN: " + scores.Count);
 
- 
+
             foreach (Pirate pirate in unemployedPirates) {
                 var ptasks = from tup in scores.Keys.ToList().Where(tup => tup.Item1.Id == pirate.Id) select tup.Item2.ToString() + " > " + scores[tup] + "  ||  ";
                 string s = "";
@@ -112,6 +112,9 @@ namespace Hydra {
 
                 case TaskType.ESCORT:
                     return new TaskEscort(pirate);
+
+                case TaskType.BOOSTER:
+                    return new TaskBooster(pirate);
 
                 case TaskType.MOLE:
                     return new TaskMole(pirate);

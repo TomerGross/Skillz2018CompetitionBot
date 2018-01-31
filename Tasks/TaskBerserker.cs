@@ -32,12 +32,7 @@ namespace Hydra {
                 if (pirate.CanPush(enemyHolder)) {
 
                     var cloestEdge = Utils.CloestEdge(enemyHolder.Location);
-                    double killCost = cloestEdge.Item1 / game.PushDistance;
-
-                    if (killCost <= 1) {
-                        pirate.Push(enemyHolder, cloestEdge.Item2);
-                        return Utils.GetPirateStatus(pirate, "Pushed nemey holder to edge");
-                    }
+                    double killCost = (cloestEdge.Item1 + pirate.MaxSpeed / 2) / game.PushDistance;
 
                     var available = Utils.PiratesWithTask(TaskType.BERSERKER);
                     available.RemoveAll(escort => !escort.CanPush(enemyHolder) || escort.Id == pirate.Id);
@@ -64,35 +59,30 @@ namespace Hydra {
                 return Utils.GetPirateStatus(pirate, "Moving towards enemy holder");
             }
 
-            pirate.Sail(Main.mineEnemy.Towards(Main.game.GetEnemyMothership(), 300));
+            pirate.Sail(Main.mineEnemy.Towards(Main.game.GetEnemyMothership(), 1000));
             return Utils.GetPirateStatus(pirate, "Moving towards enemy mine");
         }
 
 
-
         override public double GetWeight() {
 
+            Location holder = game.GetEnemyCapsule().Location;
+
             if (game.GetEnemyCapsule().Holder != null) {
-
-                var holderDisEnemyMom = game.GetEnemyCapsule().Holder.Distance(game.GetEnemyMothership());
-
-                if (holderDisEnemyMom <= pirate.Distance(game.GetEnemyMothership()) - game.PushRange) {
-                    return 0;
-                }
-
-                var pairs = Utils.SoloClosestPair(Main.game.GetMyLivingPirates(), Main.game.GetEnemyCapsule().Holder);
-                int index = pairs.IndexOf(pairs.First(tuple => tuple.Item1 == pirate));
-
-                int numofpirates = Main.game.GetAllMyPirates().Length;
-
-                double maxDis = Main.unemployedPirates.Max(pirate => pirate.Distance(game.GetEnemyCapsule().Holder));
-                double weight = ((double)(maxDis - pirate.Distance(game.GetEnemyCapsule().Holder)) / maxDis) * 100;
-
-                return weight;
+                holder = game.GetEnemyCapsule().Holder.Location;
             }
 
-            return 0;
+            var pairs = Utils.SoloClosestPair(Main.game.GetMyLivingPirates(), holder);
+            int index = pairs.IndexOf(pairs.First(tuple => tuple.Item1 == pirate));
+
+            int numofpirates = Main.game.GetAllMyPirates().Length;
+
+            double maxDis = Main.unemployedPirates.Max(pirate => pirate.Distance(holder));
+            double weight = ((double)(maxDis - pirate.Distance(holder)) / maxDis) * 100;
+
+            return weight;
         }
+
 
 
         override public int Bias() {
@@ -101,7 +91,7 @@ namespace Hydra {
                 return 45;
             }
 
-            return 0;
+            return 1;
         }
 
 

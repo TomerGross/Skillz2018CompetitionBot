@@ -6,7 +6,7 @@ namespace Hydra {
 
 
 	public enum TaskType {
-		BERSERKER, ESCORT, MINER, MOLE, DEFAULT
+		BERSERKER, ESCORT, MINER, MOLE, BOOSTER
 	};
 
 
