@@ -7,6 +7,8 @@ namespace Hydra {
     public class Main : IPirateBot {
 
 
+        public static int numofpushes = 0;
+
         //---------------[ Main variables ]-----------
         public static PirateGame game;
         public static List<int> didTurn = new List<int>();
@@ -15,8 +17,8 @@ namespace Hydra {
 
 
         //---------------[ Mines ]--------------------
-        public static List<Location> mines;
-        public static List<Location> enemyMines;
+        public static List<Location> mines = new List<Location>();
+        public static List<Location> enemyMines = new List<Location>();
         public static int maxMiners = 2;
         //--------------------------------------------
 
@@ -35,14 +37,20 @@ namespace Hydra {
             Main.game = game;
 
             // Clearing objects
+            numofpushes = 0;
             tasks.Clear();
             didTurn.Clear();
             alivePirateCount = game.GetMyLivingPirates().Count();
             unemployedPirates = game.GetMyLivingPirates().ToList();
 
             // Gettings the mines
-            game.GetMyCapsules().Where(cap => cap.Holder == null && !mines.Contains(cap.Location)).ToList().ForEach(cap => mines.Add(cap.Location));
-            game.GetEnemyCapsules().Where(cap => cap.Holder == null && !enemyMines.Contains(cap.Location)).ToList().ForEach(cap => enemyMines.Add(cap.Location));
+            if (game.GetMyCapsules().Count() > 0) {
+                game.GetMyCapsules().Where(cap => cap.Holder == null && !mines.Contains(cap.Location)).ToList().ForEach(cap => mines.Add(cap.Location));
+            }
+
+            if (game.GetEnemyCapsules().Count() > 0) {
+                game.GetEnemyCapsules().Where(cap => cap.Holder == null && !enemyMines.Contains(cap.Location)).ToList().ForEach(cap => enemyMines.Add(cap.Location));
+            }
 
             GiveTasks();
 

@@ -67,7 +67,8 @@ namespace Hydra {
                 return Utils.GetPirateStatus(pirate, "Sailing towards holder");
             }
 
-            pirate.Sail(Main.mine.GetLocation().Towards(game.GetMyMotherships()[0], 500));
+            Utils.OrderByDistance(Main.mines, pirate.Location)
+                 pirate.Sail(Utils.OrderByDistance(Main.mines, pirate.Location).First().Towards(game.GetMyMotherships()[0], 500));
             return Utils.GetPirateStatus(pirate, "Sailing to rendezvous point");
         }
 

@@ -61,7 +61,7 @@ namespace Hydra {
             }
 
             // If there is no free capsule a miner is not needed...
-            if (Utils.GetMyHolders().Count() == 0) {
+            if (Utils.FreeCapsulesByDistance().Count() == 0) {
                 return 0;
             }
 
