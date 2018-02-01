@@ -35,11 +35,12 @@ namespace Hydra {
                     double killCost = (cloestEdge.Item1 + pirate.MaxSpeed / 2) / game.PushDistance;
 
                     var available = Utils.PiratesWithTask(TaskType.BERSERKER);
-                    available.RemoveAll(escort => !escort.CanPush(enemyHolder) || escort.Id == pirate.Id);
+                    available.AddRange(Utils.PiratesWithTask(TaskType.MOLE));
+                    available.RemoveAll(pirateAvailable => !pirateAvailable.CanPush(enemyHolder) || pirateAvailable.Id == pirate.Id);
                     available.Insert(0, pirate);
 
                     if (available.Count >= 2) {
-                        var pushLocation = new Location(6400 - enemyHolder.Location.Row, 6400 - enemyHolder.Location.Col);
+                        var pushLocation = new Location(game.Rows - enemyHolder.Location.Row, game.Cols - enemyHolder.Location.Col);
 
                         if (0.5 * killCost <= 1) {
                             pushLocation = cloestEdge.Item2;

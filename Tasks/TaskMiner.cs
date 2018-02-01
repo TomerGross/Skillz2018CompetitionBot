@@ -22,31 +22,30 @@ namespace Hydra {
 
             if (pirate.HasCapsule()) {
 
+                var nearestShip = Utils.OrderByDistance(game.GetMyMotherships().ToList(), pirate.Location).First();
+
                 Chunk origin = Chunk.GetChunk(pirate.GetLocation());
-                Chunk endgoal = Chunk.GetChunk(game.GetMyMotherships()[0].Location);
+                Chunk endgoal = Chunk.GetChunk(nearestShip);
 
                 var traits = new List<Trait>() {
                         new TraitRateByEnemy(2, 1,-1),
-                        new TraitAttractedToGoal(3, game.GetMyMotherships()[0]),
+                        new TraitAttractedToGoal(2, nearestShip),
                         new TraitRateByEdges(5, 2),
                         new TraitRateByAsteroid(2)
                 };
 
                 Path path = new Path(origin, endgoal, traits, Path.Algorithm.ASTAR);
 
-                if (path.GetChunks().Count > 0) {
+                if (path.GetChunks().Count > 0 && nearestShip.Distance(pirate.Location) > Chunk.size) {
 
                     Chunk nextChunk = path.Pop();
                     pirate.Sail(nextChunk.GetLocation());
                     return Utils.GetPirateStatus(pirate, "Sailing to: " + nextChunk.ToString());
                 }
-
-                pirate.Sail(game.GetMyMotherships()[0]);
-                return Utils.GetPirateStatus(pirate, "Is idle");
             }
 
-            if (Main.mines.Count > 0) {
-                pirate.Sail(Utils.OrderByDistance(Main.mines, pirate.Location).First());
+            if (Utils.FreeCapsulesByDistance(pirate.Location).Count > 0) {
+                pirate.Sail(Utils.SafeSail(pirate, Utils.FreeCapsulesByDistance(pirate.Location).First()));
                 return Utils.GetPirateStatus(pirate, "Sailing to mine...");
             }
 
@@ -56,16 +55,20 @@ namespace Hydra {
 
         override public double GetWeight() {
 
+            if(pirate.HasCapsule()){
+                return 1000;
+            }
+
             if (game.GetMyCapsules().Count() == 0 || Utils.PiratesWithTask(TaskType.MINER).Count >= Main.maxMiners) {
                 return -100;
             }
 
             // If there is no free capsule a miner is not needed...
-            if (Utils.FreeCapsulesByDistance().Count() == 0) {
+            if (Utils.FreeCapsulesByDistance(pirate.Location).Count() == 0) {
                 return 0;
             }
 
-            double maxDis = Main.unemployedPirates.Max(pirate => pirate.Distance(Utils.FreeCapsulesByDistance(pirate.Location).Last()));
+            double maxDis = Main.unemployedPirates.Max(unemployed =>  unemployed.Distance(Utils.FreeCapsulesByDistance(unemployed.GetLocation()).Last()) );
             double distance = pirate.Distance(Utils.FreeCapsulesByDistance(pirate.Location).First());
 
             return ((maxDis - distance) / maxDis) * 100;

@@ -29,47 +29,40 @@ namespace Hydra {
         }
 
 
-        //BUG, TURN 25 VS BUNKERBOT
         override public string Preform() {
 
-            if (game.GetMyCapsules()[0].Holder != null) {
+            if (Utils.GetMyHolders().Count() > 0 && game.GetAllMotherships().Count() != 0) {
 
-                Pirate holder = game.GetMyCapsules()[0].Holder;
-
-                game.Debug(Utils.GetPirateStatus(pirate, "PUSH TURNS: " + pirate.PushReloadTurns + " CANPUSH: " + pirate.CanPush(holder) + " DIS: " + holder.Distance(game.GetMyMotherships()[0])) + " DIS2: " + (game.PushDistance + holder.MaxSpeed));
-
-                if (pirate.CanPush(holder) && Main.numofpushes == 0 && holder.Distance(game.GetMyMotherships()[0]) - 300 <= (game.PushDistance + holder.MaxSpeed)) {
-                    game.Debug("numofpushes: " + Main.numofpushes);
-                    Main.numofpushes++;
-                    pirate.Push(holder, game.GetMyMotherships()[0]);
-                    return Utils.GetPirateStatus(pirate, "Pushed holder directly to ship");
-                }
-                
-                Location futureLocation = holder.GetLocation().Towards(game.GetMyMotherships()[0], game.PushDistance);
-                var enemyDisMyMom = Utils.SoloClosestPair(game.GetEnemyLivingPirates(), game.GetMyMotherships()[0]);
-                
-                if (pirate.CanPush(holder) && enemyDisMyMom.Count > 0 && Main.numofpushes == 0 && futureLocation.Distance(game.GetMyMotherships()[0]) < enemyDisMyMom.First().Item2 - game.PushRange)
-                {
-                    game.Debug("numofpushes: " + Main.numofpushes);
-                    Main.numofpushes++;
-                    pirate.Push(holder, game.GetMyMotherships()[0]);
-                    return Utils.GetPirateStatus(pirate, "Pushed holder directly to ship");
-                }
-                
+                var holder = Utils.GetMyHolders().OrderBy(h => h.Distance(pirate)).First();
+                var ship = Utils.OrderByDistance(game.GetMyMotherships().ToList(), pirate.Location).First();
 
                 if (holder.Distance(pirate) >= radius) {
-
-                    pirate.Sail(holder);
+                    pirate.Sail(Utils.SafeSail(pirate, holder.Location));
                     return Utils.GetPirateStatus(pirate, "Sailing towards holder");
                 }
 
-                pirate.Sail(holder);
+                if (pirate.CanPush(holder) && Main.numofpushes == 0 && holder.Distance(ship) - 300 <= (game.PushDistance + holder.MaxSpeed)) {
+                    game.Debug("numofpushes: " + Main.numofpushes);
+                    Main.numofpushes++;
+                    pirate.Push(holder, ship);
+                    return Utils.GetPirateStatus(pirate, "Pushed holder directly to ship");
+                }
+
+                pirate.Sail(Utils.SafeSail(pirate, holder.Location));
                 return Utils.GetPirateStatus(pirate, "Sailing towards holder");
             }
 
-            Utils.OrderByDistance(Main.mines, pirate.Location)
-                 pirate.Sail(Utils.OrderByDistance(Main.mines, pirate.Location).First().Towards(game.GetMyMotherships()[0], 500));
-            return Utils.GetPirateStatus(pirate, "Sailing to rendezvous point");
+            if (Main.mines.Count > 0 && game.GetMyMotherships().Count() > 0) {
+
+                var nearestMine = Utils.OrderByDistance(Main.mines, pirate.Location).First();
+                var nearestShipToMine = Utils.OrderByDistance(game.GetMyMotherships().ToList(), nearestMine).First();
+                var locTowards = nearestMine.Towards(nearestShipToMine, game.PirateMaxSpeed * 2);
+
+                pirate.Sail(Utils.SafeSail(pirate, locTowards));
+                return Utils.GetPirateStatus(pirate, "Sailing to rendezvous point");
+            }
+
+            return Utils.GetPirateStatus(pirate, "Is idle.");
         }
 
 

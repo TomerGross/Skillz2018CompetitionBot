@@ -5,13 +5,13 @@ namespace Hydra {
     public class TraitAttractedToGoal : Trait {
 
         readonly int range;
-        readonly GameObject goal;
+        readonly Chunk goal;
 
 
-        public TraitAttractedToGoal(int range, GameObject goal) {
+        public TraitAttractedToGoal(int range, Location goal) {
 
 			this.range = range;
-            this.goal = goal;
+            this.goal = Chunk.GetChunk(goal);
 		}
 		
 

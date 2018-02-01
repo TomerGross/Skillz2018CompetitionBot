@@ -3,85 +3,101 @@ using System.Linq;
 
 namespace Hydra {
 
-	public class TaskMole : Task{
+    public class TaskMole : Task {
+        
+        //-------------------Globals---------------------------------------------
+        public static PirateGame game = Main.game;
+        //-----------------------------------------------------------------------
+
+        readonly Pirate pirate;
 
 
-		readonly Pirate pirate;
-
-
-		public TaskMole(Pirate pirate) {
-			this.pirate = pirate;
-		}
-		
-		
-		override public string Preform() {
-
-			PirateGame game = Main.game;
-
-			int radius = pirate.MaxSpeed + game.PushDistance;
-			
-			if (game.GetEnemyCapsules()[0].Holder != null) {
-
-				Pirate enemyHolder = game.GetEnemyCapsules()[0].Holder;
-				//Location towardsEnemy = game.GetEnemyMothership().GetLocation().Towards(game.GetEnemyCapsule(),radius);
-
-                // If the pirate is in position and can attack
-                if (pirate.CanPush(enemyHolder)) {
-
-                    var cloestEdge = Utils.CloestEdge(enemyHolder.GetLocation());
-
-                    if (cloestEdge.Item1 <= game.PushDistance) {
-                        pirate.Push(enemyHolder, cloestEdge.Item2);
-                    } else {
-                        pirate.Push(enemyHolder, Main.enemyMines[0]);
-                    }
-
-                    return Utils.GetPirateStatus(pirate, "Pushed enemy holder");
-
-
-                } else {
-                    pirate.Sail(game.GetEnemyMotherships()[0].GetLocation().Towards(game.GetEnemyCapsules()[0].Holder, radius));
-					
-					return Utils.GetPirateStatus(pirate, "Is sailing to position");
-					/*if(pirate.Distance(game.GetEnemyMothership().GetLocation().Towards(Main.mineEnemy, radius)) < 500){
-					// Sail to a position
-					pirate.Sail(towardsEnemy);
-					return "Pirate is sailing to position";
-					}*/
-				}
-			}
-
-            pirate.Sail(game.GetEnemyMotherships()[0].GetLocation().Towards(Main.enemyMines[0], radius));
-			return Utils.GetPirateStatus(pirate, "Is sailing to position");
-		}
-
-
-	
-        override public double GetWeight(){
-            
-            if(Utils.PiratesWithTask(TaskType.MOLE).Count >= 1){
-                return 0;
-            }
-            
-            Location holder = Main.game.GetEnemyMotherships()[0].Location;
-            
-            double maxDis = Main.unemployedPirates.Max(pirate => pirate.Distance(holder));
-
-            double weight = ((double)(maxDis - pirate.Distance(holder)) / maxDis) * 100;
-            Main.game.Debug("ESCORT WEIGHT: " + weight);
-
-            return weight;
+        public TaskMole(Pirate pirate) {
+            this.pirate = pirate;
         }
 
 
-		override public int Bias() {
-		    
-		    if(Utils.PiratesWithTask(TaskType.MOLE).Count >= 1){
+        override public string Preform() {
+
+            if (Main.didTurn.Contains(pirate.Id)) {
+                return Utils.GetPirateStatus(pirate, "Already did turn");
+            }
+
+            int radius = pirate.MaxSpeed + game.PushDistance;
+
+            if (Utils.EnemyHoldersByDistance(pirate.Location).Count() > 0) {
+
+                var enemyHolder = Utils.EnemyHoldersByDistance(pirate.Location).First();
+
+                if (pirate.CanPush(enemyHolder)) {
+
+                    var cloestEdge = Utils.CloestEdge(enemyHolder.GetLocation());
+                    double killCost = (cloestEdge.Item1 + pirate.MaxSpeed / 2) / game.PushDistance;
+
+                    var available = Utils.PiratesWithTask(TaskType.BERSERKER);
+                    available.AddRange(Utils.PiratesWithTask(TaskType.MOLE));
+                    available.RemoveAll(pirateAvailable => !pirateAvailable.CanPush(enemyHolder) || pirateAvailable.Id == pirate.Id);
+                    available.Insert(0, pirate);
+
+                    if (available.Count >= 2) {
+                        var pushLocation = new Location(game.Rows - enemyHolder.Location.Row, game.Cols - enemyHolder.Location.Col);
+
+                        if (0.5 * killCost <= 1) {
+                            pushLocation = cloestEdge.Item2;
+                        }
+
+                        foreach (Pirate mole in available.Take(2)) {
+                            Main.didTurn.Add(mole.Id);
+                            mole.Push(enemyHolder, cloestEdge.Item2);
+                        }
+
+                        return Utils.GetPirateStatus(pirate, "Couple attacked holder");
+                    }
+
+
+                    pirate.Push(enemyHolder, Utils.OppositeLocation(enemyHolder.Location));
+                    return Utils.GetPirateStatus(pirate, "Pushed enemy holder");
+                }
+            }
+
+            var nearestCapsule = Utils.OrderByDistance(game.GetEnemyCapsules().ToList(), pirate.Location).First();
+            var nearestShip = Utils.OrderByDistance(game.GetEnemyMotherships().ToList(), nearestCapsule).First();
+            var loc = nearestShip.GetLocation().Towards(nearestCapsule, radius);
+
+            pirate.Sail(Utils.SafeSail(pirate, loc));
+            return Utils.GetPirateStatus(pirate, "Is sailing to position");
+        }
+
+
+
+        override public double GetWeight() {
+
+            if (game.GetEnemyMotherships().Count() == 0 && Utils.PiratesWithTask(TaskType.MOLE).Count >= 1) {
                 return 0;
             }
-            
-			return 80;
-		}
-		
-	}
+
+            var nearestCapsule = Utils.OrderByDistance(game.GetEnemyMotherships().ToList(), pirate.Location).First();
+
+            if(Utils.EnemyHoldersByDistance(pirate.Location).Count() > 0){
+                nearestCapsule = Utils.EnemyHoldersByDistance(pirate.Location).First().Location;
+            }
+
+            var nearestShip = Utils.OrderByDistance(game.GetEnemyMotherships().ToList(), nearestCapsule).First();
+
+            double maxDis = Main.unemployedPirates.Max(pirate => pirate.Distance(nearestShip));
+
+            return ((double)(maxDis - pirate.Distance(nearestShip)) / maxDis) * 100;
+        }
+
+
+        override public int Bias() {
+
+            if (Utils.PiratesWithTask(TaskType.MOLE).Count >= 2) {
+                return 0;
+            }
+
+            return 80;
+        }
+
+    }
 }

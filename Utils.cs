@@ -11,11 +11,22 @@ namespace Hydra {
         //-----------------------------------------------------------------------
 
 
+        public static bool pushAsteroid(Pirate pirate) {
+
+            foreach (Asteroid asteroid in game.GetAllAsteroids()) {
+
+            }
+
+            return false;
+        }
+
+
         public static Location SafeSail(Pirate pirate, Location to) {
+
 
             var asteroids = AsteroidsByDistance(pirate.Location);
 
-            if (asteroids.Count > 0 && asteroids.First().Distance(pirate.Location) < Chunk.size * 2){
+            if (asteroids.Count > 0 && asteroids.First().Distance(pirate.Location) > Chunk.size * 2){
                 return to;
             }
 
@@ -50,7 +61,7 @@ namespace Hydra {
         public static List<Pirate> EnemyHoldersByDistance(Location l) => (from cap in game.GetEnemyCapsules().ToList().Where(cap => cap.Holder != null).OrderBy(cap => cap.Distance(l)).ToList() select cap.Holder).ToList();
 
 
-        public static List<Pirate> FreeCapsulesByDistance(Location l) => (from cap in game.GetMyCapsules().ToList().Where(cap => cap.Holder == null).OrderBy(cap => cap.Distance(l)).ToList() select cap.Holder).ToList();
+        public static List<Location> FreeCapsulesByDistance(Location l) => (from cap in game.GetMyCapsules().ToList().Where(cap => cap.Holder == null).OrderBy(cap => cap.Distance(l)).ToList() select cap.GetLocation()).ToList();
 
 
         public static List<Asteroid> AsteroidsByDistance(Location l) => game.GetAllAsteroids().OrderBy(asteroid => asteroid.Distance(l)).ToList();
@@ -59,8 +70,13 @@ namespace Hydra {
         public static List<Pirate> PiratesWithTask(TaskType t) => (from tuple in Main.tasks.Where(pair => pair.Value == t) select game.GetMyPirateById(tuple.Key)).ToList(); 
   
 
-        public static int ClosestEdgeDistance(Location l) => new List<int> { l.Col, l.Row, 6400 - l.Col, 6400 - l.Row }.OrderBy(dis => dis).First();
+        public static int ClosestEdgeDistance(Location l) => new List<int> { l.Col, l.Row, game.Cols - l.Col, game.Rows - l.Row }.OrderBy(dis => dis).First();
  
+
+        public static Location OppositeLocation(Location loc){
+            return new Location(game.Rows - loc.Row, game.Cols - loc.Col);
+        }
+
 
         // Returns the distance from the cloest edge and the push location
         public static Tuple<int, Location> CloestEdge(Location loc) {
