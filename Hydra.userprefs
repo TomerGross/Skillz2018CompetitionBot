@@ -1,15 +1,19 @@
 ﻿<Properties StartupConfiguration="{9848AF57-F484-4FAA-BCF8-4BF00774ACF5}|Default">
   <MonoDevelop.Ide.Workbench ActiveDocument="Hydra Status">
     <Files>
-      <File FileName="Tasks/TaskEscort.cs" Line="14" Column="9" />
+      <File FileName="Tasks/TaskEscort.cs" Line="92" Column="1" />
       <File FileName="Pathfinding/Trait/TraitAttractedToGoal.cs" Line="6" Column="9" />
-      <File FileName="Tasks/TaskMiner.cs" Line="17" Column="34" />
+      <File FileName="Tasks/TaskMiner.cs" Line="33" Column="19" />
       <File FileName="alottofix.cs" Line="1" Column="1" />
       <File FileName="Pathfinding/Algorithms/AStar.cs" Line="99" Column="40" />
       <File FileName="Tasks/TaskBooster.cs" Line="20" Column="25" />
-      <File FileName="Tasks/TaskMole.cs" Line="6" Column="35" />
-      <File FileName="Tasks/TaskBerserker.cs" Line="48" Column="14" />
-      <File FileName="Main.cs" Line="76" Column="13" />
+      <File FileName="Tasks/TaskMole.cs" Line="37" Column="1" />
+      <File FileName="Tasks/TaskBerserker.cs" Line="80" Column="63" />
+      <File FileName="Main.cs" Line="48" Column="24" />
+      <File FileName="Utils.cs" Line="30" Column="17" />
+      <File FileName="Map/Chunk.cs" Line="10" Column="52" />
+      <File FileName="Pathfinding/Trait/TraitRateByAsteroid.cs" Line="23" Column="12" />
+      <File FileName="Pathfinding/Trait/TraitRateByEdges.cs" Line="1" Column="1" />
       <File FileName="Hydra Status" />
     </Files>
   </MonoDevelop.Ide.Workbench>

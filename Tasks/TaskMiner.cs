@@ -23,12 +23,13 @@ namespace Hydra {
             if (pirate.HasCapsule()) {
 
                 Chunk origin = Chunk.GetChunk(pirate.GetLocation());
-                Chunk endgoal = Chunk.GetChunk(game.GetMyMothership().Location);
+                Chunk endgoal = Chunk.GetChunk(game.GetMyMotherships()[0].Location);
 
                 var traits = new List<Trait>() {
                         new TraitRateByEnemy(2, 1,-1),
-                        new TraitAttractedToGoal(3, game.GetMyMothership()),
-                        new TraitRateByEdges(5, 2)
+                        new TraitAttractedToGoal(3, game.GetMyMotherships()[0]),
+                        new TraitRateByEdges(5, 2),
+                        new TraitRateByAsteroid(3)
                 };
 
                 Path path = new Path(origin, endgoal, traits, Path.Algorithm.ASTAR);
@@ -40,7 +41,7 @@ namespace Hydra {
                     return Utils.GetPirateStatus(pirate, "Sailing to: " + nextChunk.ToString());
                 }
 
-                pirate.Sail(game.GetMyMothership());
+                pirate.Sail(game.GetMyMotherships()[0]);
                 return Utils.GetPirateStatus(pirate, "Is idle");
             }
 
@@ -50,14 +51,18 @@ namespace Hydra {
 
 
         override public double GetWeight() {
+            
+            if (game.GetMyCapsules().Count() == 0) {
+                return 0;
+            }
 
             if (Utils.PiratesWithTask(TaskType.MINER).Count >= Main.maxMiners) {
                 return -100;
             }
 
-            if (game.GetMyCapsule().Holder == null) {
+            if (game.GetMyCapsules()[0].Holder == null) {
 
-                var pairs = Utils.SoloClosestPair(game.GetMyLivingPirates(), game.GetMyCapsule());
+                var pairs = Utils.SoloClosestPair(game.GetMyLivingPirates(), game.GetMyCapsules()[0]);
 
                 int index = pairs.IndexOf(pairs.First(tuple => tuple.Item1 == pirate));
                 int numofpirates = game.GetAllMyPirates().Length;
@@ -65,7 +70,7 @@ namespace Hydra {
                 return (numofpirates - index) * (100 / numofpirates);
             }
 
-            if (game.GetMyCapsule().Holder == pirate) {
+            if (game.GetMyCapsules()[0].Holder == pirate) {
                 return 1000; //he is already in his task
             }
 
@@ -75,9 +80,10 @@ namespace Hydra {
 
         override public int Bias() {
 
-            //if (Utils.PiratesWithTask(TaskType.MINER).Count >= Main.maxMiners) {
-            //  return 0;
-            //}
+            if (game.GetMyCapsules().Count() == 0) {
+                return 0;
+            }
+
 
             return 100;
         }

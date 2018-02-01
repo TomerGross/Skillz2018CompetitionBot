@@ -48,6 +48,7 @@
     <Compile Include="Tuple.cs" />
     <Compile Include="PushingTactic.cs" />
     <Compile Include="Tasks\TaskBooster.cs" />
+    <Compile Include="Pathfinding\Trait\TraitRateByAsteroid.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="PirateGame">

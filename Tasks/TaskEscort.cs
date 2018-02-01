@@ -32,9 +32,9 @@ namespace Hydra {
         //BUG, TURN 25 VS BUNKERBOT
         override public string Preform() {
 
-            if (game.GetMyCapsule().Holder != null) {
+            if (game.GetMyCapsules()[0].Holder != null) {
 
-                Pirate holder = game.GetMyCapsule().Holder;
+                Pirate holder = game.GetMyCapsules()[0].Holder;
 
                 if (holder.Distance(pirate) >= radius) {
                     pirate.Sail(holder);
@@ -42,7 +42,7 @@ namespace Hydra {
                 }
 
                 foreach (Pirate enemy in game.GetEnemyLivingPirates().Where(enemy => pirate.CanPush(enemy))) {
-                    pirate.Push(enemy, enemy.Location.Towards(game.GetEnemyMothership(), -5000));
+                    pirate.Push(enemy, enemy.Location.Towards(game.GetEnemyMotherships()[0], -5000));
                     return Utils.GetPirateStatus(pirate, "Pushed enemy pirate " + enemy.Id);
                 }
 
@@ -50,22 +50,26 @@ namespace Hydra {
                 return Utils.GetPirateStatus(pirate, "Sailing towards holder");
             }
 
-            pirate.Sail(Main.mine.GetLocation().Towards(game.GetMyMothership(), 500));
+            pirate.Sail(Main.mine.GetLocation().Towards(game.GetMyMotherships()[0], 500));
             return Utils.GetPirateStatus(pirate, "Sailing to rendezvous point");
         }
 
 
         override public double GetWeight() {
 
-            Location holder = Main.mine;
-
-            if (game.GetMyCapsule().Holder != null) {
-                holder = game.GetMyCapsule().Holder.Location;
+            if (game.GetMyCapsules().Count() == 0) {
+                return 0;
             }
 
-            var enemyDisMyMom = Utils.SoloClosestPair(game.GetEnemyLivingPirates(), game.GetMyMothership());
+            Location holder = Main.mine;
 
-            if (game.Turn > 1 && enemyDisMyMom.First().Item2 > holder.Distance(game.GetMyMothership()) + game.PushRange) {
+            if (game.GetMyCapsules()[0].Holder != null) {
+                holder = game.GetMyCapsules()[0].Holder.Location;
+            }
+
+            var enemyDisMyMom = Utils.SoloClosestPair(game.GetEnemyLivingPirates(), game.GetMyMotherships()[0]);
+
+            if (game.Turn > 1 && enemyDisMyMom.Count > 0 && enemyDisMyMom.First().Item2 > holder.Distance(game.GetMyMotherships()[0]) + game.PushRange) {
                 return 0;
             }
 

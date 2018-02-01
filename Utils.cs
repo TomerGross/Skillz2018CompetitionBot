@@ -11,15 +11,42 @@ namespace Hydra {
         //-----------------------------------------------------------------------
 
 
-        public static List<Pirate> PiratesWithTask(TaskType type) {
-            return (from tuple in Main.tasks.Where(pair => pair.Value == type) select game.GetMyPirateById(tuple.Key)).ToList();
+        public static Location SafeSail(Pirate pirate, Location to) {
+
+            var asteroids = AsteroidsByDistance(pirate.Location);
+
+            if (asteroids.Count > 0 && asteroids.First().Distance(pirate.Location) < Chunk.size * 2){
+                return to;
+            }
+
+            if (game.GetAllAsteroids().Count() == 0 || pirate.Distance(to) < Chunk.size) {
+                return to;
+            }
+
+            var traits = new List<Trait>() { new TraitRateByAsteroid(2) };
+            Path path = new Path(Chunk.GetChunk(pirate.Location), Chunk.GetChunk(to), traits, Path.Algorithm.ASTAR);
+
+            if (path.GetChunks().Count > 0) {
+
+                Chunk nextChunk = path.Pop();
+                return nextChunk.GetLocation();
+            }
+
+            return to;
         }
 
 
-        public static int ClosestEdgeDistance(Location loc) {
-            return new List<int> { loc.Col, loc.Row, 6400 - loc.Col, 6400 - loc.Row }.OrderBy(dis => dis).First();
-        }
+        public static List<Pirate> EnemyHoldersByDistance(Location l) => (from cap in game.GetEnemyCapsules().ToList().Where(cap => cap.Holder != null).OrderBy(cap => cap.Distance(l)).ToList() select cap.Holder).ToList();
 
+
+        public static List<Asteroid> AsteroidsByDistance(Location l) => game.GetAllAsteroids().OrderBy(asteroid => asteroid.Distance(l)).ToList();
+
+
+        public static List<Pirate> PiratesWithTask(TaskType t) => (from tuple in Main.tasks.Where(pair => pair.Value == t) select game.GetMyPirateById(tuple.Key)).ToList(); 
+  
+
+        public static int ClosestEdgeDistance(Location l) => new List<int> { l.Col, l.Row, 6400 - l.Col, 6400 - l.Row }.OrderBy(dis => dis).First();
+ 
 
         // Returns the distance from the cloest edge and the push location
         public static Tuple<int, Location> CloestEdge(Location loc) {

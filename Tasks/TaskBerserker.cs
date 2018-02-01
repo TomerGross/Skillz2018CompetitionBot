@@ -25,14 +25,14 @@ namespace Hydra {
                 return Utils.GetPirateStatus(pirate, "Already did turn");
             }
 
-            if (game.GetEnemyCapsule().Holder != null) {
+            if (Utils.EnemyHoldersByDistance(pirate.Location).Count > 0) {
 
-                Pirate enemyHolder = game.GetEnemyCapsule().Holder;
+                Pirate enemyHolder = Utils.EnemyHoldersByDistance(pirate.Location).First();
 
                 if (pirate.CanPush(enemyHolder)) {
 
                     var cloestEdge = Utils.CloestEdge(enemyHolder.Location);
-                    double killCost = (cloestEdge.Item1 + pirate.MaxSpeed / 2) / game.PushDistance;
+                    double killCost = (cloestEdge.Item1 + pirate.MaxSpeed/2) / game.PushDistance;
 
                     var available = Utils.PiratesWithTask(TaskType.BERSERKER);
                     available.RemoveAll(escort => !escort.CanPush(enemyHolder) || escort.Id == pirate.Id);
@@ -55,21 +55,53 @@ namespace Hydra {
 
                 }
 
-                pirate.Sail(enemyHolder);
-                return Utils.GetPirateStatus(pirate, "Moving towards enemy holder");
+                var sailLocation = Utils.SafeSail(pirate, enemyHolder.Location);
+
+               Chunk origin2 = Chunk.GetChunk(pirate.Location);
+                Chunk endgoal2 = Chunk.GetChunk(enemyHolder.Location);
+
+                var traits2 = new List<Trait>() {
+                        new TraitRateByAsteroid(2)
+                };
+
+                Path path2 = new Path(origin2, endgoal2, traits2, Path.Algorithm.ASTAR);
+
+                if (path2.GetChunks().Count > 0) {
+
+                    Chunk nextChunk = path2.Pop();
+                    pirate.Sail(nextChunk.GetLocation());
+                    return Utils.GetPirateStatus(pirate, "Moving towards enemy holder");
+                }
+
             }
 
-            pirate.Sail(Main.mineEnemy.Towards(Main.game.GetEnemyMothership(), 1000));
+            var sailLocation = Main.mineEnemy.Towards(Main.game.GetEnemyMotherships()[0], 1000));
+
+               Chunk origin = Chunk.GetChunk(pirate.Location);
+                Chunk endgoal = Chunk.GetChunk(Main.mineEnemy.Towards(Main.game.GetEnemyMotherships()[0], 1000));
+
+                var traits = new List<Trait>() {
+                        new TraitRateByAsteroid(2)
+                };
+
+                Path path = new Path(origin, endgoal, traits, Path.Algorithm.ASTAR);
+
+                if (path.GetChunks().Count > 0) {
+
+                    Chunk nextChunk = path.Pop();
+                    pirate.Sail(nextChunk.GetLocation());
+                }
+                
             return Utils.GetPirateStatus(pirate, "Moving towards enemy mine");
         }
 
 
         override public double GetWeight() {
 
-            Location holder = game.GetEnemyCapsule().Location;
+            Location holder = game.GetEnemyCapsules()[0].Location;
 
-            if (game.GetEnemyCapsule().Holder != null) {
-                holder = game.GetEnemyCapsule().Holder.Location;
+            if (game.GetEnemyCapsules()[0].Holder != null) {
+                holder = game.GetEnemyCapsules()[0].Holder.Location;
             }
 
             var pairs = Utils.SoloClosestPair(Main.game.GetMyLivingPirates(), holder);

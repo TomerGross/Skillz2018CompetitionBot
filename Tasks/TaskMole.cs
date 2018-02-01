@@ -3,27 +3,26 @@ using System.Linq;
 
 namespace Hydra {
 
-    public class TaskMole : Task {
-
-        readonly Pirate pirate;
+	public class TaskMole : Task{
 
 
-        public TaskMole(Pirate pirate) {
-            
-            this.pirate = pirate;
-        }
+		readonly Pirate pirate;
 
+		public TaskMole(Pirate pirate) {
+			this.pirate = pirate;
+		}
+		
+		
+		override public string Preform() {
 
-        override public string Preform() {
+			PirateGame game = Main.game;
 
-            PirateGame game = Main.game;
+			int radius = pirate.MaxSpeed + game.PushDistance;
+			
+			if (game.GetEnemyCapsules()[0].Holder != null) {
 
-            int radius = pirate.MaxSpeed + game.PushDistance;
-
-            if (game.GetEnemyCapsule().Holder != null) {
-
-                Pirate enemyHolder = game.GetEnemyCapsule().Holder;
-                //Location towardsEnemy = game.GetEnemyMothership().GetLocation().Towards(game.GetEnemyCapsule(),radius);
+				Pirate enemyHolder = game.GetEnemyCapsules()[0].Holder;
+				//Location towardsEnemy = game.GetEnemyMothership().GetLocation().Towards(game.GetEnemyCapsule(),radius);
 
                 // If the pirate is in position and can attack
                 if (pirate.CanPush(enemyHolder)) {
@@ -40,31 +39,31 @@ namespace Hydra {
 
 
                 } else {
-                    pirate.Sail(game.GetEnemyMothership().GetLocation().Towards(game.GetEnemyCapsule().Holder, radius));
+                    pirate.Sail(game.GetEnemyMotherships()[0].GetLocation().Towards(game.GetEnemyCapsules()[0].Holder, radius));
+					
+					return Utils.GetPirateStatus(pirate, "Is sailing to position");
+					/*if(pirate.Distance(game.GetEnemyMothership().GetLocation().Towards(Main.mineEnemy, radius)) < 500){
+					// Sail to a position
+					pirate.Sail(towardsEnemy);
+					return "Pirate is sailing to position";
+					}*/
+				}
+			}
 
-                    return Utils.GetPirateStatus(pirate, "Is sailing to position");
-                    /*if(pirate.Distance(game.GetEnemyMothership().GetLocation().Towards(Main.mineEnemy, radius)) < 500){
-                    // Sail to a position
-                    pirate.Sail(towardsEnemy);
-                    return "Pirate is sailing to position";
-                    }*/
-                }
-            }
-
-            pirate.Sail(game.GetEnemyMothership().GetLocation().Towards(Main.mineEnemy, radius));
-            return Utils.GetPirateStatus(pirate, "Is sailing to position");
-        }
+			pirate.Sail(game.GetEnemyMotherships()[0].GetLocation().Towards(Main.mineEnemy, radius));
+			return Utils.GetPirateStatus(pirate, "Is sailing to position");
+		}
 
 
-
-        override public double GetWeight() {
-
-            if (Utils.PiratesWithTask(TaskType.MOLE).Count >= 1) {
+	
+        override public double GetWeight(){
+            
+            if(Utils.PiratesWithTask(TaskType.MOLE).Count >= 1){
                 return 0;
             }
-
-            Location holder = Main.game.GetEnemyMothership().Location;
-
+            
+            Location holder = Main.game.GetEnemyMotherships()[0].Location;
+            
             double maxDis = Main.unemployedPirates.Max(pirate => pirate.Distance(holder));
 
             double weight = ((double)(maxDis - pirate.Distance(holder)) / maxDis) * 100;
@@ -74,14 +73,14 @@ namespace Hydra {
         }
 
 
-        override public int Bias() {
-
-            if (Utils.PiratesWithTask(TaskType.MOLE).Count >= 1) {
+		override public int Bias() {
+		    
+		    if(Utils.PiratesWithTask(TaskType.MOLE).Count >= 1){
                 return 0;
             }
-
-            return 80;
-        }
-
-    }
+            
+			return 80;
+		}
+		
+	}
 }

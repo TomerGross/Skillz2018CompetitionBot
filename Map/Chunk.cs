@@ -7,7 +7,7 @@ namespace Hydra{
 
         
         public const int size = 320;
-        public const int n = 6400 / size; //Number of chunks
+        public static int n = Main.game.Cols / size; //Number of chunks
         
         public static Chunk[,] chunks = new Chunk[n, n]; //Keeps track of all the chunks
 		

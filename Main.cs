@@ -16,8 +16,8 @@ namespace Hydra {
 
 
         //---------------[ Mines ]--------------------
-        public static Location mine;
-        public static Location mineEnemy;
+        public static List<Location> mines;
+        public static List<Location> enemyMines;
         public static int maxMiners = 2;
         //--------------------------------------------
 
@@ -38,16 +38,9 @@ namespace Hydra {
             didTurn.Clear();
             alivePirateCount = game.GetMyLivingPirates().Count();
 
-            if (game.GetMyCapsule().Holder == null) {
-                mine = game.GetMyCapsule().GetLocation();
-            }
+            game.GetMyCapsules().Where(cap => cap.Holder == null && !mines.Contains(cap.Location)).ToList().ForEach(cap => mines.Add(cap.Location));
+            game.GetEnemyCapsules().Where(cap => cap.Holder == null && !enemyMines.Contains(cap.Location)).ToList().ForEach(cap => enemyMines.Add(cap.Location));
 
-            if (game.GetEnemyCapsule().Holder == null) {
-                mineEnemy = game.GetEnemyCapsule().GetLocation();
-            }
-
-
-            // do the tasks
             unemployedPirates = game.GetMyLivingPirates().ToList();
             tasks.Clear();
             giveTasks();
@@ -74,7 +67,7 @@ namespace Hydra {
 
             game.Debug("SCORES LEN: " + scores.Count);
 
-
+            
             foreach (Pirate pirate in unemployedPirates) {
                 var ptasks = from tup in scores.Keys.ToList().Where(tup => tup.Item1.Id == pirate.Id) select tup.Item2.ToString() + " > " + scores[tup] + "  ||  ";
                 string s = "";
@@ -112,7 +105,7 @@ namespace Hydra {
 
                 case TaskType.ESCORT:
                     return new TaskEscort(pirate);
-
+                    
                 case TaskType.BOOSTER:
                     return new TaskBooster(pirate);
 
