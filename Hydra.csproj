@@ -33,11 +33,11 @@
     <Compile Include="Pathfinding\Predict.cs" />
     <Compile Include="Tasks\Task.cs" />
     <Compile Include="Tasks\TaskBerserker.cs" />
+    <Compile Include="Tasks\TaskMiner.cs" />
     <Compile Include="Pathfinding\Trait\Trait.cs" />
     <Compile Include="Pathfinding\Trait\TraitRateByEnemy.cs" />
     <Compile Include="Pathfinding\Tools\Line.cs" />
     <Compile Include="Pathfinding\Algorithms\MTDstarLite.cs" />
-    <Compile Include="Tasks\TaskMiner.cs" />
     <Compile Include="Tasks\TaskEscort.cs" />
     <Compile Include="Tasks\TaskMole.cs" />
     <Compile Include="Main.cs" />

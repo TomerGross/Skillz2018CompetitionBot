@@ -8,6 +8,7 @@ namespace Hydra {
 
 		readonly Pirate pirate;
 
+
 		public TaskMole(Pirate pirate) {
 			this.pirate = pirate;
 		}
@@ -32,7 +33,7 @@ namespace Hydra {
                     if (cloestEdge.Item1 <= game.PushDistance) {
                         pirate.Push(enemyHolder, cloestEdge.Item2);
                     } else {
-                        pirate.Push(enemyHolder, Main.mineEnemy);
+                        pirate.Push(enemyHolder, Main.enemyMines[0]);
                     }
 
                     return Utils.GetPirateStatus(pirate, "Pushed enemy holder");
@@ -50,7 +51,7 @@ namespace Hydra {
 				}
 			}
 
-			pirate.Sail(game.GetEnemyMotherships()[0].GetLocation().Towards(Main.mineEnemy, radius));
+            pirate.Sail(game.GetEnemyMotherships()[0].GetLocation().Towards(Main.enemyMines[0], radius));
 			return Utils.GetPirateStatus(pirate, "Is sailing to position");
 		}
 

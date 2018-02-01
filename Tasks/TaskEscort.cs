@@ -29,15 +29,15 @@ namespace Hydra {
             radius = 500;
         }
 
-        //BUG, TURN 25 VS BUNKERBOT
+
         override public string Preform() {
 
-            if (game.GetMyCapsules()[0].Holder != null) {
+            if (Utils.GetMyHolders().Count() > 0) {
 
-                Pirate holder = game.GetMyCapsules()[0].Holder;
+                var holder = Utils.OrderByDistance(Utils.GetMyHolders(), pirate.Location).First();
 
                 if (holder.Distance(pirate) >= radius) {
-                    pirate.Sail(holder);
+                    pirate.Sail(Utils.SafeSail(pirate, holder));
                     return Utils.GetPirateStatus(pirate, "Sailing towards holder");
                 }
 
@@ -46,12 +46,21 @@ namespace Hydra {
                     return Utils.GetPirateStatus(pirate, "Pushed enemy pirate " + enemy.Id);
                 }
 
-                pirate.Sail(holder);
+                pirate.Sail(Utils.SafeSail(pirate, holder));
                 return Utils.GetPirateStatus(pirate, "Sailing towards holder");
             }
 
-            pirate.Sail(Main.mine.GetLocation().Towards(game.GetMyMotherships()[0], 500));
-            return Utils.GetPirateStatus(pirate, "Sailing to rendezvous point");
+            if(Main.mines.Count > 0 && game.GetMyMotherships().Count() > 0){
+
+                var nearestMine = Utils.OrderByDistance(Main.mines, pirate.Location).First();
+                var nearestShipToMine = Utils.OrderByDistance(game.GetMyMotherships().ToList(), nearestMine).First();
+                var locTowards = nearestMine.Towards(nearestShipToMine, game.PirateMaxSpeed * 2);
+                    
+                pirate.Sail(Utils.SafeSail(pirate, locTowards));
+                return Utils.GetPirateStatus(pirate, "Sailing to rendezvous point");
+            }
+
+            return Utils.GetPirateStatus(pirate, "Is idle.");
         }
 
 
@@ -61,28 +70,39 @@ namespace Hydra {
                 return 0;
             }
 
-            Location holder = Main.mine;
-
-            if (game.GetMyCapsules()[0].Holder != null) {
-                holder = game.GetMyCapsules()[0].Holder.Location;
-            }
-
+            /*
+             * TODO ADD BACK THIS: 
+             * 
             var enemyDisMyMom = Utils.SoloClosestPair(game.GetEnemyLivingPirates(), game.GetMyMotherships()[0]);
 
             if (game.Turn > 1 && enemyDisMyMom.Count > 0 && enemyDisMyMom.First().Item2 > holder.Distance(game.GetMyMotherships()[0]) + game.PushRange) {
                 return 0;
             }
+            */
 
-            double maxDis = Main.unemployedPirates.Max(pirate => pirate.Distance(holder));
+            if (game.GetMyCapsules().Count() > 0) {
 
-            double weight = ((double)(maxDis - pirate.Distance(holder)) / maxDis) * 100;
-            game.Debug("ESCORT WEIGHT: " + weight);
+                var capsule = Utils.OrderByDistance(game.GetMyCapsules().ToList(), pirate.Location).First().GetLocation();
 
-            return weight;
+                if (Utils.GetMyHolders().Count > 0) {
+                    capsule = Utils.GetMyHolders().OrderBy(hold => hold.Distance(pirate)).First().Location;
+                }
+
+                double maxDis = Main.unemployedPirates.Max(pirate => pirate.Distance(capsule));
+                return ((maxDis - pirate.Distance(capsule)) / maxDis) * 100;
+            }
+
+            return 0;
+
         }
 
 
         override public int Bias() {
+
+            if (Utils.GetMyHolders().Count > 0) {
+                return 20;
+            }
+
             return 0;
         }
 

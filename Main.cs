@@ -11,7 +11,6 @@ namespace Hydra {
         public static PirateGame game;
         public static List<int> didTurn = new List<int>();
         //public static List<Pirate> enemypirates = game.GetEnemyLivingPirates().ToList(); 
-        public static int numofpushes = 0;
         //--------------------------------------------
 
 
@@ -33,17 +32,19 @@ namespace Hydra {
 
         public void DoTurn(PirateGame game) {
 
-            Main.numofpushes = 0;
             Main.game = game;
+
+            // Clearing objects
+            tasks.Clear();
             didTurn.Clear();
             alivePirateCount = game.GetMyLivingPirates().Count();
+            unemployedPirates = game.GetMyLivingPirates().ToList();
 
+            // Gettings the mines
             game.GetMyCapsules().Where(cap => cap.Holder == null && !mines.Contains(cap.Location)).ToList().ForEach(cap => mines.Add(cap.Location));
             game.GetEnemyCapsules().Where(cap => cap.Holder == null && !enemyMines.Contains(cap.Location)).ToList().ForEach(cap => enemyMines.Add(cap.Location));
 
-            unemployedPirates = game.GetMyLivingPirates().ToList();
-            tasks.Clear();
-            giveTasks();
+            GiveTasks();
 
             foreach (KeyValuePair<int, TaskType> pair in tasks) {
                 game.Debug(taskTypeToTask(game.GetMyPirateById(pair.Key), pair.Value).Preform());
@@ -51,7 +52,7 @@ namespace Hydra {
         }
 
 
-        public Dictionary<Tuple<Pirate, TaskType>, double> getCurrentCosts() {
+        public Dictionary<Tuple<Pirate, TaskType>, double> GetCurrentCosts() {
 
             var scores = new Dictionary<Tuple<Pirate, TaskType>, double>();
 
@@ -79,11 +80,11 @@ namespace Hydra {
         }
 
 
-        public void giveTasks() {
+        public void GiveTasks() {
 
             for (int i = 0; i < alivePirateCount; i++) {
 
-                var scores = getCurrentCosts();
+                var scores = GetCurrentCosts();
                 var sorted = scores.Keys.OrderByDescending(key => scores[key]);
 
                 Pirate pirate = sorted.First().Item1;

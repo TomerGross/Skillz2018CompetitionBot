@@ -32,7 +32,7 @@ namespace Hydra {
                 if (pirate.CanPush(enemyHolder)) {
 
                     var cloestEdge = Utils.CloestEdge(enemyHolder.Location);
-                    double killCost = (cloestEdge.Item1 + pirate.MaxSpeed/2) / game.PushDistance;
+                    double killCost = (cloestEdge.Item1 + pirate.MaxSpeed / 2) / game.PushDistance;
 
                     var available = Utils.PiratesWithTask(TaskType.BERSERKER);
                     available.RemoveAll(escort => !escort.CanPush(enemyHolder) || escort.Id == pirate.Id);
@@ -57,7 +57,7 @@ namespace Hydra {
 
                 var sailLocation = Utils.SafeSail(pirate, enemyHolder.Location);
 
-               Chunk origin2 = Chunk.GetChunk(pirate.Location);
+                Chunk origin2 = Chunk.GetChunk(pirate.Location);
                 Chunk endgoal2 = Chunk.GetChunk(enemyHolder.Location);
 
                 var traits2 = new List<Trait>() {
@@ -75,44 +75,36 @@ namespace Hydra {
 
             }
 
-            var sailLocation = Main.mineEnemy.Towards(Main.game.GetEnemyMotherships()[0], 1000));
+            if (Main.enemyMines.Count > 0 && game.GetEnemyMotherships().Count() > 0) {
 
-               Chunk origin = Chunk.GetChunk(pirate.Location);
-                Chunk endgoal = Chunk.GetChunk(Main.mineEnemy.Towards(Main.game.GetEnemyMotherships()[0], 1000));
+                var cloestEnemyMine = Utils.OrderByDistance(Main.enemyMines, pirate.Location).First();
+                var cloestEnemyShip = Utils.OrderByDistance(game.GetEnemyMotherships().ToList(), pirate.Location).First();
+                var sailLocation = cloestEnemyMine.Towards(cloestEnemyShip, game.PirateMaxSpeed + game.PushDistance);
+                   
+                pirate.Sail(Utils.SafeSail(pirate, sailLocation));
+                return Utils.GetPirateStatus(pirate, "Moving towards enemy mine");
+            }
 
-                var traits = new List<Trait>() {
-                        new TraitRateByAsteroid(2)
-                };
 
-                Path path = new Path(origin, endgoal, traits, Path.Algorithm.ASTAR);
-
-                if (path.GetChunks().Count > 0) {
-
-                    Chunk nextChunk = path.Pop();
-                    pirate.Sail(nextChunk.GetLocation());
-                }
-                
-            return Utils.GetPirateStatus(pirate, "Moving towards enemy mine");
+            return Utils.GetPirateStatus(pirate, "Is idle."); 
         }
 
 
         override public double GetWeight() {
 
-            Location holder = game.GetEnemyCapsules()[0].Location;
+            if (game.GetEnemyCapsules().Count() > 0) {
 
-            if (game.GetEnemyCapsules()[0].Holder != null) {
-                holder = game.GetEnemyCapsules()[0].Holder.Location;
+                var capsule = Utils.OrderByDistance(game.GetEnemyCapsules().ToList(), pirate.Location).First().GetLocation();
+
+                if (Utils.EnemyHoldersByDistance(pirate.Location).Count > 0) {
+                    capsule = Utils.EnemyHoldersByDistance(pirate.Location).First().Location;
+                }
+
+                double maxDis = Main.unemployedPirates.Max(pirate => pirate.Distance(capsule));
+                return ((maxDis - pirate.Distance(capsule)) / maxDis) * 100;
             }
 
-            var pairs = Utils.SoloClosestPair(Main.game.GetMyLivingPirates(), holder);
-            int index = pairs.IndexOf(pairs.First(tuple => tuple.Item1 == pirate));
-
-            int numofpirates = Main.game.GetAllMyPirates().Length;
-
-            double maxDis = Main.unemployedPirates.Max(pirate => pirate.Distance(holder));
-            double weight = ((double)(maxDis - pirate.Distance(holder)) / maxDis) * 100;
-
-            return weight;
+            return 0;
         }
 
 

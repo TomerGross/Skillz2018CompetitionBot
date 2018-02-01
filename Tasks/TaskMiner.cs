@@ -29,7 +29,7 @@ namespace Hydra {
                         new TraitRateByEnemy(2, 1,-1),
                         new TraitAttractedToGoal(3, game.GetMyMotherships()[0]),
                         new TraitRateByEdges(5, 2),
-                        new TraitRateByAsteroid(3)
+                        new TraitRateByAsteroid(2)
                 };
 
                 Path path = new Path(origin, endgoal, traits, Path.Algorithm.ASTAR);
@@ -45,36 +45,30 @@ namespace Hydra {
                 return Utils.GetPirateStatus(pirate, "Is idle");
             }
 
-            pirate.Sail(Main.mine);
-            return Utils.GetPirateStatus(pirate, "Sailing to mine...");
+            if (Main.mines.Count > 0) {
+                pirate.Sail(Utils.OrderByDistance(Main.mines, pirate.Location).First());
+                return Utils.GetPirateStatus(pirate, "Sailing to mine...");
+            }
+
+            return Utils.GetPirateStatus(pirate, "Is idle....");
         }
 
 
         override public double GetWeight() {
-            
-            if (game.GetMyCapsules().Count() == 0) {
-                return 0;
-            }
 
-            if (Utils.PiratesWithTask(TaskType.MINER).Count >= Main.maxMiners) {
+            if (game.GetMyCapsules().Count() == 0 || Utils.PiratesWithTask(TaskType.MINER).Count >= Main.maxMiners) {
                 return -100;
             }
 
-            if (game.GetMyCapsules()[0].Holder == null) {
-
-                var pairs = Utils.SoloClosestPair(game.GetMyLivingPirates(), game.GetMyCapsules()[0]);
-
-                int index = pairs.IndexOf(pairs.First(tuple => tuple.Item1 == pirate));
-                int numofpirates = game.GetAllMyPirates().Length;
-
-                return (numofpirates - index) * (100 / numofpirates);
+            // If there is no free capsule a miner is not needed...
+            if (Utils.GetMyHolders().Count() == 0) {
+                return 0;
             }
 
-            if (game.GetMyCapsules()[0].Holder == pirate) {
-                return 1000; //he is already in his task
-            }
+            double maxDis = Main.unemployedPirates.Max(pirate => pirate.Distance(Utils.FreeCapsulesByDistance(pirate.Location).Last()));
+            double distance = pirate.Distance(Utils.FreeCapsulesByDistance(pirate.Location).First());
 
-            return 0; // only one miner for this lvl of competition     
+            return ((maxDis - distance) / maxDis) * 100;
         }
 
 

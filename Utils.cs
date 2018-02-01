@@ -36,7 +36,21 @@ namespace Hydra {
         }
 
 
+        public static List<Location> OrderByDistance(List<Location> list, Location l) => list.OrderBy(obj => obj.Distance(l)).ToList();
+
+        public static List<Location> OrderByDistance(List<Pirate> list, Location l) => OrderByDistance((from pirate in list select pirate.Location).ToList(), l);
+        public static List<Location> OrderByDistance(List<Capsule> list, Location l) => OrderByDistance((from capsule in list select capsule.Location).ToList(), l);
+        public static List<Location> OrderByDistance(List<MapObject> list, Location l) => OrderByDistance((from obj in list select obj.GetLocation()).ToList(), l);
+        public static List<Location> OrderByDistance(List<Mothership> list, Location l) => OrderByDistance((from ship in list select ship.Location).ToList(), l);
+
+
+        public static List<Pirate> GetMyHolders() => (from cap in game.GetMyCapsules().ToList().Where(cap => cap.Holder != null) select cap.Holder).ToList();
+
+
         public static List<Pirate> EnemyHoldersByDistance(Location l) => (from cap in game.GetEnemyCapsules().ToList().Where(cap => cap.Holder != null).OrderBy(cap => cap.Distance(l)).ToList() select cap.Holder).ToList();
+
+
+        public static List<Pirate> FreeCapsulesByDistance(Location l) => (from cap in game.GetMyCapsules().ToList().Where(cap => cap.Holder == null).OrderBy(cap => cap.Distance(l)).ToList() select cap.Holder).ToList();
 
 
         public static List<Asteroid> AsteroidsByDistance(Location l) => game.GetAllAsteroids().OrderBy(asteroid => asteroid.Distance(l)).ToList();
@@ -74,12 +88,7 @@ namespace Hydra {
 
         //The function return a list of sorted map object from group1 by distance to object2    
         public static List<Tuple<MapObject, int>> SoloClosestPair(MapObject[] objects, MapObject to) {
-
-            var sortedmapobjects = new List<MapObject>();
-            var listofmapobjects = new List<MapObject>();
-
-            return (from obj in objects select new Tuple<MapObject, int>(obj, obj.Distance(to))
-                   ).OrderBy(tuple => tuple.Item2).ToList();
+            return (from obj in objects select new Tuple<MapObject, int>(obj, obj.Distance(to))).OrderBy(tuple => tuple.Item2).ToList();
         }
 
 
