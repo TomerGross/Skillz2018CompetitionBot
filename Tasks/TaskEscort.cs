@@ -32,10 +32,14 @@ namespace Hydra {
 
         override public string Preform() {
 
+            if (Utils.PushAsteroid(pirate)) {
+                return Utils.GetPirateStatus(pirate, "Pushed asteroid");
+            }
+            
             if (Utils.GetMyHolders().Count() > 0) {
-
+                
                 var holder = Utils.OrderByDistance(Utils.GetMyHolders(), pirate.Location).First();
-
+                
                 if (holder.Distance(pirate) >= radius) {
                     pirate.Sail(Utils.SafeSail(pirate, holder));
                     return Utils.GetPirateStatus(pirate, "Sailing towards holder");
@@ -45,6 +49,7 @@ namespace Hydra {
                     pirate.Push(enemy, enemy.Location.Towards(game.GetEnemyMotherships()[0], -5000));
                     return Utils.GetPirateStatus(pirate, "Pushed enemy pirate " + enemy.Id);
                 }
+
 
                 pirate.Sail(Utils.SafeSail(pirate, holder));
                 return Utils.GetPirateStatus(pirate, "Sailing towards holder");
