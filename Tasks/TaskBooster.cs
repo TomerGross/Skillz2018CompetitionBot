@@ -1,4 +1,4 @@
-﻿using System.Linq;
+using System.Linq;
 using Pirates;
 
 namespace Hydra {
@@ -31,6 +31,7 @@ namespace Hydra {
 
         override public string Preform() {
 
+            
             if (Utils.GetMyHolders().Count() > 0 && game.GetAllMotherships().Count() != 0) {
 
                 var holder = Utils.GetMyHolders().OrderBy(h => h.Distance(pirate)).First();
@@ -47,6 +48,7 @@ namespace Hydra {
                     pirate.Push(holder, ship);
                     return Utils.GetPirateStatus(pirate, "Pushed holder directly to ship");
                 }
+                
 
                 pirate.Sail(Utils.SafeSail(pirate, holder.Location));
                 return Utils.GetPirateStatus(pirate, "Sailing towards holder");
@@ -67,10 +69,10 @@ namespace Hydra {
 
 
         override public double GetWeight() {
-            return new TaskEscort(pirate, radius).GetWeight();
+            return new TaskEscort(pirate, radius).GetWeight() ;
         }
 
-
+        
         override public int Bias() {
             
             if (game.GetMyCapsules().Count() == 0) {
@@ -78,7 +80,7 @@ namespace Hydra {
             }
 
 
-            if (Utils.PiratesWithTask(TaskType.BOOSTER).Count == 0) {
+            if (Utils.PiratesWithTask(TaskType.BOOSTER).Count() == 0) {
                 return 100;
             }
 
