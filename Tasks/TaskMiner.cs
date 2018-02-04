@@ -20,6 +20,10 @@ namespace Hydra {
 
         override public string Preform() {
 
+            if (Utils.PushAsteroid(pirate)) {
+                return Utils.GetPirateStatus(pirate, "Pushed asteroid");
+            }
+            
             if (pirate.HasCapsule()) {
 
                 var nearestShip = Utils.OrderByDistance(game.GetMyMotherships().ToList(), pirate.Location).First();
@@ -31,35 +35,52 @@ namespace Hydra {
                         new TraitRateByEnemy(2, 1,-1),
                         new TraitAttractedToGoal(2, nearestShip),
                         new TraitRateByEdges(5, 2),
-                        new TraitRateByAsteroid(2)
+                        new TraitRateByAsteroid(0)
                 };
 
                 Path path = new Path(origin, endgoal, traits, Path.Algorithm.ASTAR);
 
                 if (path.GetChunks().Count > 0 && nearestShip.Distance(pirate.Location) > Chunk.size) {
 
+
                     Chunk nextChunk = path.Pop();
-                    pirate.Sail(nextChunk.GetLocation());
-                    return Utils.GetPirateStatus(pirate, "Sailing to: " + nextChunk.ToString());
+
+                    if (!Utils.PushAsteroid(pirate)) {
+
+                        pirate.Sail(nextChunk.GetLocation());
+                        return Utils.GetPirateStatus(pirate, "Sailing to: " + nextChunk.ToString());
+                    }
+
+                    return Utils.GetPirateStatus(pirate, "Pushed asteroid");
                 }
+
+                pirate.Sail(Utils.SafeSail(pirate, nearestShip));
+                return Utils.GetPirateStatus(pirate, "Sailing to ship");
             }
 
             if (Utils.FreeCapsulesByDistance(pirate.Location).Count > 0) {
-                pirate.Sail(Utils.SafeSail(pirate, Utils.FreeCapsulesByDistance(pirate.Location).First()));
-                return Utils.GetPirateStatus(pirate, "Sailing to mine...");
+                if (!Utils.PushAsteroid(pirate)) {
+
+                    pirate.Sail(Utils.SafeSail(pirate, Utils.FreeCapsulesByDistance(pirate.Location).First()));
+                    return Utils.GetPirateStatus(pirate, "Sailing to mine... " + pirate.PushReloadTurns);
+                }
+
+                return Utils.GetPirateStatus(pirate, "Pushed asteroid");
             }
 
+
+            //need to check where the miner goes
             return Utils.GetPirateStatus(pirate, "Is idle....");
         }
 
 
         override public double GetWeight() {
 
-            if(pirate.HasCapsule()){
+            if (pirate.HasCapsule()) {
                 return 1000;
             }
 
-            if (game.GetMyCapsules().Count() == 0 || Utils.PiratesWithTask(TaskType.MINER).Count >= Main.maxMiners) {
+            if (game.GetMyCapsules().Count() == 0 || Utils.PiratesWithTask(TaskType.MINER).Count >= game.GetMyCapsules().Count()) {
                 return -100;
             }
 
@@ -68,10 +89,15 @@ namespace Hydra {
                 return 0;
             }
 
-            double maxDis = Main.unemployedPirates.Max(unemployed =>  unemployed.Distance(Utils.FreeCapsulesByDistance(unemployed.GetLocation()).Last()) );
+            double maxDis = Main.unemployedPirates.Max(unemployed => unemployed.Distance(Utils.FreeCapsulesByDistance(unemployed.GetLocation()).Last()));
             double distance = pirate.Distance(Utils.FreeCapsulesByDistance(pirate.Location).First());
+            double weight = ((maxDis - distance) / maxDis) * 100;
 
-            return ((maxDis - distance) / maxDis) * 100;
+            if (pirate.PushReloadTurns > 2) {
+                weight += 15;
+            }
+
+            return weight;
         }
 
 
