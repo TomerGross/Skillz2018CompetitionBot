@@ -7,14 +7,15 @@ namespace Hydra {
     public class Main : IPirateBot {
 
 
-        public static int numofpushes = 0;
-
         //---------------[ Main variables ]-----------
         public static PirateGame game;
         public static List<int> didTurn = new List<int>();
         public static List<Asteroid> asteroidsPushed = new List<Asteroid>();
-        public static bool debug = false;
-        public static bool importantdebug = false;
+        public static List<Pirate> piratesPushed = new List<Pirate>();
+        public static List<Pirate> holdersPaired = new List<Pirate>();
+        public static Dictionary<Pirate, Capsule> capsulesTargetted = new Dictionary<Pirate, Capsule>();
+        public static bool debug = true;
+        public static bool importantdebug = true;
         //--------------------------------------------
 
 
@@ -30,7 +31,7 @@ namespace Hydra {
         public static Dictionary<int, TaskType> tasks = new Dictionary<int, TaskType>();
         public static List<Pirate> unemployedPirates = new List<Pirate>();
         public readonly List<TaskType> todoTasks = new List<TaskType>(new List<TaskType>
-        { TaskType.MINER, TaskType.MOLE, TaskType.BERSERKER, TaskType.ESCORT, TaskType.BOOSTER});
+        { TaskType.MINER, TaskType.MOLE, TaskType.BOOSTER});
         public static int alivePirateCount = 0;
         //--------------------------------------------
 
@@ -39,14 +40,18 @@ namespace Hydra {
 
             Main.game = game;
 
+            if (game.Cols < 6000) {
+                todoTasks.Add(TaskType.BERSERKER);
+            }
             // Clearing objects
-            numofpushes = 0;
+            holdersPaired.Clear();
+            capsulesTargetted.Clear();
             asteroidsPushed.Clear();
             tasks.Clear();
             didTurn.Clear();
+            piratesPushed.Clear();
             alivePirateCount = game.GetMyLivingPirates().Count();
             unemployedPirates = game.GetMyLivingPirates().ToList();
-
 
             // Gettings the mines
             if (game.GetMyCapsules().Count() > 0) {
@@ -56,17 +61,26 @@ namespace Hydra {
             if (game.GetEnemyCapsules().Count() > 0) {
                 game.GetEnemyCapsules().Where(cap => cap.Holder == null && !enemyMines.Contains(cap.Location)).ToList().ForEach(cap => enemyMines.Add(cap.Location));
             }
-            
-            GiveTasks();
-            
 
-            foreach (KeyValuePair<int, TaskType> pair in tasks) {
+            GiveTasks();
+
+            foreach (KeyValuePair<int, TaskType> pair in tasks.Where(pair => pair.Value == TaskType.BOOSTER)) {
                 if (!Main.debug) {
                     taskTypeToTask(game.GetMyPirateById(pair.Key), pair.Value).Preform();
                 } else {
                     game.Debug(taskTypeToTask(game.GetMyPirateById(pair.Key), pair.Value).Preform());
                 }
             }
+
+            foreach (KeyValuePair<int, TaskType> pair in tasks.Where(pair => pair.Value != TaskType.BOOSTER)) {
+                if (!Main.debug) {
+                    taskTypeToTask(game.GetMyPirateById(pair.Key), pair.Value).Preform();
+                } else {
+                    game.Debug(taskTypeToTask(game.GetMyPirateById(pair.Key), pair.Value).Preform());
+                }
+            }
+
+            Predict.Log();
         }
 
 
@@ -89,7 +103,7 @@ namespace Hydra {
                 string s = "";
                 ptasks.ToList().ForEach(str => s += str);
 
-                if (Main.debug) {
+                if (Main.importantdebug) {
                     game.Debug(pirate.Id + " | " + s);
                 }
             }
@@ -110,9 +124,15 @@ namespace Hydra {
 
                 tasks[pirate.Id] = taskType;
                 unemployedPirates.Remove(pirate);
-                
-                if (Main.importantdebug)
+
+                if (taskType == TaskType.MINER && Utils.FreeCapsulesByDistance(pirate.Location).Count > 0) {
+                    var cloestCapsule = Utils.FreeCapsulesByDistance(pirate.Location).First();
+                    capsulesTargetted.Add(pirate, cloestCapsule);
+                }
+
+                if (Main.importantdebug) {
                     game.Debug("Gave: " + pirate.Id + " | " + taskType + " at cost: " + scores[sorted.First()]);
+                }
             }
         }
 

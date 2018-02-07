@@ -5,10 +5,10 @@ namespace Hydra{
 
     public class Chunk{
 
-        
-        public const int size = 320;
-        public static int n = Main.game.Cols / size; //Number of chunks
-        
+        public static int n = 20; //Number of chunks
+        public static int size = Main.game.Cols / n;
+
+
         public static Chunk[,] chunks = new Chunk[n, n]; //Keeps track of all the chunks
 		
 		
@@ -17,8 +17,11 @@ namespace Hydra{
             int y = loc.Row / size;
             int x = loc.Col / size;
 
+            if (x >= n || y >= n) {
+                return chunks[0, 0];
+            }
+
             if(chunks[y, x] != null){
-                
                 return chunks[y, x];
             }
             
@@ -48,7 +51,7 @@ namespace Hydra{
             this.X = X;
 			
 			neighbors = new Dictionary<int,List<Chunk>>();
-			
+		
             chunks[Y, X] = this; //Registers the chunk
         }
 
@@ -66,6 +69,9 @@ namespace Hydra{
             return GetLocation().Distance(obj);
         }
 
+        public int Distance(Location loc) {
+            return GetLocation().Distance(loc);
+        }
 
         public int Distance(Chunk chunk){ 
             return GetLocation().Distance(chunk.GetLocation());

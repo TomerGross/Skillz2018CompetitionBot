@@ -2,29 +2,28 @@ using Pirates;
 
 namespace Hydra {
 
-    public class TraitRateByAsteroid : Trait {
-
+    public class TraitRateByLazyAsteroid : Trait {
+        
         readonly int range;
 
 
-        public TraitRateByAsteroid(int range) {
+        public TraitRateByLazyAsteroid(int range) {
 
             this.range = range;
         }
 
 
         override public int Cost(Chunk chunk) {
-
+            
             PirateGame game = Main.game;
-            int cost = 0;
 
             foreach (Asteroid asteroid in game.GetAllAsteroids()) {
-                if (asteroid.Distance(chunk.GetLocation()) < range * 320) {
+                if (asteroid.Distance(chunk.GetLocation()) < range * Chunk.size + asteroid.Size) {
                     return 100000;
                 }
             }
 
-            return cost;
+            return 0;
         }
 
 

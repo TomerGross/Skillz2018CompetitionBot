@@ -25,27 +25,27 @@ namespace Hydra {
                 return Utils.GetPirateStatus(pirate, "Already did turn");
             }
 
-            if (Utils.PushAsteroid(pirate)) {
-                return Utils.GetPirateStatus(pirate, "Pushed asteroid");
-            }
-            
             if (Utils.EnemyHoldersByDistance(pirate.Location).Count > 0) {
 
                 Pirate enemyHolder = Utils.EnemyHoldersByDistance(pirate.Location).First();
-                game.Debug("ID: " + enemyHolder.Id + " " + enemyHolder.Distance(pirate) + " -> " + game.PushRange);
-                
+
+                //Turn 107 against  2 there is a problem in pushing
                 if (pirate.CanPush(enemyHolder)) {
-                
+
+                    if (Predict.enemiesPossiblyPushed.Contains(enemyHolder.Id) && !Main.piratesPushed.Contains(enemyHolder)) {
+
+                        pirate.Push(enemyHolder, Utils.OppositeLocation(enemyHolder.Location));
+                        Main.piratesPushed.Add(enemyHolder);
+                        return "Pushed the boosted enemy holder";
+                    }
+
                     var cloestEdge = Utils.CloestEdge(enemyHolder.Location);
-                    double killCost = ((double) cloestEdge.Item1) / game.PushDistance;
-
-                    game.Debug("KILLCOST: " + killCost);
-
+                    double killCost = ((double)cloestEdge.Item1) / game.PushDistance;
                     var available = Utils.PiratesWithTask(TaskType.BERSERKER);
                     available.AddRange(Utils.PiratesWithTask(TaskType.MOLE));
                     available.RemoveAll(pirateAvailable => !pirateAvailable.CanPush(enemyHolder) || pirateAvailable.Id == pirate.Id || Main.didTurn.Contains(pirateAvailable.Id));
                     available.Insert(0, pirate);
-              
+
                     if (available.Count >= 2) {
                         var pushLocation = new Location(game.Rows - enemyHolder.Location.Row, game.Cols - enemyHolder.Location.Col);
 
@@ -59,9 +59,9 @@ namespace Hydra {
                         }
 
                         return Utils.GetPirateStatus(pirate, "Couple attacked holder");
+                    }
 
-
-                    } else if (killCost <= 1.26) /*add the movement of the enemy pirate to kill cost*/{
+                    if (killCost <= 1.26) /*add the movement of the enemy pirate to kill cost*/{
 
                         pirate.Push(enemyHolder, cloestEdge.Item2);
                         return Utils.GetPirateStatus(pirate, "Attacked holder");
@@ -69,7 +69,7 @@ namespace Hydra {
 
                 }
 
-                pirate.Sail(Utils.SafeSail(pirate, enemyHolder.GetLocation()));
+                Utils.SafeSail(pirate, enemyHolder.GetLocation());
                 return Utils.GetPirateStatus(pirate, "Moving towards enemy holder");
             }
 
@@ -77,33 +77,11 @@ namespace Hydra {
 
                 var cloestEnemyMine = Utils.OrderByDistance(Main.enemyMines, pirate.Location).First();
                 var cloestEnemyShip = Utils.OrderByDistance(game.GetEnemyMotherships().ToList(), pirate.Location).First();
-                var sailLocation = cloestEnemyMine.Towards(cloestEnemyShip, game.PirateMaxSpeed + game.PushDistance);
-                
-                
-                if (game.GetAllAsteroids().Count() > 0){
-                    
-                    var size = game.GetAllAsteroids()[0].Size;
-                    List<Location> allastroidslocation = new List<Location>();
-                    
-                    foreach(Asteroid asteroid in game.GetAllAsteroids()){
-                        allastroidslocation.Add(asteroid.InitialLocation);
-                        if (asteroid.IsAlive())
-                            allastroidslocation.Add(asteroid.GetLocation());
-                    }
-                    
-                    foreach (Location loc in allastroidslocation)
-                    {
-                        if (sailLocation.InRange(loc, size))
-                            sailLocation = loc.Towards(cloestEnemyShip, game.PirateMaxSpeed + game.PushDistance);
-                    }
-                    
-                }
-                
-                
-                pirate.Sail(Utils.SafeSail(pirate, sailLocation));
+                var sailLocation = cloestEnemyShip.Towards(cloestEnemyMine, game.PirateMaxSpeed + game.PushDistance);
+
+                Utils.SafeSail(pirate, sailLocation);
                 return Utils.GetPirateStatus(pirate, "Moving towards enemy mine");
             }
-
 
             return Utils.GetPirateStatus(pirate, "Is idle.");
         }
@@ -144,7 +122,7 @@ namespace Hydra {
                 return 45;
             }
 
-            return 1;
+            return 20;
         }
 
 

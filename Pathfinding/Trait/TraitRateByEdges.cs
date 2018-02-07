@@ -18,7 +18,7 @@
             int distanceFromWall = Utils.ClosestEdgeDistance(chunk.GetLocation());
 
             if(distanceFromWall < radius){
-                return distanceFromWall * multiplier;
+                return (radius - distanceFromWall) * multiplier;
             }
 
             return 0;
