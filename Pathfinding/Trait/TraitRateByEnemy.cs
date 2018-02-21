@@ -31,7 +31,7 @@ namespace Hydra {
 
             int maxDistance = Chunk.size * range;
 
-            foreach (Pirate pirate in pirates) {
+            foreach (Pirate pirate in pirates.Where(p => chunk.Distance(p) < maxDistance)) {
                 if (pirateID == -1 || pirate.UniqueId == pirateID) {                             
                     if (pirate.Distance(chunk.GetLocation()) < Chunk.size * range) {
                         cost += (maxDistance - pirate.Distance(chunk.GetLocation())) * multiplier;

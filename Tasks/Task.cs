@@ -1,9 +1,8 @@
-using Pirates;
-
 namespace Hydra {
 
-	//This is an interface class, it builds the super type to all the tasks
+    using Pirates;
 
+	//This is an interface class, it builds the super type to all the tasks
 
 	public enum TaskType {
 		BERSERKER, ESCORT, MINER, MOLE, BOOSTER
@@ -12,18 +11,23 @@ namespace Hydra {
 
 	public abstract class Task {
 
-		//The task's bias
-		public virtual int Bias() {
-			return 0;
-		}
 
-        public virtual double GetWeight() {
-			return 0;
-		}
+		public virtual int Bias() => 0;
 		
-		public virtual string Preform() {
-			return "Nulp";
-		}
+
+        public virtual double GetWeight() => 0;
+
+
+        public virtual double HeavyWeight() => 0;
+
+
+        public virtual int Priority() => 0;
+
+
+        public virtual string Preform() => "Nulp";
+
+
+        public virtual void UpdatePirate(Pirate pirate) {}
 
 	}
 

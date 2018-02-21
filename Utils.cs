@@ -4,6 +4,8 @@ using Pirates;
 
 namespace Hydra {
 
+    public enum PirateState { NORMAL, HEAVY };
+
     public class Utils {
 
         //-------------------Globals---------------------------------------------
@@ -31,139 +33,73 @@ namespace Hydra {
         }
 
 
-        public static int GetNumOfEnemyPiratesOnPoint(Location loc) {
-            var enemylivingpirates = game.GetEnemyLivingPirates();
-            int count = 0;
-            foreach (Pirate enemy in enemylivingpirates) {
-                if (enemy.GetLocation().Row == loc.Row && enemy.GetLocation().Col == loc.Col) {
-                    count += 1;
-                }
-
-            }
-
-            return count;
-        }
+        public static List<Capsule> OrderByDistance(List<Capsule> list, Location l) => list.OrderBy(cap => DistanceWithWormhole(cap.GetLocation(), l, 0)).ToList();
+        public static List<Capsule> FreeCapsulesByDistance(Location l) => game.GetMyCapsules().ToList().Where(cap => cap.Holder == null && !Main.capsulesTargetted.Values.Contains(cap)).OrderBy(cap => DistanceWithWormhole(cap.GetLocation(), l, 0)).ToList();
 
 
-
-        public static bool SafeSail(Pirate pirate, Location to) {
-
-            if (Main.didTurn.Contains(pirate.Id)) {
-                return false;
-            }
-
-            var threaths = AsteroidsByDistance(pirate.Location);
-            threaths.RemoveAll(asteroid => asteroid.Direction.Add(asteroid.Location).Distance(pirate) > 5 * asteroid.Size);
-
-            if (threaths.Count() == 0) {
-                pirate.Sail(to);
-                Main.didTurn.Add(pirate.Id);
-                return true;
-            }
-
-            if (InAsteroid(to, threaths.First())) {
-                pirate.Sail(SafestCloest(pirate.Location, to));
-                Main.didTurn.Add(pirate.Id);
-                return true;
-            }
-
-            if (pirate.Distance(to) < pirate.MaxSpeed * 2.5) {
-
-                if (pirate.CanPush(threaths.First()) && !Main.asteroidsPushed.Contains(threaths.First()) && pirate.Distance(threaths.First()) < threaths.First().Size * 1.5) {
-
-                    var pushLocation = new Location(threaths.First().Location.Row - threaths.First().Direction.Row, threaths.First().Location.Col - threaths.First().Direction.Col);
-                    if (threaths.Count() > 1 && threaths[1].Distance(threaths.First()) < 1000) {
-                        pushLocation = threaths[1].Location;
-                    }
-
-                    pirate.Push(threaths.First(), pushLocation);
-                    Main.asteroidsPushed.Add(threaths.First());
-                    Main.didTurn.Add(pirate.Id);
-                    return true;
-                }
-
-                pirate.Sail(SafestCloest(pirate.Location, to));
-                Main.didTurn.Add(pirate.Id);
-                return true;
-            }
-
-            var traits = new List<Trait>() { new TraitRateByLazyAsteroid(1), new TraitRateByMovingAsteroid(5) };
-            Path path = new Path(Chunk.GetChunk(pirate.Location), Chunk.GetChunk(to), traits, Path.Algorithm.ASTAR);
-
-            if (path.GetChunks().Count > 0) {
-
-                Chunk nextChunk = path.Pop();
-                pirate.Sail(nextChunk.GetLocation());
-                Main.didTurn.Add(pirate.Id);
-                return true;
-            }
-
-            pirate.Sail(to);
-            Main.didTurn.Add(pirate.Id);
-            return true;
-        }
+        public static List<Location> OrderByDistance(List<Location> list, Location l) => list.OrderBy(obj => DistanceWithWormhole(obj, l, 0)).ToList();
+        public static List<MapObject> OrderByDistance(List<MapObject> list, Location l) => list.OrderBy(l.Distance).ToList();
+        public static List<Mothership> OrderByDistance(List<Mothership> list, Location l) => list.OrderBy(l.Distance).ToList();
 
 
-        public static bool AsteroidMove(Asteroid ast) {
-            return ast.Location.Add(ast.Direction).Row == ast.Location.Row && ast.Location.Add(ast.Direction).Col == ast.Location.Col;
-        }
+        public static List<Pirate> OrderByDistance(List<Pirate> list, Location l) => list.OrderBy(p => DistanceWithWormhole(p.GetLocation(), l, 0)).ToList();
+        public static List<Pirate> EnemyHoldersByDistance(Location l) => game.GetEnemyLivingPirates().Where(e => e.HasCapsule()).OrderBy(l.Distance).ToList();
+        public static List<Pirate> GetMyHolders() => game.GetMyLivingPirates().Where(p => p.Capsule != null).ToList();
+        public static List<Pirate> PiratesWithTask(TaskType t) => (from tuple in Main.tasks.Where(pair => pair.Value.Item1 == t) select game.GetMyPirateById(tuple.Key)).ToList();
+        public static List<Pirate> PiratesWithState(PirateState state) => game.GetAllMyPirates().Where(p => p.StateName == state.ToString()).ToList();
 
 
-        public static Location SafestCloest(Location danger, Location goal) {
-
-            var traits = new List<Trait>() { new TraitRateByLazyAsteroid(1), new TraitRateByMovingAsteroid(5) };
-            var best = Chunk.GetChunk(danger).GetNeighbors(0).OrderBy(chunk => traits.Sum(trait => trait.Cost(chunk)) + chunk.GetLocation().Distance(goal)).First();
-
-            if (best.Distance(goal) < Chunk.size) {
-                return goal;
-            }
-
-            return best.GetLocation();
-        }
+        public static List<Asteroid> AsteroidsByDistance(Location l) => game.GetLivingAsteroids().OrderBy(asteroid => asteroid.Distance(l)).ToList();
 
 
-        public static bool InAsteroid(Location to, Asteroid ass) {
-
-            if (to.Distance(ass.Location.Add(ass.Direction)) < ass.Size) {
-                return true;
-            }
-
-            return false;
-        }
-
-
-        public static List<Pirate> OrderByDistance(List<Pirate> list, Location l) => list.OrderBy(p => p.Distance(l)).ToList();
-        public static List<Capsule> OrderByDistance(List<Capsule> list, Location l) => list.OrderBy(a => a.Distance(l)).ToList();
-        public static List<Location> OrderByDistance(List<Location> list, Location l) => list.OrderBy(obj => obj.Distance(l)).ToList();
-        public static List<Location> OrderByDistance(List<MapObject> list, Location l) => OrderByDistance((from obj in list select obj.GetLocation()).ToList(), l);
-        public static List<Location> OrderByDistance(List<Mothership> list, Location l) => OrderByDistance((from ship in list select ship.Location).ToList(), l);
-        public static List<Capsule> FreeCapsulesByDistance(Location l) => game.GetMyCapsules().ToList().Where(cap => cap.Holder == null && !Main.capsulesTargetted.Values.Contains(cap)).OrderBy(cap => cap.Distance(l)).ToList();
-
-
-        public static List<Pirate> GetMyHolders() => (from cap in game.GetMyCapsules().ToList().Where(cap => cap.Holder != null) select cap.Holder).ToList();
-        public static List<Pirate> EnemyHoldersByDistance(Location l) => (from cap in game.GetEnemyCapsules().ToList().Where(cap => cap.Holder != null).OrderBy(cap => cap.Distance(l)).ToList() select cap.Holder).ToList();
-        public static List<Pirate> PiratesWithTask(TaskType t) => (from tuple in Main.tasks.Where(pair => pair.Value == t) select game.GetMyPirateById(tuple.Key)).ToList();
-
-
-        public static List<Asteroid> AsteroidsByDistance(Location l) => game.GetAllAsteroids().OrderBy(asteroid => asteroid.Distance(l)).ToList();
+        public static List<Wormhole> OrderByDistance(List<Wormhole> list, Location l) => list.OrderBy(p => p.Distance(l)).ToList();
+        public static List<Wormhole> WormHolesByDistance(Location l) => game.GetAllWormholes().ToList().OrderBy(w => w.Distance(l)).ToList();
 
 
         public static int ClosestEdgeDistance(Location l) => new List<int> { l.Col, l.Row, game.Cols - l.Col, game.Rows - l.Row }.OrderBy(dis => dis).First();
 
 
-        public static Location OppositeLocation(Location loc) {
-            return new Location(game.Rows - loc.Row, game.Cols - loc.Col);
+        public static Location OppositeLocation(Location loc) => new Location(game.Rows - loc.Row, game.Cols - loc.Col);
+
+        public static Location Center(Location A, Location B) => new Location((A.Row + B.Row) / 2, (A.Col + B.Col) / 2);
+
+
+        public static int DistanceWithWormhole(Location from, Location to, int speed) {
+
+            if (game.GetAllWormholes().Any()) {
+                
+                var bestHole = game.GetAllWormholes().OrderBy(w => from.Distance(w) + w.Partner.Distance(to)).First();
+                int teleportMin = from.Distance(bestHole) + bestHole.Partner.Distance(to) + bestHole.TurnsToReactivate * speed;
+
+                return System.Math.Min(teleportMin, from.Distance(to));
+            }
+
+            return from.Distance(to);
         }
 
 
-        // Returns the distance from the cloest edge and the push location
+        public static Tuple<int, Location> NearestKillLocation(Location loc) => new List<Tuple<int, Location>> { ClosestAss(loc), CloestEdge(loc) }.OrderBy(tuple => tuple.Item1).First();
+
+
+        public static Tuple<int, Location> ClosestAss(Location loc) {
+
+            if (game.GetLivingAsteroids().Any()) {
+                var cloestAss = game.GetLivingAsteroids().OrderBy(loc.Distance).First();
+                return new Tuple<int, Location>(cloestAss.Distance(loc) - cloestAss.Size, cloestAss.Location);
+            }
+
+            return CloestEdge(loc);
+        }
+
+
         public static Tuple<int, Location> CloestEdge(Location loc) {
 
             return new List<Tuple<int, Location>> {
-                new Tuple<int, Location>(loc.Col, new Location(loc.Row, -1)),
-                new Tuple<int, Location>(game.Cols - loc.Col, new Location(loc.Row, game.Cols + 1)),
-                new Tuple<int, Location>(loc.Row, new Location(-1, loc.Col)),
-                new Tuple<int, Location>(game.Rows - loc.Row, new Location(game.Rows + 1, loc.Col))
+
+                new Tuple<int, Location>(loc.Col, new Location(loc.Row, -1 * game.Rows)),
+                new Tuple<int, Location>(game.Cols - loc.Col, new Location(loc.Row, game.Cols * 2)),
+                new Tuple<int, Location>(loc.Row, new Location(-1 * game.Cols , loc.Col)),
+                new Tuple<int, Location>(game.Rows - loc.Row, new Location(game.Rows * 2, loc.Col))
             }.OrderBy(tuple => tuple.Item1).First();
         }
 
@@ -193,49 +129,51 @@ namespace Hydra {
             return pairs;
         }
 
+        public static int GetNumOfMyPiratesInRange(Location loc) {
 
-        public static List<GameObject> GetObstacles(PirateGame game, Location origin, Location end) {
+            var mylivingpirates = game.GetMyLivingPirates();
+            int count = 0;
+            foreach (Pirate prt in mylivingpirates) {
+                if (prt.GetLocation().InRange(loc, game.WormholeRange))
+                    count += 1;
 
-            var obstacles = new List<GameObject>();
-
-            foreach (Point point in new Line(origin, end).GetPoints(10)) {
-                foreach (Pirate pirate in game.GetEnemyLivingPirates()) {
-
-                    if (pirate.Distance(point.GetLocation()) < game.PushDistance) {
-                        obstacles.Add(pirate);
-                    }
-                }
             }
 
-            return obstacles;
+            return count;
         }
+
+
+        public static int GetNumOfEnemyPiratesOnPoint(Location loc) {
+
+            var enemylivingpirates = game.GetEnemyLivingPirates();
+            int count = 0;
+            foreach (Pirate enemy in enemylivingpirates) {
+                if (enemy.GetLocation().Row == loc.Row && enemy.GetLocation().Col == loc.Col)
+                    count += 1;
+
+            }
+
+            return count;
+        }
+
+
+        public static bool AsteroidIsMoving(Asteroid ast) => ast.Location.Add(ast.Direction).Row == ast.Location.Row && ast.Location.Add(ast.Direction).Col == ast.Location.Col;
+
+
+        public static bool InAsteroid(Location to, Asteroid ass) => to.InRange(ass.Location, ass.Size);
 
 
         public static string GetPirateStatus(Pirate pirate, string status) {
 
             string task = "NO TASK";
             if (Main.tasks.ContainsKey(pirate.Id)) {
-                task = Main.tasks[pirate.Id].ToString();
+                task = Main.tasks[pirate.Id].Item1.ToString();
             }
 
-            return task + " | " + pirate.Id + " | " + status;
+            bool canPush = game.GetEnemyLivingPirates().Any(pirate.CanPush);
+
+            return task.Substring(0, 2)+ " | ID: " + pirate.Id + " | RT: " + pirate.PushReloadTurns + " | CP: " + canPush + " | " + status;
         }
-
-
-        public static Location[] GetFormation(Pirate Miner, Location oldLocation, Location newLocation) {
-
-            if (Miner.HasCapsule()) {
-
-                return new Location[2] { oldLocation, newLocation };
-
-            } else {
-
-                return null;
-            }
-
-        }
-
-
 
     }
 }

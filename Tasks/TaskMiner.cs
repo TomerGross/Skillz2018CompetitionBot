@@ -6,16 +6,23 @@ namespace Hydra {
 
     public class TaskMiner : Task {
 
-        //-------------------Globals---------------------------------------------
         public static PirateGame game = Main.game;
-        //-----------------------------------------------------------------------
 
-        readonly Pirate pirate;
+
+        Pirate pirate;
+        int turnCounter = 0;
+        double maxTurnsToArrive = 100;
 
 
         public TaskMiner(Pirate pirate) {
             this.pirate = pirate;
         }
+
+
+        override public void UpdatePirate(Pirate pirate) => this.pirate = pirate;
+
+
+        override public int Priority() => 1;
 
 
         override public string Preform() {
@@ -24,125 +31,137 @@ namespace Hydra {
                 return Utils.GetPirateStatus(pirate, "Already did turn");
             }
 
-            if (pirate.HasCapsule()) {
+            if (!pirate.HasCapsule()) {
 
-                var nearestShip = Utils.OrderByDistance(game.GetMyMotherships().ToList(), pirate.Location).First();
-                var threats = game.GetEnemyLivingPirates().ToList().Where(e => e.Distance(nearestShip) < pirate.Distance(nearestShip));
-                threats = threats.OrderBy(treath => treath.Distance(nearestShip)).ToList();
-
-                Chunk endgoal = Chunk.GetChunk(nearestShip);
-                /*
-                if (Utils.PiratesWithTask(TaskType.BOOSTER).Count > 0) {
-
-                    var closestBooster = Utils.OrderByDistance(Utils.PiratesWithTask(TaskType.BOOSTER), pirate.Location).First();
-                    var cloestHolderToBooster = Utils.OrderByDistance(Utils.GetMyHolders(), closestBooster.Location).First();
-
-                    if(cloestHolderToBooster == pirate){
-                        if(closestBooster.Distance(pirate) > game.PushRange){
-                            pirate.Sail(closestBooster);
-                            return Utils.GetPirateStatus(pirate, "Sailing closer to booster");
-                        } 
-                    }
-                }
-*/
-                var closestenemy = game.GetEnemyLivingPirates().ToList().First();
-                if (Utils.GetMyHolders().Count() > 1) {
-
-                    var secondHolder = Utils.GetMyHolders().Where(h => h.Id != pirate.Id).First();
-                    var nearestShipToSecondHolder = Utils.OrderByDistance(game.GetMyMotherships().ToList(), secondHolder.Location).First();
-
-                    if (threats.Count() > 0 && Utils.GetNumOfEnemyPiratesOnPoint(closestenemy.GetLocation()) >= 4) {
-
-                        bool caseI = nearestShip.Equals(nearestShipToSecondHolder);
-                        bool caseII = pirate.Distance(nearestShip) < secondHolder.Distance(nearestShip);
-                        bool caseIII = pirate.Distance(secondHolder) < pirate.Distance(nearestShip);
-                        bool caseIV = game.PushRange * 3 < pirate.Distance(secondHolder);
-                        bool caseV = game.PushRange < pirate.Distance(nearestShip);
-
-                        if (caseI && caseII && caseIII && caseIV && caseV) {
-                            // pirate.Sail(secondHolder);
-                            //    return Utils.GetPirateStatus(pirate, "Sailing closer to second holder");
-                        }
-                    }
-
-                    var secondThreats = game.GetEnemyLivingPirates().ToList().Where(e => e.CanPush(secondHolder) && e.Distance(nearestShip) < secondHolder.Distance(nearestShip));
-                    secondThreats = secondThreats.OrderBy(treath => treath.Distance(secondHolder)).ToList();
-
-                    bool caseVI = secondHolder.Distance(nearestShip) < pirate.Distance(nearestShip);
-                    bool caseVII = secondHolder.Distance(nearestShip) < game.PushDistance + secondHolder.MaxSpeed * 1.5;
-
-                    if (pirate.CanPush(secondHolder) && caseVI && caseVII && !Main.piratesPushed.Contains(secondHolder)) {
-                        pirate.Push(secondHolder, nearestShipToSecondHolder);
-                        Main.piratesPushed.Add(secondHolder);
-                        return Utils.GetPirateStatus(pirate, "Boosted second holder");
-                    }
-
-                }
-
-                var traits = new List<Trait>() {
-                        new TraitRateByEnemy(1, 1, -1),
-                        new TraitRateByEdges(2, 1),
-                        new TraitRateByLazyAsteroid(1),
-                        new TraitRateByMovingAsteroid(4)
-                };
-
-                if (Utils.GetMyHolders().Count() > 1) {
-                    var secondHolder = Utils.GetMyHolders().Where(h => h.Id != pirate.Id).First();
-
-                    if(Utils.GetNumOfEnemyPiratesOnPoint(closestenemy.GetLocation()) < 4){
-                        traits.Add(new TraitRateByEnemy(5, 100, secondHolder.UniqueId));
-                    }else{
-                        traits.Add(new TraitRateByEnemy(5, -100, secondHolder.UniqueId));
-                    }
-                }
-
-                if (pirate.Distance(nearestShip) > 300) {
-
-                    Path path = new Path(Chunk.GetChunk(pirate.GetLocation()), endgoal, traits, Path.Algorithm.ASTAR);
-
-                    if (path.GetChunks().Count > 0 && nearestShip.Distance(pirate.Location) > Chunk.size) {
-
-                        Chunk nextChunk = path.Pop();
-
-                        if (Utils.PushAsteroid(pirate)) {
-                            return Utils.GetPirateStatus(pirate, "Pushed asteroid");
-                        }
-
-                        pirate.Sail(nextChunk.GetLocation());
-                        return Utils.GetPirateStatus(pirate, "Sailing to: " + nextChunk.ToString());
-                    }
-                }
-
-                Utils.SafeSail(pirate, nearestShip);
-                return Utils.GetPirateStatus(pirate, "Sailing to ship");
-            }
-
-
-            if (Utils.PushAsteroid(pirate)) {
-                return Utils.GetPirateStatus(pirate, "Pushed asteroid");
-            }
-
-            if (Main.mines.Count() > 0) {
-
-                var targetCapsule = Utils.OrderByDistance(Main.mines, pirate.Location).First();
+                turnCounter = 0;
 
                 if (Main.capsulesTargetted.ContainsKey(pirate)) {
-                    targetCapsule = Main.capsulesTargetted[pirate].Location;
+                    var sailLocation = Main.capsulesTargetted[pirate].Location;
+                    return Utils.GetPirateStatus(pirate, "Sailing to capsule " + Sailing.SafeSail(pirate, sailLocation));
                 }
 
-                Utils.SafeSail(pirate, targetCapsule);
-                return Utils.GetPirateStatus(pirate, "Sailing to target capsule... ");
+                return Utils.GetPirateStatus(pirate, "Is idle... ");
             }
 
-            return Utils.GetPirateStatus(pirate, "Is idle... ");
+            var nearestShip = Utils.OrderByDistance(game.GetMyMotherships().ToList(), pirate.Location).First();
+            var threats = game.GetEnemyLivingPirates().ToList().Where(e => e.PushReloadTurns < 3 && e.Distance(nearestShip) < pirate.Distance(nearestShip)).OrderBy(nearestShip.Distance).ToList();
+
+            turnCounter++;
+
+            if (turnCounter == 0) {
+                maxTurnsToArrive = ((double)pirate.Distance(nearestShip) / pirate.MaxSpeed) * 2.5;
+            }
+
+            if (Utils.GetMyHolders().Count() > 1) {
+
+                var secondHolder = Utils.GetMyHolders().Where(h => h.Id != pirate.Id).First();
+                var nearestShipToSecondHolder = Utils.OrderByDistance(game.GetMyMotherships().ToList(), secondHolder.Location).First();
+
+                var secondThreats = game.GetEnemyLivingPirates().ToList().Where(e => e.CanPush(secondHolder) && e.Distance(nearestShip) < secondHolder.Distance(nearestShip));
+                secondThreats = secondThreats.OrderBy(treath => treath.Distance(secondHolder)).ToList();
+
+                bool caseVI = secondHolder.Distance(nearestShip) < pirate.Distance(nearestShip);
+                bool caseVII = secondHolder.Distance(nearestShip) < pirate.PushDistance + secondHolder.MaxSpeed + game.MothershipUnloadRange;
+
+                if (pirate.CanPush(secondHolder) && caseVI && caseVII && !Main.piratesPushed.Contains(secondHolder)) {
+                    pirate.Push(secondHolder, nearestShipToSecondHolder);
+                    Main.piratesPushed.Add(secondHolder);
+                    return Utils.GetPirateStatus(pirate, "Boosted second holder");
+                }
+
+            }
+
+            var traits = new List<Trait>() {
+                        new TraitRateByEdges(750, 4),
+                        new TraitRateByEnemy(1100, 1, -1),
+                        new TraitRateByLazyAsteroid(1),
+                        new TraitAttractedToGoal(1000, nearestShip.Location),
+                        new TraitRateByMovingAsteroid(3),
+                        new TraitWormhole(nearestShip.Location, pirate)
+            };
+
+            if (threats.Any() && maxTurnsToArrive < turnCounter && Utils.GetNumOfEnemyPiratesOnPoint(threats.First().Location) >= 4) {
+                pirate.Sail(nearestShip);
+                return Utils.GetPirateStatus(pirate, "Kamikazad on ship");
+            }
+
+            int abstainRadius = pirate.MaxSpeed * 8;
+
+            if (Utils.GetMyHolders().Count() > 1 && abstainRadius / 2 < pirate.Distance(nearestShip)) {
+                var secondHolder = Utils.GetMyHolders().First(h => h.Id != pirate.Id);
+                traits.Add(new TraitRateByEnemy(abstainRadius, 100, secondHolder.UniqueId));
+            }
+
+            var path = new Path(pirate.GetLocation(), nearestShip.Location, traits);
+
+            if (!threats.Any() && pirate.Distance(nearestShip) < abstainRadius || pirate.Distance(nearestShip) <= Chunk.size || path.GetSailLocations().Count <= 1) {
+                pirate.Sail(nearestShip);
+                return Utils.GetPirateStatus(pirate, "Sailing directly to ship");
+            }
+
+            Location pathPopLocation = path.Pop();
+            Location nextSailLocation = pathPopLocation;
+
+            if (Utils.GetMyHolders().Count() > 1) {
+
+                var otherMiner = Utils.GetMyHolders().First(h => h.Id != pirate.Id);
+
+                bool sameTargetShip = Utils.OrderByDistance(game.GetMyMotherships().ToList(), otherMiner.Location).First() == nearestShip;
+                bool checkI = pirate.Distance(nearestShip) < otherMiner.Distance(nearestShip);
+                bool checkII = Chunk.size * 4 < otherMiner.Distance(nearestShip) - pirate.Distance(nearestShip);
+                bool checkIII = otherMiner.Distance(pirate) < Chunk.size * 5;
+
+                if (sameTargetShip && checkI && checkII) {
+                    nextSailLocation = pirate.Location.Towards(pathPopLocation, pirate.MaxSpeed / 2);
+                }
+            }
+
+            if (Utils.PiratesWithTask(TaskType.BOOSTER).Any()) {
+
+                var closestBooster = Utils.OrderByDistance(Utils.PiratesWithTask(TaskType.BOOSTER), pirate.Location).First();
+                bool cloestToBooster = Utils.OrderByDistance(Utils.GetMyHolders(), closestBooster.Location).First().Id == pirate.Id;
+                bool checkI = threats.Any() && threats.First().MaxSpeed * 2 <= threats.First().Distance(pirate);
+
+                if (cloestToBooster && game.PushRange < pirate.Distance(closestBooster) && checkI) {
+                    nextSailLocation = pirate.Location.Towards(pathPopLocation, closestBooster.MaxSpeed / 2);
+                }
+            }
+
+            pirate.Sail(nextSailLocation.GetLocation());
+            return Utils.GetPirateStatus(pirate, "Sailing to goal, next point: " + nextSailLocation.GetLocation());
         }
 
+
+        override public double HeavyWeight() {
+
+            if (game.GetMyMotherships().Count() == 0) {
+                return 0;
+            }
+            if (!pirate.HasCapsule()) {
+                return -100;
+            }
+
+
+            if (Utils.PiratesWithTask(TaskType.BOOSTER).Any()) {
+                var nearestShip = Utils.OrderByDistance(game.GetMyMotherships().ToList(), pirate.Location).First();
+                var closestBooster = Utils.OrderByDistance(Utils.PiratesWithTask(TaskType.BOOSTER), pirate.Location).First();
+                bool cloestToBooster = Utils.OrderByDistance(Utils.GetMyHolders(), closestBooster.Location).First().Id == pirate.Id;
+
+                if (cloestToBooster) {
+
+                    if (pirate.Distance(nearestShip) <= closestBooster.PushDistance + closestBooster.PushRange) {
+                        return 100;
+                    }
+                }
+            }
+            return 0;
+        }
 
 
         override public double GetWeight() {
 
             if (pirate.HasCapsule()) {
-                return 1000;
+                return 10000;
             }
 
             if (game.GetMyCapsules().Count() == 0 || Utils.FreeCapsulesByDistance(pirate.Location).Count() == 0 || Utils.PiratesWithTask(TaskType.MINER).Count >= game.GetMyCapsules().Count() || Utils.FreeCapsulesByDistance(pirate.Location).Count() == 0) {
@@ -157,6 +176,14 @@ namespace Hydra {
                 weight += 20;
             }
 
+            if (Utils.GetMyHolders().Count() > 0 && Utils.PiratesWithTask(TaskType.BOOSTER).Count == 0) {
+
+                var cloestToOtherHolder = Main.unemployedPirates.OrderBy(u => Utils.GetMyHolders().Min(h => h.Distance(u))).First();
+                if (cloestToOtherHolder.Id == pirate.Id) {
+                    //weight += 200;
+                }
+            }
+
             return weight;
         }
 
@@ -165,6 +192,10 @@ namespace Hydra {
 
             if (game.GetMyCapsules().Count() == 0 || Utils.FreeCapsulesByDistance(pirate.Location).Count() == 0) {
                 return 0;
+            }
+
+            if (Utils.PiratesWithTask(TaskType.MINER).Count == 0) {
+                return 1000;
             }
 
             return 100;

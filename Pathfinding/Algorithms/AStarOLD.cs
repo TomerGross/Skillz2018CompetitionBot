@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Hydra {
 
-	public class AStar{
+	public class AStarOLD{
 		
 		//The algorithm: 
 		//https://en.wikipedia.org/wiki/A*_search_algorithm
@@ -19,7 +19,7 @@ namespace Hydra {
         List<Chunk> closedSet, openSet;
 
 
-		public AStar(List<Trait> traits, Chunk origin, Chunk endgoal) {
+        public AStarOLD(List<Trait> traits, Chunk origin, Chunk endgoal) {
 
 			this.traits = traits;
 			this.origin = origin;

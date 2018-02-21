@@ -17,10 +17,8 @@ namespace Hydra {
 
 		override public int Cost(Chunk chunk) {
 
-            int MoveDistance = Main.game.PirateMaxSpeed;               
-
-            if (MoveDistance * range > chunk.Distance(goal)){
-                return -5 * (MoveDistance * range - chunk.Distance(goal));
+            if (chunk.Distance(goal) <= range){
+                return -(range - chunk.Distance(goal));
             }
 
             return 0; 

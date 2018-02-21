@@ -21,7 +21,9 @@
 
         override public List<Tuple<int, EmitterType>> Radius() => radius;
 
+
         override public Location Center() => pirate.Location;
+
 
     }
 }

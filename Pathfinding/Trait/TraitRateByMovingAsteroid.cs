@@ -47,7 +47,6 @@ namespace Hydra {
 
             for (int i = 1; i <= 5; i++) {
                 if (loc.InMap()) {
-                    
                     Chunk chunk = Chunk.GetChunk(loc);
                     if (!nextChunks.Contains(chunk)) {
                         nextChunks.Add(chunk);

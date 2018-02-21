@@ -1,27 +1,19 @@
 ﻿<Properties StartupConfiguration="{9848AF57-F484-4FAA-BCF8-4BF00774ACF5}|Default">
   <MonoDevelop.Ide.Workbench ActiveDocument="Utils.cs">
     <Files>
-      <File FileName="Tasks/TaskEscort.cs" Line="79" Column="14" />
-      <File FileName="Pathfinding/Trait/TraitAttractedToGoal.cs" Line="16" Column="3" />
-      <File FileName="Tasks/TaskMiner.cs" Line="178" Column="1" />
-      <File FileName="alottofix.cs" Line="19" Column="25" />
-      <File FileName="Pathfinding/Algorithms/AStar.cs" Line="99" Column="40" />
-      <File FileName="Tasks/TaskBooster.cs" Line="101" Column="30" />
-      <File FileName="Tasks/TaskMole.cs" Line="154" Column="1" />
-      <File FileName="Tasks/TaskBerserker.cs" Line="99" Column="17" />
-      <File FileName="Main.cs" Line="45" Column="14" />
-      <File FileName="Utils.cs" Line="46" Column="9" />
-      <File FileName="Map/Chunk.cs" Line="21" Column="1" />
-      <File FileName="Pathfinding/Trait/TraitRateByLazyAsteroid.cs" Line="19" Column="13" />
-      <File FileName="Pathfinding/Trait/TraitRateByEdges.cs" Line="23" Column="13" />
-      <File FileName="Tasks/Task.cs" Line="9" Column="14" />
-      <File FileName="PushingTactic.cs" Line="1" Column="1" />
+      <File FileName="OldCode/TaskEscort.cs" Line="47" Column="18" />
+      <File FileName="Tasks/TaskMole.cs" Line="146" Column="17" />
+      <File FileName="Tasks/TaskMiner.cs" Line="54" Column="13" />
+      <File FileName="Tasks/TaskBooster.cs" Line="214" Column="33" />
+      <File FileName="Utils.cs" Line="168" Column="14" />
+      <File FileName="Sailing.cs" Line="28" Column="33" />
+      <File FileName="Tasks/Task.cs" Line="1" Column="1" />
+      <File FileName="OldCode/TaskBerserker.cs" Line="1" Column="1" />
+      <File FileName="Pathfinding/Algorithms/AStar.cs" Line="76" Column="21" />
+      <File FileName="Map/Chunk.cs" Line="22" Column="14" />
+      <File FileName="Pathfinding/Trait/TraitRateByLazyAsteroid.cs" Line="5" Column="18" />
+      <File FileName="Pathfinding/Trait/TraitWormhole.cs" Line="29" Column="2" />
       <File FileName="Tuple.cs" Line="1" Column="1" />
-      <File FileName="Pathfinding/Tools/Line.cs" Line="38" Column="19" />
-      <File FileName="Pathfinding/Predict.cs" Line="32" Column="63" />
-      <File FileName="Pathfinding/Trait/TraitRateByEnemy.cs" Line="39" Column="12" />
-      <File FileName="Pathfinding/Trait/TraitRateByMovingAsteroid.cs" Line="50" Column="43" />
-      <File FileName="Pathfinding/Path.cs" Line="1" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />

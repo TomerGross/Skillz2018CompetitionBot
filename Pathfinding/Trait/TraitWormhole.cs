@@ -1,31 +1,30 @@
 ﻿using Pirates;
+using System.Linq;
 
 namespace Hydra {
 
-    public class TraitAttractedToGoal : Trait {
+    public class TraitWormhole : Trait {
 
-        readonly int range;
-        readonly Chunk goal;
+        readonly Location goal;
+        readonly Pirate pirate;
 
+        public TraitWormhole(Location goal, Pirate pirate) {
 
-        public TraitAttractedToGoal(int range, Location goal) {
-
-			this.range = range;
-            this.goal = Chunk.GetChunk(goal);
-		}
-		
-
-		override public int Cost(Chunk chunk) {
-
-            int MoveDistance = Main.game.PirateMaxSpeed;               
-
-            if (MoveDistance * range > chunk.Distance(goal)){
-                return -5 * (MoveDistance * range - chunk.Distance(goal));
-            }
-
-            return 0; 
-		}
+            this.goal = goal;
+            this.pirate = pirate;
+        }
 
 
-	}
+        override public int Cost(Chunk chunk) {
+
+            var holesInChunk = Main.game.GetAllWormholes().Any(w => chunk.Distance(w) <= w.WormholeRange + Chunk.size);
+
+            if(holesInChunk)
+                if (chunk.Distance(goal) == Utils.DistanceWithWormhole(chunk.GetLocation(), goal, pirate.MaxSpeed))
+                    return 10000;
+           
+            return 0;
+        }
+
+    }
 }
