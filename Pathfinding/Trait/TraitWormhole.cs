@@ -17,12 +17,18 @@ namespace Hydra {
 
         override public int Cost(Chunk chunk) {
 
-            var holesInChunk = Main.game.GetAllWormholes().Any(w => chunk.Distance(w) <= w.WormholeRange + Chunk.size);
+            var holesInChunk = Main.game.GetAllWormholes().Any(w => chunk.Distance(w) <= w.WormholeRange && pirate.Distance(w) / pirate.MaxSpeed + 2 <= w.TurnsToReactivate);
 
-            if(holesInChunk)
-                if (chunk.Distance(goal) == Utils.DistanceWithWormhole(chunk.GetLocation(), goal, pirate.MaxSpeed))
-                    return 10000;
-           
+            if (holesInChunk) {
+                if (pirate.HasCapsule() && Utils.PiratesWithTask(TaskType.BOOSTER).Any()) {
+                    return 100000;
+                }
+
+                if (chunk.Distance(goal) == Utils.DistanceWithWormhole(chunk.GetLocation(), goal, pirate.MaxSpeed)) {
+                    return 100000;
+                }
+            }
+
             return 0;
         }
 

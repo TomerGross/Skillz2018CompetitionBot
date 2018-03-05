@@ -11,7 +11,7 @@ namespace Hydra {
         public static PirateGame game;
 
         public static bool debug = true;
-        public static bool fullDebug = true;
+        public static bool fullDebug = false;
 
         public static List<int> didTurn = new List<int>();
 
@@ -23,6 +23,11 @@ namespace Hydra {
         public static List<Wormhole> wormHolesTargetted = new List<Wormhole>();
 
         public static List<Asteroid> asteroidsPushed = new List<Asteroid>();
+
+        public static List<Pirate> gotHeavy = new List<Pirate>();
+        public static List<Pirate> goStick = new List<Pirate>();
+
+        public static bool stopStick = false;
         //--------------------------------------------
 
 
@@ -58,8 +63,24 @@ namespace Hydra {
 
             Main.game = game;
 
-            // Clearing objects
+            ///*
+            game.Debug("Kol od baleivav penimah");
+            game.Debug("Nefesh Yehudi homiyah,");
+            game.Debug("Ul(e)faatei mizrach kadimah,");
+            game.Debug("Ayin leTziyon tzofiyah;");
+            game.Debug("");
+            game.Debug("Od lo avdah tikvateinu,");
+            game.Debug("Hatikvah bat sh(e)not alpayim,");
+            game.Debug("Lihyot am chofshi b(e)artzeinu,");
+            game.Debug("Eretz-Tziyon virushalayim.");
+            game.Debug("");
+            //*/
 
+            if (goStick.Any() && !game.GetMyPirateById(goStick.First().Id).IsAlive()) {
+                goStick.Clear();
+            }
+
+            // Clearing objects
             didTurn.Clear();
             sailToworm.Clear();
             capsulesTargetted.Clear();
@@ -68,53 +89,60 @@ namespace Hydra {
             wormsPushed.Clear();
 
             // Gettings the mines
-            if (game.GetMyCapsules().Count() > 0 && game.Turn == 1) {
+            if (game.GetMyCapsules().Any() && game.Turn == 1) {
                 game.GetMyCapsules().Where(cap => cap.Holder == null && !mines.Contains(cap.Location)).ToList().ForEach(cap => mines.Add(cap.Location));
             }
 
-            if (game.GetEnemyCapsules().Count() > 0 && game.Turn == 1) {
+            if (game.GetEnemyCapsules().Any() && game.Turn == 1) {
                 game.GetEnemyCapsules().Where(cap => cap.Holder == null && !enemyMines.Contains(cap.Location)).ToList().ForEach(cap => enemyMines.Add(cap.Location));
             }
-
 
             unemployedPirates = game.GetMyLivingPirates().ToList();
             HandTasks();
 
-            if(didDirtyAss == false && dirtyAss == null && game.GetLivingAsteroids().Any() && game.GetEnemyMotherships().Any() && Utils.PiratesWithTask(TaskType.MOLE).Any()){
+            foreach (Pirate pirate in game.GetMyLivingPirates().Where(p => p.StateName != game.STATE_NAME_HEAVY).OrderByDescending(p => tasks[p.Id].Item2.HeavyWeight())) {
 
-                var cloestEnemyMom = game.GetEnemyMotherships().OrderBy(Utils.PiratesWithTask(TaskType.MOLE).First().Distance).First();
-                var cloestAssToMom = game.GetLivingAsteroids().OrderBy(cloestEnemyMom.Distance).First();
-                var cloestMoleToAss = Utils.PiratesWithTask(TaskType.MOLE).OrderBy(cloestAssToMom.Distance).First();
-
-                dirtyAss = new Tuple<Asteroid, int>(cloestAssToMom, cloestMoleToAss.Id);
-            }
-
-            foreach (Pirate pirate in game.GetMyLivingPirates().OrderByDescending(p => tasks[p.Id].Item2.HeavyWeight())) {
+                if (tasks[pirate.Id].Item2.HeavyWeight() <= 0) {
+                    break;
+                }
 
                 var switchWith = game.GetMyLivingPirates().Where(p => p.Id != pirate.Id
                                                               && tasks[p.Id].Item2.HeavyWeight() < tasks[pirate.Id].Item2.HeavyWeight()
                                                               && p.StateName == game.STATE_NAME_HEAVY)
-                                                                .OrderBy(p => tasks[p.Id].Item2.HeavyWeight());
+                                                              .OrderBy(p => tasks[p.Id].Item2.HeavyWeight());
+
+                bool shouldNotSwitch = game.__livingAsteroids.Any(a => pirate.Distance(a) < pirate.MaxSpeed * 5) || game.GetEnemyLivingPirates().Any(e => pirate.Distance(e) < pirate.MaxSpeed * 3.5);
+
+                if (shouldNotSwitch) break;
 
                 if (switchWith.Any() && pirate.StateName != game.STATE_NAME_HEAVY) {
                     switchWith.First().SwapStates(pirate);
                     didTurn.Add(switchWith.First().Id);
                     break;
                 }
+
             }
 
-  
             foreach (KeyValuePair<int, Tuple<TaskType, Task>> pair in tasks.OrderByDescending(pair => pair.Value.Item2.Priority())) {
 
-                var preform = pair.Value.Item2.Preform();
+                try {
+                    
+                    var preform = pair.Value.Item2.Preform();
 
-                if (debug) {
-                    game.Debug(preform);
+                    if (debug) game.Debug(preform);
+
+                } catch (System.Exception e) {
+                    game.Debug(e.Message);
                 }
+
             }
+
+            if (stopStick == true) Main.goStick.Clear();
         }
 
 
+        /// <summary> Calculates what is the best task to asign </summary>
+        /// <returns> Tuple with the pirate and the task-type </returns>
         public Tuple<Pirate, TaskType> BestTaskToAssign() {
 
             var scores = new Dictionary<Tuple<Pirate, TaskType>, double>();
@@ -129,29 +157,28 @@ namespace Hydra {
                 }
             }
 
-            foreach (Pirate pirate in unemployedPirates) {
-                var ptasks = from tup in scores.Keys.ToList().Where(tup => tup.Item1.Id == pirate.Id) select tup.Item2.ToString() + " > " + scores[tup] + "  ||  ";
-                string s = "";
-                ptasks.ToList().ForEach(str => s += str);
-
-                if (fullDebug) {
-                    game.Debug(pirate.Id + " | " + s);
-                }
-            }
-
             if (scores.Count > 0) {
+
+                var best = scores.OrderByDescending(pair => pair.Value).First();
+
                 if (fullDebug) {
-                    var best = scores.OrderByDescending(pair => pair.Value).First();
+                    
+                    (from pirate in unemployedPirates
+                     let tasks = from tup in scores.Keys.Where(p => pirate.Equals(p)) select tup.Item2 + " > " + scores[tup]
+                     let taskString = tasks.Aggregate((t1, t2) => t1 + "  ||  " + t2)
+                     select taskString).ToList().ForEach(game.Debug);
+
                     game.Debug("Gave: " + best.Key.Item1.Id + " | " + best.Key.Item2 + " at: " + best.Value);
                 }
 
-                return scores.OrderByDescending(pair => pair.Value).First().Key;
+                return best.Key;
             }
 
             return new Tuple<Pirate, TaskType>(game.GetMyLivingPirates()[0], TaskType.MINER);
         }
 
 
+        /// <summary> Hands out the tasks according to the BestTaskToAssign() function </summary>
         public void HandTasks() {
 
             Dictionary<int, Tuple<TaskType, Task>> tempTasks = tasks.ToDictionary(p1 => p1.Key, p2 => p2.Value);
@@ -185,18 +212,13 @@ namespace Hydra {
 
             switch (task) {
 
-                case TaskType.BOOSTER:
-                    return new TaskBooster(pirate);
-
-                case TaskType.MOLE:
-                    return new TaskMole(pirate);
-
-                default:
-                    return new TaskMiner(pirate);
+                case TaskType.BOOSTER: return new TaskBooster(pirate);
+                
+                case TaskType.MOLE: return new TaskMole(pirate);
+                
+                default: return new TaskMiner(pirate);
             }
         }
 
-
     }
-
 }

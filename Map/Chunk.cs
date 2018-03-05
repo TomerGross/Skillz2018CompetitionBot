@@ -6,60 +6,60 @@ namespace Hydra {
 
     public class Chunk {
 
-        public static int n = 20; //Number of chunks
+        /// <summary> Number of chunks </summary>
+        public static int n = 20; 
         public static int size = Main.game.Cols / n;
 
-        public static Chunk[,] chunks = new Chunk[n, n]; //Keeps track of all the chunks
+        /// <summary> Keeps track of all the chunks </summary>
+        public static Chunk[,] chunks = new Chunk[n, n]; 
 
 
-        public static Chunk GetChunk(Location loc) { //Returns a chunkk
+        /// <summary> Gets a chunk from a given location</summary>
+        /// <returns> Either a cached or a new chunk </returns>
+        public static Chunk GetChunk(Location loc) { 
 
             int y = loc.Row / size;
             int x = loc.Col / size;
 
-            if (x >= n || y >= n || y < 0 || x < 0) {
+            if (x >= n || y >= n || y < 0 || x < 0) 
                 return chunks[0, 0];
-            }
-
-            if (chunks[y, x] != null) {
+        
+            if (chunks[y, x] != null) 
                 return chunks[y, x];
-            }
-
+            
             return new Chunk(x, y);
         }
 
 
-        public static Chunk GetChunk(int x, int y) { //Returns a chunk from an index
+        /// <summary> Gets a chunk by it's index </summary>
+        /// <returns> Either a cached or a new chunk </returns>
+        public static Chunk GetChunk(int x, int y) { 
 
-            if (chunks[y, x] != null) {
-
+            if (chunks[y, x] != null) 
                 return chunks[y, x];
-            }
 
             return new Chunk(x, y);
         }
 
-        //---------------[ End of static functions and vars ]--------
 
         readonly int X, Y;
-        readonly Dictionary<int, List<Chunk>> neighbors; //Keeps track of neighbors and removes the need to recalculate
+        readonly Dictionary<int, List<Chunk>> cahchedNeighbors; 
 
 
-        protected Chunk(int X, int Y) { //This should only be used by GetChunk methods, never by us.
+        protected Chunk(int X, int Y) { 
 
             this.Y = Y;
             this.X = X;
 
-            neighbors = new Dictionary<int, List<Chunk>>();
-
-            chunks[Y, X] = this; //Registers the chunk
+            cahchedNeighbors = new Dictionary<int, List<Chunk>>();
+            chunks[Y, X] = this; 
         }
 
 
-        public Location GetLocation() => new Location((Y * size) + (size / 2), (X * size) + (size / 2));
-
-
         public override string ToString() => "[Y: " + Y + ", X:" + X + "]";
+
+
+        public Location GetLocation() => new Location((Y * size) + (size / 2), (X * size) + (size / 2));
 
 
         public int Distance(GameObject to) => GetLocation().Distance(to);
@@ -71,17 +71,30 @@ namespace Hydra {
         public int Distance(Chunk to) => GetLocation().Distance(to.GetLocation());
 
 
-        public Tuple<int, Location> GetOptimalSailLocation(Location goal, List<Trait> traits) {
+        public List<Pirate> GetPirates(List<Pirate> pirates) => pirates.Where(p => GetChunk(p.GetLocation()) == this).ToList();
 
-            if (GetChunk(goal) == this)
+
+        public List<Pirate> GetMyPirates() => GetPirates(Main.game.GetMyLivingPirates().ToList());
+
+
+        public List<Pirate> GetEnemyPirates()=> GetPirates(Main.game.GetEnemyLivingPirates().ToList());  
+
+
+        /// <summary> Gets the optimal sail location </summary>
+        /// <returns> Either chunk center or wormhole</returns>
+        /// <param name="goal"> Where do you want to go </param>
+        public Tuple<int, Location> GetOptimalSailLocation(Location goal) {
+
+            if (GetChunk(goal) == this) {
                 return new Tuple<int, Location>(0, goal);
+            }
 
             var wormsInChunk = Main.game.GetAllWormholes().Where(w => w.InRange(GetLocation(), w.WormholeRange + size * 2)).OrderBy(GetLocation().Distance);
 
             if (wormsInChunk.Any()) {
 
                 var worm = wormsInChunk.First();
-                int teleportDistance = worm.Partner.Distance(goal) + Distance(worm);
+                int teleportDistance = worm.Partner.Distance(goal) + Distance(worm) + worm.TurnsToReactivate * Main.game.PirateMaxSpeed;
 
                 if (teleportDistance < Distance(goal))
                     return new Tuple<int, Location>(teleportDistance, worm.Location);
@@ -91,32 +104,16 @@ namespace Hydra {
         }
 
 
-        public List<Pirate> GetEnemyPirates() {
-            // TODO Gets every living pirate that is on the chunk, needs to be reworked
+        /// <summary> Gets the neighbor chunks within a range </summary>
+        /// <param name="range"> If the range is 0 it will return adjecent chunks only</param>
+        public List<Chunk> GetNeighbors(int range) {
 
-            var list = new List<Pirate>();
-
-            foreach (Pirate enemy in Main.game.GetEnemyLivingPirates()) {
-                if (enemy.Distance(GetLocation()) < size / 2) {
-
-                    list.Add(enemy);
-                }
-            }
-
-            return list;
-        }
-
-
-        public List<Chunk> GetNeighbors(int level) { //The level is the distance of neighbors it should get
-                                                     //0 will return only adjacent chunks
-            if (neighbors.ContainsKey(level)) {
-                return neighbors[level];
-            }
+            if (cahchedNeighbors.ContainsKey(range)) return cahchedNeighbors[range];
 
             var list = new List<Chunk>();
 
-            for (int rx = (X - (level + 1)); rx <= (X + (level + 1)); rx++) {
-                for (int ry = (Y - (level + 1)); ry <= (Y + (level + 1)); ry++) {
+            for (int rx = (X - (range + 1)); rx <= (X + (range + 1)); rx++) {
+                for (int ry = (Y - (range + 1)); ry <= (Y + (range + 1)); ry++) {
                     if (rx >= 0 && ry >= 0 && rx < n && ry < n) {
 
                         list.Add(GetChunk(rx, ry));
@@ -124,7 +121,7 @@ namespace Hydra {
                 }
             }
 
-            neighbors[level] = list;
+            cahchedNeighbors[range] = list;
             return list;
         }
 

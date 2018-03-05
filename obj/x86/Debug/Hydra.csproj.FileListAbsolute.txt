@@ -1,2 +1,0 @@
-/Users/matanrak/Documents/Code/C#/Hydra/obj/x86/Debug/Hydra.csprojResolveAssemblyReference.cache
-/Users/matanrak/Documents/Code/C#/Hydra/obj/x86/Debug/Hydra.csproj.CoreCompileInputs.cache

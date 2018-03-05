@@ -14,11 +14,10 @@ namespace Hydra {
         readonly List<Trait> traits;
         readonly Stack pathStack;
 
-        Dictionary<Chunk, int> fScore;
-        Dictionary<Chunk, Location> optimalLocation;
-        Dictionary<Chunk, int> gScore;
-        Dictionary<Chunk, Chunk> cameFrom;
         List<Chunk> closedSet, openSet;
+        Dictionary<Chunk, int> fScore, gScore;
+        Dictionary<Chunk, Location> optimalLocation;
+        Dictionary<Chunk, Chunk> cameFrom;
 
 
         public AStar(Location origin, Location endgoal, List<Trait> traits) {
@@ -27,7 +26,6 @@ namespace Hydra {
             this.origin = origin;
             this.endgoal = endgoal;
 
-            //Initiates everything 
             fScore = new Dictionary<Chunk, int>();
             gScore = new Dictionary<Chunk, int>();
             cameFrom = new Dictionary<Chunk, Chunk>();
@@ -39,11 +37,14 @@ namespace Hydra {
         }
 
 
-        protected Stack Calculate() { //The actual algorithm
+        public Stack GetPathStack() => pathStack;
 
-            for (int x = 0; x < Chunk.n; x++) { //Sets every chunk cost to INFINITY
+
+        protected Stack Calculate() {
+
+            //Sets every chunk cost to INFINITY
+            for (int x = 0; x < Chunk.n; x++) { 
                 for (int y = 0; y < Chunk.n; y++) {
-
                     Chunk chunk = Chunk.GetChunk(x, y);
                     fScore[chunk] = int.MaxValue;
                     gScore[chunk] = int.MaxValue;
@@ -57,42 +58,37 @@ namespace Hydra {
             for (int count = 0; count < Chunk.n * Chunk.n; count++) {
 
                 Chunk current = openSet.OrderBy(chunk => fScore[chunk]).First();
-                Location optiomalCurrent = current.GetOptimalSailLocation(endgoal, traits).Item2;
+                Location optiomalCurrent = current.GetOptimalSailLocation(endgoal).Item2;
 
                 openSet.Remove(current);
                 closedSet.Add(current);
 
-                if (current == Chunk.GetChunk(endgoal)) {
+                if (current == Chunk.GetChunk(endgoal)) 
                     break;
-                }
-
-
+                
                 int range = 0;
-                if (Main.game.GetActiveWormholes().Any(wh => current.Distance(wh) <= Chunk.size * 4)) {
+                if (Main.game.GetActiveWormholes().Any(wh => current.Distance(wh) <= Chunk.size * 4)) 
                     range = current.Distance(Main.game.GetActiveWormholes().OrderBy(current.Distance).First()) / Chunk.size;
-                }
+                
 
                 foreach (Chunk neighbor in current.GetNeighbors(range)) {
 
-                    if (closedSet.Contains(neighbor)) {
+                    if (closedSet.Contains(neighbor)) 
                         continue;
-                    }
-
-                    if (!openSet.Contains(neighbor)) {
+                    
+                    if (!openSet.Contains(neighbor)) 
                         openSet.Add(neighbor);
-                    }
+                    
 
-                    var optiomal = neighbor.GetOptimalSailLocation(endgoal, traits);
+                    var optiomal = neighbor.GetOptimalSailLocation(endgoal);
                     int g = gScore[current] - (Main.game.Cols - optiomal.Item1);
 
-                    foreach (Trait trait in traits) {
+                    foreach (Trait trait in traits) 
                         g += trait.Cost(neighbor);
-                    }
-
-                    if (g >= gScore[neighbor]) {
+                    
+                    if (g >= gScore[neighbor]) 
                         continue;
-                    }
-
+                    
                     optimalLocation[neighbor] = optiomal.Item2;
                     cameFrom[neighbor] = current;
                     gScore[neighbor] = g;
@@ -111,11 +107,5 @@ namespace Hydra {
 
             return p;
         }
-
-
-        public Stack GetPathStack() {
-            return pathStack;
-        }
-
     }
 }

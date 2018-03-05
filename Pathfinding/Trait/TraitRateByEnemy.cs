@@ -5,15 +5,15 @@ namespace Hydra {
 
     public class TraitRateByEnemy : Trait {
 
-        readonly int range, multiplier, pirateID;
+        readonly int setRange, multiplier, pirateID;
 
         //if the bias is minus the cost will make the pirate attracted to enemies
         //if pirateID is -1 the trait will target all enemies, if it's an ID it will only effect the given pirate
 
 
-        public TraitRateByEnemy(int range, int multiplier, int pirateID) {
-
-            this.range = range;
+        public TraitRateByEnemy(int setRange, int multiplier, int pirateID) {
+            
+            this.setRange = setRange;
             this.multiplier = multiplier;
             this.pirateID = pirateID;
         }
@@ -22,20 +22,17 @@ namespace Hydra {
         override public int Cost(Chunk chunk) {
 
             PirateGame game = Main.game;
-            int cost = 0, PDistance = game.PushDistance, PRange = game.PushRange;
+            int cost = 0;
             var pirates = game.GetAllEnemyPirates().ToList();
 
             if (pirateID != -1) {
                 pirates.AddRange(game.GetAllMyPirates());
             }
 
-            int maxDistance = Chunk.size * range;
-
-            foreach (Pirate pirate in pirates.Where(p => chunk.Distance(p) < maxDistance)) {
-                if (pirateID == -1 || pirate.UniqueId == pirateID) {                             
-                    if (pirate.Distance(chunk.GetLocation()) < Chunk.size * range) {
-                        cost += (maxDistance - pirate.Distance(chunk.GetLocation())) * multiplier;
-                    }
+            foreach (Pirate pirate in pirates.Where(e => chunk.Distance(e) < setRange + e.PushRange + e.MaxSpeed)) {
+                if (pirateID == -1 || pirate.UniqueId == pirateID) {
+                    int range = setRange + pirate.PushRange + pirate.MaxSpeed;
+                    cost += (range - chunk.Distance(pirate)) * multiplier;
                 }
             }
 
@@ -44,5 +41,4 @@ namespace Hydra {
 
 
     }
-
 }

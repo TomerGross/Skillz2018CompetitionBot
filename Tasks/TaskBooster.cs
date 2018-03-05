@@ -64,15 +64,16 @@ namespace Hydra {
                 bool caseI = holder.Distance(nearestShip) - game.MothershipUnloadRange <= pirate.PushDistance + holder.MaxSpeed;
 
                 bool caseII = false;
-                if (threats.Any() && threats.First().Distance(nearestShip) > holder.Distance(nearestShip))
+                if (threats.Any() && threats.First().Distance(nearestShip) > holder.Distance(nearestShip)) {
                     caseII = holder.Distance(nearestShip) - threats.First().Distance(nearestShip) < pirate.PushRange;
+                }
 
                 var holderLocAfterPush = holder.GetLocation().Towards(nearestShip, pirate.PushDistance + holder.MaxSpeed / 2);
                 bool caseIII_PI = threats.Any() && threats.First().Distance(nearestShip) < holder.Distance(nearestShip);
                 bool caseIII_PII = threats.Any() && threats.First().PushRange < holderLocAfterPush.Distance(threats.First());
-                bool ImminentDeath = game.GetEnemyLivingPirates().Count(t => holder.InRange(t, holder.MaxSpeed + t.MaxSpeed + t.PushRange) && t.PushReloadTurns <= 1) >= holder.NumPushesForCapsuleLoss;
+                bool ImminentDeath = game.GetEnemyLivingPirates().Count(t => holder.InRange(t, holder.MaxSpeed + t.PushRange) && t.PushReloadTurns <= 1) >= holder.NumPushesForCapsuleLoss;
 
-                if (ImminentDeath && !caseI && holder.MaxSpeed * 4 < holder.Distance(nearestShip)) {
+                if (ImminentDeath && !caseI && holder.MaxSpeed * 10 < holder.Distance(nearestShip)) {
 
                     var safest = Sailing.SafestCloestLocation(holder.Location, nearestShip.Location, 2, true, pirate);
                     pirate.Push(holder, safest);

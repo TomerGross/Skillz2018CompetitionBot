@@ -28,14 +28,10 @@
   <ItemGroup>
     <Compile Include="Utils.cs" />
     <Compile Include="Pathfinding\Path.cs" />
-    <Compile Include="Pathfinding\Algorithms\AStar.cs" />
-    <Compile Include="Pathfinding\Algorithms\Dijsktra.cs" />
     <Compile Include="Tasks\Task.cs" />
     <Compile Include="Tasks\TaskMiner.cs" />
     <Compile Include="Pathfinding\Trait\Trait.cs" />
     <Compile Include="Pathfinding\Trait\TraitRateByEnemy.cs" />
-    <Compile Include="Pathfinding\Tools\Line.cs" />
-    <Compile Include="Pathfinding\Algorithms\MTDstarLite.cs" />
     <Compile Include="Tasks\TaskMole.cs" />
     <Compile Include="Main.cs" />
     <Compile Include="Map\Chunk.cs" />
@@ -46,14 +42,18 @@
     <Compile Include="Pathfinding\Trait\TraitRateByLazyAsteroid.cs" />
     <Compile Include="Pathfinding\Trait\TraitRateByMovingAsteroid.cs" />
     <Compile Include="Pathfinding\Trait\TraitWormhole.cs" />
-    <Compile Include="Pathfinding\Emitter\Emitter.cs" />
-    <Compile Include="Pathfinding\Emitter\EmitterPirate.cs" />
-    <Compile Include="Pathfinding\Algorithms\AStarOLD.cs" />
     <Compile Include="OldCode\TaskBerserker.cs" />
     <Compile Include="OldCode\TaskEscort.cs" />
     <Compile Include="OldCode\Node.cs" />
     <Compile Include="OldCode\Predict.cs" />
     <Compile Include="Sailing.cs" />
+    <Compile Include="OldCode\Dijsktra.cs" />
+    <Compile Include="OldCode\MTDstarLite.cs" />
+    <Compile Include="OldCode\AStarOLD.cs" />
+    <Compile Include="Pathfinding\AStar.cs" />
+    <Compile Include="OldCode\Emitter\Emitter.cs" />
+    <Compile Include="OldCode\Emitter\EmitterPirate.cs" />
+    <Compile Include="OldCode\Tools\Line.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="PirateGame">
@@ -62,13 +62,12 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Pathfinding\" />
-    <Folder Include="Pathfinding\Algorithms\" />
     <Folder Include="Tasks\" />
     <Folder Include="Pathfinding\Trait\" />
-    <Folder Include="Pathfinding\Tools\" />
     <Folder Include="Map\" />
-    <Folder Include="Pathfinding\Emitter\" />
     <Folder Include="OldCode\" />
+    <Folder Include="OldCode\Emitter\" />
+    <Folder Include="OldCode\Tools\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -17,50 +17,40 @@ namespace Hydra {
 
         override public int Cost(Chunk chunk) {
 
+            PirateGame game = Main.game;
             int cost = 0;
 
-            foreach (Asteroid asteroid in Main.game.GetAllAsteroids().ToList()){
-
-                if (IsMoving(asteroid)) {
-                    foreach (Chunk next in GetNextChunks(asteroid).Where(n => n.Distance(chunk) < Chunk.size * range)) {
-                        cost += 10000 - next.Distance(chunk);
-                    }
-                    continue;
+            foreach (Asteroid asteroid in Main.game.__livingAsteroids.Where(a => Utils.AsteroidIsMoving(a))) {
+                foreach (Location next in GetNextLocations(asteroid).Where(loc => chunk.Distance(loc) < range)) {
+                    cost += (range - chunk.Distance(asteroid)) * 10;
                 }
-
-                cost += new TraitRateByLazyAsteroid(0).Cost(chunk);
             }
-         
+
             return cost;
         }
 
 
-        public bool IsMoving(Asteroid ast) {
-            return ast.Direction.Col != 0 && ast.Direction.Row != 0;
-        }
+        public List<Location> GetNextLocations(Asteroid asteroid) {
 
-
-        public List<Chunk> GetNextChunks(Asteroid asteroid) {
-
-            var nextChunks = new List<Chunk>();
+            var nextLocations = new List<Location>();
             var loc = asteroid.Location.Add(asteroid.Direction);
 
             for (int i = 1; i <= 5; i++) {
+
+                loc = asteroid.Location.Add(asteroid.Direction);
+
                 if (loc.InMap()) {
-                    Chunk chunk = Chunk.GetChunk(loc);
-                    if (!nextChunks.Contains(chunk)) {
-                        nextChunks.Add(chunk);
+
+                    if (!nextLocations.Contains(loc)) {
+                        nextLocations.Add(loc);
                     }
 
                     loc = loc.Add(asteroid.Direction);
                 }
             }
 
-
-            return nextChunks;
+            return nextLocations;
         }
-
-
     }
 
 }
