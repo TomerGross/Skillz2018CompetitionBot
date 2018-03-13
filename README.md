@@ -17,4 +17,4 @@ The traits:
   4. TraitRateByLazyAsteroid - attempt to avoid static asteroids in the way.
   5. TraitRateByMovingAsteroid - attempt to avoid moving asteroids in the way.
   6. TraitRateByStickyBomb - attempt to avoid the sticky bombs' blast radii.
-  7. TraitWormhole - attempt to avoid falling into wormholed.
+  7. TraitWormhole - attempt to avoid falling into wormholes.
