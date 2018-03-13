@@ -5,7 +5,7 @@ It won 8th place in Skillz 2018 - The israeli cyber competition.
 Our main goal was to make it as simple and adaptable as possible, so it would be easy to deal with the new feature that arrived each week.
 Our strategy was to first of all, split the map into chunks of the same size. For each chunk, we calculated its cost, based on our traits. Traits might have had a positive impact on the cost but could have also had a negative impact. Then, our pirate force split into roles. Each turn, a pirate was assigned the optimal task for it.
 
-The Roles:
+The roles:
   1. Miner - unloads a capsule in our mothership.
   2. Moler - prevents from enemy pirates from unloading their capsules in their mothership. 
   3. Booster - pushes our miner to score points.
