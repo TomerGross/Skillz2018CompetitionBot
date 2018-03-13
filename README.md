@@ -1,6 +1,6 @@
 # Skillz 2018 Competition Bot - עמי אסף דרום השרון 1
 
-Throughout the past month (February - March 2018), my friend Matan Rak and i have been developing our bot. 
+Throughout the past month (February - March 2018), my friend Matan Rak and I have been developing our bot. 
 It won 8th place in Skillz 2018 - The israeli cyber competition.
 Our main goal was to make it as simple and adaptable as possible, so it would be easy to deal with the new feature that arrived each week.
 Our strategy was to first of all, split the map into chunks of the same size. For each chunk, we calculated its cost, based on our traits. Traits might have had a positive impact on the cost but could have also had a negative impact. Then, our pirate force split into roles. Each turn, a pirate was assigned the optimal task for it.
